@@ -4,11 +4,13 @@ import java.awt.event.*;
 
 public class Keyboard extends KeyAdapter {
 	Scene scene;
+	boolean running;
 	final float MOVESPEED = 0.1f;
 	
 	
 	public Keyboard(Scene scene) {
 		this.scene = scene;
+		running = true;
 	}
 	
 	public void keyPressed(KeyEvent e) {
@@ -19,6 +21,7 @@ public class Keyboard extends KeyAdapter {
 		case(KeyEvent.VK_D): scene.getCam().translate(-MOVESPEED, 0, 0); break;
 		case(KeyEvent.VK_SPACE): scene.getCam().translate(0, MOVESPEED, 0); break;
 		case(KeyEvent.VK_CONTROL): scene.getCam().translate(0, -MOVESPEED, 0); break;
+		case(KeyEvent.VK_ESCAPE): System.exit(0); break;
 		}
 		
 	}
