@@ -18,8 +18,8 @@ public class Init {
 		frame.setResizable(false);
 		//frame.setVisible(true);
 		Screen scr = new Screen(new int[] {1920,1080});
-		for(int i=0;i<20;i++) {
-			for(int i2=0;i2<20;i2++) {
+		for(int i=0;i<30;i++) {
+			for(int i2=0;i2<30;i2++) {
 				//System.out.println("Adding cube");
 				scr.getScene().addCube(new FloatMatrix(new float[] {i,0,-i2}), new FloatMatrix(new float[] {1,1,1}), new int[] {i+50,0,i2+50});
 				try {

@@ -15,6 +15,8 @@ public class Scene {
 	
 	public void render(Graphics2D g2) {
 		FloatMatrix camMatTemp = camera.getCamMat();
+		//ArrayList<FloatMatrix>
+		
 		for(Polygon poly : polygons) {
 			FloatMatrix[] polyRen = poly.getRendered(camera,camMatTemp);
 			if (polyRen != null) {
@@ -30,7 +32,6 @@ public class Scene {
 				if (polyRen[0].get(1) > camera.screenDims[1] || polyRen[1].get(1) > camera.screenDims[1] || polyRen[2].get(1) > camera.screenDims[1]) {
 					continue;
 				}
-				
 				g2.setColor(Color.BLACK);
 				g2.drawLine((int)polyRen[0].get(0), (int)polyRen[0].get(1), (int)polyRen[1].get(0), (int)polyRen[1].get(1));
 				g2.drawLine((int)polyRen[1].get(0), (int)polyRen[1].get(1), (int)polyRen[2].get(0), (int)polyRen[2].get(1));
