@@ -11,6 +11,7 @@ public class Screen extends JPanel {
 	public Screen(int[] screenDims) {
 		this.screenDims = screenDims;
 		this.scene = new Scene(screenDims);
+		new Thread(new CameraUpdateThread(scene)).start();
 	}
 	
 	public void redraw() {

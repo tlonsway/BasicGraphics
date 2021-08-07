@@ -7,8 +7,8 @@ public class Camera {
 	private float[] camPos;
 	public int[] screenDims; //{width,height} in pixels
 	private Projection projection;
-	//left, right, forward, backwards
-	public boolean[] translationState = {false, false, false, false};
+	//left, right, forward, backwards, up, down, shift
+	public boolean[] translationState = {false, false, false, false, false, false, false};
 	public Camera(int[] screenDims) {
 		float[][] identMat = new float[][] {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
 		camMat = new FloatMatrix(identMat);
