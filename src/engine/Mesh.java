@@ -11,7 +11,9 @@ public class Mesh {
 			this.polygons = polygons;
 		}
 	}
-	
+	public Mesh() {
+		this.polygons = new ArrayList<Polygon>();
+	}
 	public void addToMesh(Polygon p) {
 		polygons.add(p);
 	}
