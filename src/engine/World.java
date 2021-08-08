@@ -11,7 +11,7 @@ public class World {
 	public Mesh generateWorld(int seed) {
 		Noise noise = new Noise();
 		Mesh map = new Mesh(null);
-		float[][] grid = new float[41][41];
+		float[][] grid = new float[101][101];
 		for(int x = 0; x < grid.length; x++) {
 			for(int y = 0; y < grid[0].length; y++) {
 				grid[x][y] = (float)(noise.noise(x/30.0+seed, y/30.0+seed)*10);
