@@ -6,6 +6,8 @@ import java.awt.Color;
 public class Polygon implements Comparable {
 	private FloatMatrix[] points;
 	private int[] color;
+	private float distance;
+	FloatMatrix[] renderedPoints;
 	
 	public Polygon(float[] p1, float[] p2, float[] p3) {
 		points = new FloatMatrix[3];
@@ -72,26 +74,46 @@ public class Polygon implements Comparable {
 	
 	public FloatMatrix[] getRendered(Camera cam, FloatMatrix camMat) {
 		try {
+			
 			float[] ren1 = cam.renderPoint(points[0],camMat);
 			float[] ren2 = cam.renderPoint(points[1],camMat);
 			float[] ren3 = cam.renderPoint(points[2],camMat);
+			float closest = ren1[2];
+			if (ren2[2] < closest) {
+				closest = ren2[2];
+			}
+			if (ren3[2] < closest) {
+				closest = ren3[2];
+			}
+			distance = closest;
 			FloatMatrix[] ret = new FloatMatrix[3];
 			ret[0] = new FloatMatrix(ren1);
 			ret[1] = new FloatMatrix(ren2);
 			ret[2] = new FloatMatrix(ren3);
+			renderedPoints = ret;
 			return ret;
 		} catch (NullPointerException e) {
 			return null;
 		}
 	}
-		
 	
 	public int compareTo(Object other) {
 		Polygon op = (Polygon)other;
-		
-		
-		return 0;
+		if (this.distance < op.getDistance()) {
+			return 1;
+		} else if (this.distance == op.getDistance()) {
+			return 0;
+		} else {
+			return -1;
+		}
 	}
 	
+	public float getDistance() {
+		return distance;
+	}
+	
+	public FloatMatrix[] getRenderedPoints() {
+		return renderedPoints;
+	}
 	
 }

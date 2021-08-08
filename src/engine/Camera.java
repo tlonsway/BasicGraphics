@@ -44,7 +44,7 @@ public class Camera {
 		FloatMatrix transformed = cameraMat.mmul(temp3D);
 		if (transformed.get(2) > 0) { //check if in front
 			FloatMatrix projected = projection.project(transformed);
-			return new float[] {projected.get(0)*screenDims[0],projected.get(1)*screenDims[1]};
+			return new float[] {projected.get(0)*screenDims[0],projected.get(1)*screenDims[1],transformed.get(2)};
 		} else {
 			return null;
 		}

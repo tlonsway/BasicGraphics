@@ -16,9 +16,20 @@ public class Scene {
 	public void render(Graphics2D g2) {
 		FloatMatrix camMatTemp = camera.getCamMat();
 		//ArrayList<FloatMatrix>
+		//FloatMatrix[][] renderedPolys = new FloatMatrix[polygons.size()][2];
+		
+		
+		ArrayList<Polygon> renderedPolys = new ArrayList<Polygon>();
+		for(Polygon poly : polygons) {
+			poly.getRendered(camera,camMatTemp);
+			//renderedPolys.add(poly);
+		}
+		
+		Collections.sort(polygons);
 		
 		for(Polygon poly : polygons) {
-			FloatMatrix[] polyRen = poly.getRendered(camera,camMatTemp);
+			//FloatMatrix[] polyRen = poly.getRendered(camera,camMatTemp);
+			FloatMatrix[] polyRen = poly.getRenderedPoints();
 			if (polyRen != null) {
 				if (polyRen[0].get(0) < 0 || polyRen[1].get(0) < 0 || polyRen[2].get(0) < 0) {
 					continue;
