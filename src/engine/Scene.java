@@ -14,6 +14,13 @@ public class Scene {
 	}
 	
 	public void render(Graphics2D g2) {
+		
+		RenderingHints rh = new RenderingHints(
+	             RenderingHints.KEY_COLOR_RENDERING,
+	             RenderingHints.VALUE_COLOR_RENDER_SPEED);
+	    g2.setRenderingHints(rh);
+		
+		
 		FloatMatrix camMatTemp = camera.getCamMat();
 		//ArrayList<FloatMatrix>
 		//FloatMatrix[][] renderedPolys = new FloatMatrix[polygons.size()][2];
@@ -31,16 +38,36 @@ public class Scene {
 			//FloatMatrix[] polyRen = poly.getRendered(camera,camMatTemp);
 			FloatMatrix[] polyRen = poly.getRenderedPoints();
 			if (polyRen != null) {
-				if (polyRen[0].get(0) < 0 || polyRen[1].get(0) < 0 || polyRen[2].get(0) < 0) {
-					continue;
+				boolean onscreen = false;
+				if (polyRen[0].get(0) > 0 && polyRen[0].get(0) < camera.screenDims[0] && polyRen[0].get(1) > 0 && polyRen[0].get(1) < camera.screenDims[1]) {
+					onscreen = true;
+				} else
+				if (polyRen[1].get(0) > 0 && polyRen[1].get(0) < camera.screenDims[0] && polyRen[1].get(1) > 0 && polyRen[1].get(1) < camera.screenDims[1]) {
+					onscreen = true;
+				} else
+				if (polyRen[2].get(0) > 0 && polyRen[2].get(0) < camera.screenDims[0] && polyRen[2].get(1) > 0 && polyRen[2].get(1) < camera.screenDims[1]) {
+					onscreen = true;
 				}
-				if (polyRen[0].get(0) > camera.screenDims[0] || polyRen[1].get(0) > camera.screenDims[0] || polyRen[2].get(0) > camera.screenDims[0]) {
-					continue;
+				
+				
+				/*if ((polyRen[0].get(0) < 0 || polyRen[1].get(0) < 0 || polyRen[2].get(0) < 0)) {
+					onscreen = false;
+					//continue;
 				}
-				if (polyRen[0].get(1) < 0 || polyRen[1].get(1) < 0 || polyRen[2].get(1) < 0) {
-					continue;
+				if ((polyRen[0].get(0) > camera.screenDims[0] || polyRen[1].get(0) > camera.screenDims[0] || polyRen[2].get(0) > camera.screenDims[0])) {
+					onscreen = false;
+					//continue;
 				}
-				if (polyRen[0].get(1) > camera.screenDims[1] || polyRen[1].get(1) > camera.screenDims[1] || polyRen[2].get(1) > camera.screenDims[1]) {
+				if ((polyRen[0].get(1) < 0 || polyRen[1].get(1) < 0 || polyRen[2].get(1) < 0)) {
+					onscreen = false;
+					//continue;
+				}
+				if ((polyRen[0].get(1) > camera.screenDims[1] || polyRen[1].get(1) > camera.screenDims[1] || polyRen[2].get(1) > camera.screenDims[1])) {
+					onscreen = false;
+					//continue;
+				}
+				*/
+				if (!onscreen) {
 					continue;
 				}
 				//g2.setColor(Color.BLACK);

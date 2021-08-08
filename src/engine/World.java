@@ -4,7 +4,8 @@ public class World {
 	Mesh terrain;
 	ArrayList<Mesh> objects;
 	public World() {
-		int seed = 10000;
+		//int seed = 10000;
+		int seed = (int)(Math.random()*100000000);
 		terrain = generateWorld(seed);
 		objects = new ArrayList<Mesh>();
 	}

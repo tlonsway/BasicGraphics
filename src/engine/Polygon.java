@@ -93,6 +93,7 @@ public class Polygon implements Comparable {
 			renderedPoints = ret;
 			return ret;
 		} catch (NullPointerException e) {
+			renderedPoints = null;
 			return null;
 		}
 	}
