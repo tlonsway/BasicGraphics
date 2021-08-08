@@ -19,8 +19,8 @@ public class Init {
 		World world = new World();
 		//frame.setVisible(true);
 		Screen scr = new Screen(new int[] {1920,1080});
-		for(int i=0;i<30;i++) {
-			for(int i2=0;i2<30;i2++) {
+		//for(int i=0;i<30;i++) {
+		//	for(int i2=0;i2<30;i2++) {
 				//System.out.println("Adding cube");
 				//scr.getScene().addCube(new FloatMatrix(new float[] {i,0,-i2}), new FloatMatrix(new float[] {1,1,1}), new int[] {i+50,0,i2+50});
 				for(Polygon p: world.getPolygons()) {
@@ -31,8 +31,8 @@ public class Init {
 				} catch (Exception e) {
 					
 				}
-			}
-		}
+		//	}
+		//}
 		//System.out.println("Done adding cubes");
 		
 		//scr.getScene().addCube(new FloatMatrix(new float[] {0,0,-5}), new FloatMatrix(new float[] {3,3,3}), new int[] {255,0,0});
