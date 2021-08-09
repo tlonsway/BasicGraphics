@@ -9,7 +9,8 @@ public class World {
 		height = 40;
 		width = 40;
 		length = 40;
-		int seed = (int)(Math.random()*100000000);
+		int seed = 2000;
+				//(int)(Math.random()*100000000);
 		//terrain = generateWorld(seed);
 		terrain = generateCaves(seed);
 		objects = new ArrayList<Mesh>();
@@ -22,7 +23,10 @@ public class World {
 		for(int x = 0; x < width; x++) {
 			for(int y = 0; y < height; y++) {
 				for(int z = 0; z < length; z++) {
-					if(noise.noise(x/5.0+seed, y/5.0+seed, z/5.0+seed)>0.5) {
+					double value = noise.noise(x/10.0+seed, y/10.0+seed, z/10.0+seed);
+					//if(value > 0.5) {
+					//if(value<0.5 && value > 0.3) {
+					if(value<0.5 && value > 0.3) {
 						openCavities[x][y][z] = true;
 					}
 					else {
@@ -38,49 +42,260 @@ public class World {
 					if(openCavities[x][y][z]) {
 						if(!openCavities[x-1][y][z] && !pts.contains(new float[] {x-0.5f, y, z})) {
 							pts.add(new float[] {x-0.5f, y, z});
+							if(openCavities[x][y][z+1] && !openCavities[x-1][y][z+1]) {
+								pts.add(new float[] {x-0.5f, y, z+0.5f});
+							}
+							if(openCavities[x][y+1][z] && !openCavities[x-1][y+1][z]) {
+								pts.add(new float[] {x-0.5f, y+0.5f, z});
+							}
 						}
 						if(!openCavities[x+1][y][z] && !pts.contains(new float[] {x+0.5f, y, z})) {
 							pts.add(new float[] {x+0.5f, y, z});
+							if(openCavities[x][y][z+1] && !openCavities[x+1][y][z+1]) {
+								pts.add(new float[] {x+0.5f, y, z+0.5f});
+							}
+							if(openCavities[x][y+1][z] && !openCavities[x+1][y+1][z]) {
+								pts.add(new float[] {x+0.5f, y+0.5f, z});
+							}
 						}
 						if(!openCavities[x][y][z-1] && !pts.contains(new float[] {x, y, z-0.5f})) {
 							pts.add(new float[] {x, y, z-0.5f});
+							if(openCavities[x][y+1][z] && !openCavities[x][y+1][z-1]) {
+								pts.add(new float[] {x, y+0.5f, z-0.5f});
+							}
+							if(openCavities[x+1][y][z] && !openCavities[x+1][y][z-1]) {
+								pts.add(new float[] {x+0.5f, y, z-0.5f});
+							}
 						}
 						if(!openCavities[x][y][z+1] && !pts.contains(new float[] {x, y, z+0.5f})) {
 							pts.add(new float[] {x, y, z+0.5f});
+							if(openCavities[x][y+1][z] && !openCavities[x][y+1][z+1]) {
+								pts.add(new float[] {x, y+0.5f, z+0.5f});
+							}
+							if(openCavities[x+1][y][z] && !openCavities[x+1][y][z+1]) {
+								pts.add(new float[] {x+0.5f, y, z+0.5f});
+							}
 						}
 						if(!openCavities[x][y+1][z] && !pts.contains(new float[] {x, y+0.5f, z})) {
 							pts.add(new float[] {x, y+0.5f, z});
+							if(openCavities[x+1][y][z] && !openCavities[x+1][y+1][z]) {
+								pts.add(new float[] {x+0.5f, y+0.5f, z});
+							}
+							if(openCavities[x][y][z+1] && !openCavities[x][y+1][z+1]) {
+								pts.add(new float[] {x, y+0.5f, z+0.5f});
+							}
 						}
 						if(!openCavities[x][y-1][z] && !pts.contains(new float[] {x, y-0.5f, z})) {
 							pts.add(new float[] {x, y-0.5f, z});
+							if(openCavities[x+1][y][z] && !openCavities[x+1][y-1][z]) {
+								pts.add(new float[] {x+0.5f, y-0.5f, z});
+							}
+							if(openCavities[x][y][z+1] && !openCavities[x][y-1][z+1]) {
+								pts.add(new float[] {x, y-0.5f, z+0.5f});
+							}
 						}
 					}
 				}
 			}
 		}
 		for(float[] p: pts) {
-			System.out.println("X: "+p[0]+" Y: "+p[1]+" Z: "+p[2]);
+			//System.out.println("X: "+p[0]+" Y: "+p[1]+" Z: "+p[2]);
 			Polygon poly = new Polygon(new float[] {p[0]+0.1f, p[1]+0.1f, p[2]+0.1f}, new float[] {p[0]-0.1f, p[1]-0.1f, p[2]-0.1f}, new float[] {p[0]-0.1f, p[1]-0.1f, p[2]+0.1f});
 			poly.setColor(new int[] {255, 0, 0});
 			caves.addToMesh(poly);
 		}
 		for(float[] p: pts) {
-			if(containsPoint(new float[] {p[0]+1, p[1], p[2]}, pts)) {
-				//System.out.println("found point to the right");
-				if(containsPoint(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]+0.5f}, pts)) {
-					Polygon poly = new Polygon(new float[] {p[0], p[1], p[2]}, new float[] {p[0]+1, p[1], p[2]}, new float[] {p[0]+0.5f,p[1]+0.5f, p[2]+0.5f});
-					poly.setColor(new int[] {60, 60, 60});
+			//forward
+			if(containsPoint(new float[] {p[0], p[1], p[2]+1}, pts)) {
+				if(containsPoint(new float[] {p[0], p[1]+0.5f, p[2]+0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0], p[1]+0.5f, p[2]+0.5f}, p, new float[] {p[0], p[1], p[2]+1});
+					poly.setColor(new int[] {100, 100, 100});
 					caves.addToMesh(poly);
-					System.out.println("Added a polygon 1");
 				}
-				if(containsPoint(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]}, pts)) {
-					Polygon poly = new Polygon(new float[] {p[0], p[1], p[2]}, new float[] {p[0]+1, p[1], p[2]}, new float[] {p[0]+0.5f,p[1]+0.5f, p[2]});
-					poly.setColor(new int[] {60, 60, 60});
+				if(containsPoint(new float[] {p[0], p[1]-0.5f, p[2]+0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0], p[1]-0.5f, p[2]+0.5f}, p, new float[] {p[0], p[1], p[2]+1});
+					poly.setColor(new int[] {100, 100, 100});
 					caves.addToMesh(poly);
-					System.out.println("Added a polygon 2");
+				}
+				if(containsPoint(new float[] {p[0]-0.5f, p[1], p[2]+0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]-0.5f, p[1], p[2]+0.5f}, p, new float[] {p[0], p[1], p[2]+1});
+					poly.setColor(new int[] {100, 100, 100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0]+0.5f, p[1], p[2]+0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1], p[2]+0.5f}, p, new float[] {p[0], p[1], p[2]+1});
+					poly.setColor(new int[] {100, 100, 100});
+					caves.addToMesh(poly);
 				}
 			}
+			//forward-right
+			if(containsPoint(new float[] {p[0]+0.5f, p[1], p[2]+0.5f}, pts)) {
+				if(containsPoint(new float[] {p[0], p[1]+0.5f, p[2]+0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0], p[1]+0.5f, p[2]+0.5f}, p, new float[] {p[0]+0.5f, p[1], p[2]+0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0]+0.5f, p[1]-0.5f, p[2]}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1]-0.5f, p[2]}, p, new float[] {p[0]+0.5f, p[1], p[2]+0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]}, p, new float[] {p[0]+0.5f, p[1], p[2]+0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0], p[1]-0.5f, p[2]+0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0], p[1]-0.5f, p[2]+0.5f}, p, new float[] {p[0]+0.5f, p[1], p[2]+0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0], p[1]-0.5f, p[2]+0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0], p[1]-0.5f, p[2]+0.5f}, p, new float[] {p[0]+0.5f, p[1], p[2]+0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0]+0.5f, p[1]-0.5f, p[2]}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1]-0.5f, p[2]}, p, new float[] {p[0]+0.5f, p[1], p[2]+0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+				}
+			}
+			//right
+			if(containsPoint(new float[] {p[0]+1f, p[1], p[2]}, pts)) {
+				if(containsPoint(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]}, p, new float[] {p[0]+1f, p[1], p[2]});
+					poly.setColor(new int[] {100, 100, 100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0]+0.5f, p[1]-0.5f, p[2]}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1]-0.5f, p[2]}, p, new float[] {p[0]+1f, p[1], p[2]});
+					poly.setColor(new int[] {100, 100, 100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0]+0.5f, p[1], p[2]+0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1], p[2]+0.5f}, p, new float[] {p[0]+1f, p[1], p[2]});
+					poly.setColor(new int[] {100, 100, 100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0]+0.5f, p[1], p[2]-0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1], p[2]-0.5f}, p, new float[] {p[0]+1f, p[1], p[2]});
+					poly.setColor(new int[] {100, 100, 100});
+					caves.addToMesh(poly);
+					
+				}
+			}
+			//backward-right
+			
+			if(containsPoint(new float[] {p[0]+0.5f, p[1], p[2]-0.5f}, pts)) {
+				if(containsPoint(new float[] {p[0], p[1]+0.5f, p[2]-0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0], p[1]+0.5f, p[2]-0.5f}, p, new float[] {p[0]+0.5f, p[1], p[2]-0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]}, p, new float[] {p[0]+0.5f, p[1], p[2]-0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0], p[1]-0.5f, p[2]-0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0], p[1]-0.5f, p[2]-0.5f}, p, new float[] {p[0]+0.5f, p[1], p[2]-0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0]+0.5f, p[1]-0.5f, p[2]}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1]-0.5f, p[2]}, p, new float[] {p[0]+0.5f, p[1], p[2]-0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+				}
+			}
+			//up-forward-right
+			if(containsPoint(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]+0.5f}, pts)) {
+				if(containsPoint(new float[] {p[0]+0.5f, p[1], p[2]}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1], p[2]}, p, new float[] {p[0]+0.5f, p[1]+0.5f, p[2]+0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]}, p, new float[] {p[0]+0.5f, p[1]+0.5f, p[2]+0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0], p[1]+0.5f, p[2]+0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0], p[1]+0.5f, p[2]+0.5f}, p, new float[] {p[0]+0.5f, p[1]+0.5f, p[2]+0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+					//System.out.println("polygon created");
+				}
+				if(containsPoint(new float[] {p[0], p[1], p[2]+0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0], p[1], p[2]+0.5f}, p, new float[] {p[0]+0.5f, p[1]+0.5f, p[2]+0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+					
+				}
+			}
+			
+			//up-back-right
+			if(containsPoint(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]-0.5f}, pts)) {
+				if(containsPoint(new float[] {p[0]+0.5f, p[1], p[2]}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1], p[2]}, p, new float[] {p[0]+0.5f, p[1]+0.5f, p[2]-0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0], p[1]+0.5f, p[2]-0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0], p[1]+0.5f, p[2]-0.5f}, p, new float[] {p[0]+0.5f, p[1]+0.5f, p[2]-0.5f});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0], p[1]+0.5f, p[2]+0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0], p[1]+0.5f, p[2]+0.5f}, p, new float[] {p[0]+0.5f, p[1]+0.5f, p[2]-0.5f});
+					poly.setColor(new int[] {0,0,0});
+					caves.addToMesh(poly);
+					//System.out.println("polygon created");
+				}
+				if(containsPoint(new float[] {p[0]+0.5f, p[1], p[2]-0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1], p[2]-0.5f}, p, new float[] {p[0]+0.5f, p[1]+0.5f, p[2]-0.5f});
+					poly.setColor(new int[] {0,255,0});
+					caves.addToMesh(poly);
+				}
+			}
+			//up-right
+			/*
+			if(containsPoint(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]}, pts)) {
+				
+				if(containsPoint(new float[] {p[0]+0.5f, p[1], p[2]-0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1], p[2]-0.5f}, p, new float[] {p[0]+0.5f, p[1]+0.5f, p[2]});
+					poly.setColor(new int[] {100,100,100});
+					//caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0], p[1]+0.5f, p[2]+0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0], p[1]+0.5f, p[2]+0.5f}, p, new float[] {p[0]+0.5f, p[1]+0.5f, p[2]});
+					poly.setColor(new int[] {0,255,100});
+					//caves.addToMesh(poly);
+				}
+				if(containsPoint(new float[] {p[0], p[1]+0.5f, p[2]-0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0], p[1]+0.5f, p[2]-0.5f}, p, new float[] {p[0]+0.5f, p[1]+0.5f, p[2]});
+					poly.setColor(new int[] {0,255,100});
+					//caves.addToMesh(poly);
+					//System.out.println("polygon created");
+				}
+				if(containsPoint(new float[] {p[0]+0.5f, p[1], p[2]+0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1], p[2]+0.5f}, p, new float[] {p[0]+0.5f, p[1]+0.5f, p[2]});
+					poly.setColor(new int[] {0,255,100});
+					//caves.addToMesh(poly);
+					
+				}
+				/*
+				if(containsPoint(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]+0.5f}, pts)) {
+					Polygon poly = new Polygon(new float[] {p[0]+0.5f, p[1]+0.5f, p[2]+0.5f}, p, new float[] {p[0]+0.5f, p[1]+0.5f, p[2]});
+					poly.setColor(new int[] {100,100,100});
+					caves.addToMesh(poly);
+					
+				}
+			}
+			*/
 		}
+		
 		return caves;
 		
 	}
