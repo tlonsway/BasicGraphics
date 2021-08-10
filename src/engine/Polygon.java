@@ -1,5 +1,6 @@
 package engine;
 
+import java.util.*;
 import org.jblas.*;
 import java.awt.Color;
 
@@ -109,6 +110,21 @@ public class Polygon implements Comparable {
 		}
 	}
 	
+	public boolean equals(Object o) {
+		if(o instanceof Polygon) {
+			Polygon poly = (Polygon)o;
+			FloatMatrix[] pts = poly.getPoints();
+			ArrayList<FloatMatrix> localpts = new ArrayList<FloatMatrix>();
+			Collections.addAll(localpts, points);
+			for(FloatMatrix fm: pts) {
+				if(!localpts.contains(fm)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 	public float getDistance() {
 		return distance;
 	}

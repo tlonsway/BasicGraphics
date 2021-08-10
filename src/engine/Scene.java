@@ -70,10 +70,10 @@ public class Scene {
 				if (!onscreen) {
 					continue;
 				}
-				//g2.setColor(Color.BLACK);
-				//g2.drawLine((int)polyRen[0].get(0), (int)polyRen[0].get(1), (int)polyRen[1].get(0), (int)polyRen[1].get(1));
-				//g2.drawLine((int)polyRen[1].get(0), (int)polyRen[1].get(1), (int)polyRen[2].get(0), (int)polyRen[2].get(1));
-				//g2.drawLine((int)polyRen[2].get(0), (int)polyRen[2].get(1), (int)polyRen[0].get(0), (int)polyRen[0].get(1));
+				g2.setColor(Color.BLACK);
+				g2.drawLine((int)polyRen[0].get(0), (int)polyRen[0].get(1), (int)polyRen[1].get(0), (int)polyRen[1].get(1));
+				g2.drawLine((int)polyRen[1].get(0), (int)polyRen[1].get(1), (int)polyRen[2].get(0), (int)polyRen[2].get(1));
+				g2.drawLine((int)polyRen[2].get(0), (int)polyRen[2].get(1), (int)polyRen[0].get(0), (int)polyRen[0].get(1));
 				g2.setColor(poly.getColorAsColor());
 				int[] pxP = new int[] {(int)polyRen[0].get(0),(int)polyRen[1].get(0),(int)polyRen[2].get(0)};
 				int[] pyP = new int[] {(int)polyRen[0].get(1),(int)polyRen[1].get(1),(int)polyRen[2].get(1)};
