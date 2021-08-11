@@ -9,7 +9,7 @@ import java.nio.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL41.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -17,7 +17,20 @@ public class HelloWorld {
 
 	// The window handle
 	private long window;
-
+	String vertexShaderSource = "#version 410 core\n" + 
+			"layout (location = 0) in vec3 aPos;\n" + 
+			"void main()\n" + 
+			"{\n" + 
+			"gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n" + 
+			"}";
+	
+	String fragmentShaderSource = "#version 410 core\n"
+			+ "out vec4 FragColor;\n"
+			+ "void main()\n"
+			+ "{\n"
+			+ "FragColor = vec4(1.0f,0.0f,0.0f,1.0f);"
+			+ "}";
+	
 	public void run() {
 		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
@@ -94,16 +107,59 @@ public class HelloWorld {
 		// bindings available for use.
 		GL.createCapabilities();
 
+		int VBO;
+		VBO = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);  
+		
+		float[] vertices = new float[] {-0.5f,-0.5f,0.0f,0.5f,-0.5f,0.0f,0.0f,0.5f,0.0f};
+		glBufferData(GL_ARRAY_BUFFER,vertices,GL_STATIC_DRAW);
+		
+		
+		int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		glShaderSource(vertexShader,vertexShaderSource);
+		glCompileShader(vertexShader);
+		System.out.println(glGetShaderInfoLog(vertexShader));
+		
+		
+		int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		glShaderSource(fragmentShader,fragmentShaderSource);
+		glCompileShader(fragmentShader);
+		
+		
+		
+		int shaderProgram = glCreateProgram();
+		glAttachShader(shaderProgram, vertexShader);
+		glAttachShader(shaderProgram, fragmentShader);
+		glLinkProgram(shaderProgram);
+		
+		glUseProgram(shaderProgram);
+		glDeleteShader(vertexShader);
+		glDeleteShader(fragmentShader);
+		
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, 12, 0l);
+		glEnableVertexAttribArray(0);
+		
+		int VAO = glGenVertexArrays();
+		glBindVertexArray(VAO);
+		
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		
 		// Set the clear color
-		glClearColor(1.0f, 0.0f, 0.5f, 1.0f);
+		glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.
 		while ( !glfwWindowShouldClose(window) ) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
+			glUseProgram(shaderProgram);
+			glBindVertexArray(VAO);
+			glDrawArrays(GL_TRIANGLES,0,3);
+			
 			glfwSwapBuffers(window); // swap the color buffers
 
+			
+			
 			// Poll for window events. The key callback above will only be
 			// invoked during this call.
 			glfwPollEvents();
@@ -113,5 +169,6 @@ public class HelloWorld {
 	public static void main(String[] args) {
 		new HelloWorld().run();
 	}
+	
 
 }
