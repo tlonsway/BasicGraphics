@@ -7,14 +7,13 @@ public class World {
 	
 	public World() {
 		//int seed = 10000;
-		height = 40;
-		width = 40;
-		length = 40;
-		double seed = 2000;
-				//(int)(Math.random()*100000000);
+		height = 50;
+		width = 50;
+		length = 50;
+		double seed = (Math.random()*100000000);
 		//terrain = generateWorld(seed);
 		//distance between each point in the grid
-		float gridUnit = 1;
+		float gridUnit = 2f;
 		//determines how zoomed in on the perlin noise the cave will be
 		double perlinScaler = 25;
 		//display the points or not
@@ -31,6 +30,7 @@ public class World {
 		zaxis.setColor(new int[] {0,0,255});
 		terrain.addToMesh(zaxis);
 		System.out.println("Generated "+terrain.getPolygons().size()+" Polygons");
+		System.out.println("Seed: "+seed);
 		objects = new ArrayList<Mesh>();
 	}
 	
@@ -64,13 +64,13 @@ public class World {
 	private boolean[][][] createOpenCavities(float gridUnit, double perlinScaler, double seed){
 		Noise noise = new Noise();
 		boolean[][][] openCavities = new boolean[(int)(width/gridUnit)+2][(int)(height/gridUnit)+2][(int)(length/gridUnit)+2];
-		for(int x = 0; x < width; x++) {
-			for(int y = 0; y < height; y++) {
-				for(int z = 0; z < length; z++) {
+		for(int x = 0; x < (int)(width/gridUnit); x++) {
+			for(int y = 0; y < (int)(height/gridUnit); y++) {
+				for(int z = 0; z < (int)(length/gridUnit); z++) {
 					double value = noise.noise(x/perlinScaler+seed, y/perlinScaler+seed, z/perlinScaler+seed);
 					//if(value > 0.5) {
 					//if(value<0.5 && value > 0.3) {
-					if(value<0.5 && value > 0.4) {
+					if(value < 0.2 && value > 0.1) {
 						openCavities[x][y][z] = true;
 					}
 					else {
@@ -103,6 +103,7 @@ public class World {
 		}
 		return pts;
 	}
+	
 	private ArrayList<Polygon> getPointPolys(ArrayList<GridPoint> pts, GridPoint p, float gridUnit){
 		ArrayList<Polygon> polys = new ArrayList<Polygon>();
 		ArrayList<GridPoint> closest = p.getClosest(pts, gridUnit);
