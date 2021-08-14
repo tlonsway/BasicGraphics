@@ -1,5 +1,6 @@
 package testing;
 
+import java.awt.*;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -114,6 +115,17 @@ public class TestClassTwo {
 	    
 	}
 	
-	
+	public void getPixelValue(int x, int y) {
+		try {
+			Robot r = new Robot();
+			Color c = r.getPixelColor(x, y);
+			System.out.print("(R value * 2 - 256)/256: " + (c.getRed()*2.0-256)/256 + " ");
+	        System.out.print("(G value * 2 - 256)/256: " + (c.getGreen()*2.0-256)/256 + " ");
+	        System.out.print("(B value * 2 - 256)/256: " + (c.getBlue()*2.0-256)/256 + " ");
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 }
