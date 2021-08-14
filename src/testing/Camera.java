@@ -1,4 +1,4 @@
-package engine;
+package testing;
 
 import org.jblas.*;
 
@@ -6,7 +6,7 @@ public class Camera {
 	private FloatMatrix camMat;
 	private float[] camPos;
 	public int[] screenDims; //{width,height} in pixels
-	private Projection projection;
+	//private Projection projection;
 	//left, right, forward, backwards, up, down, shift
 	public boolean[] translationState = {false, false, false, false, false, false, false};
 	public Camera(int[] screenDims) {
@@ -14,7 +14,7 @@ public class Camera {
 		camMat = new FloatMatrix(identMat);
 		camPos = new float[] {0,0,0};
 		this.screenDims = screenDims;
-		this.projection = new Projection();
+		//this.projection = new Projection();
 	}
 	
 	public Camera(float[] camPos, int[] screenDims) {
@@ -22,7 +22,7 @@ public class Camera {
 		camMat = new FloatMatrix(identMat);
 		this.camPos = camPos;
 		this.screenDims = screenDims;
-		this.projection = new Projection();
+		//this.projection = new Projection();
 	}
 	
 	public void translate(float x, float y, float z) {
@@ -39,7 +39,7 @@ public class Camera {
 		camMat = Operations.rotateMat(camMat, dir, degree);
 	}
 	
-	public float[] renderPoint(FloatMatrix point, FloatMatrix cameraMat) {
+	/*public float[] renderPoint(FloatMatrix point, FloatMatrix cameraMat) {
 		FloatMatrix temp3D = new FloatMatrix(new float[] {point.get(0),point.get(1),point.get(2),1});
 		FloatMatrix transformed = cameraMat.mmul(temp3D);
 		if (transformed.get(2) > 0) { //check if in front
@@ -48,7 +48,7 @@ public class Camera {
 		} else {
 			return null;
 		}
-	}
+	}*/
 	
 	public FloatMatrix getCamMat() {
 		return camMat;
