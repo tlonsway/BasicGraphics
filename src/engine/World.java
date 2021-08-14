@@ -7,11 +7,11 @@ public class World {
 	
 	public World() {
 		//int seed = 10000;
-		height = 50;
-		width = 50;
-		length = 50;
+		height = 30;
+		width = 100;
+		length = 100;
 		double seed = (Math.random()*100000000);
-		//terrain = generateWorld(seed);
+		//terrain = generateWorld((int)seed);
 		//distance between each point in the grid
 		float gridUnit = 2f;
 		//determines how zoomed in on the perlin noise the cave will be
