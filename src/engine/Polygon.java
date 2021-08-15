@@ -66,7 +66,15 @@ public class Polygon implements Comparable {
 	public FloatMatrix[] getPoints() {
 		return points;
 	}
-	
+	public void translate(float x, float y, float z) {
+		for(int i = 0; i < points.length; i++) {
+			float p1, p2, p3;
+			p1 = points[i].get(0)+x;
+			p2 = points[i].get(1)+y;
+			p3 = points[i].get(2)+z;
+			points[i] = new FloatMatrix(new float[] {p1, p2, p3});
+		}
+	}
 	public FloatMatrix getNorm() {
 		FloatMatrix v1 = points[0];
 		FloatMatrix v2 = points[1];

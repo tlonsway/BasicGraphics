@@ -25,4 +25,9 @@ public class Mesh {
 	public ArrayList<Polygon> getPolygons(){
 		return polygons;
 	}
+	public void translate(float x, float y, float z) {
+		for(Polygon p: polygons) {
+			p.translate(x, y, z);
+		}
+	}
 }

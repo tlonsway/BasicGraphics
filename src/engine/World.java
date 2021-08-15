@@ -20,12 +20,16 @@ public class World {
 		int zShift = 0;
 		terrain = new Mesh();
 		//terrain = generateChunk(seed, xShift, zShift);
-		for(int x = 0; x < 6; x++) {
-			for(int z = 0; z < 6; z++) {
+		for(int x = 0; x < 5; x++) {
+			for(int z = 0; z < 5; z++) {
 				Mesh chunk = generateChunk(seed, x*100, z*100);
 				terrain.addMesh(chunk);
 			}
 		}
+		Mesh tree = ObjectGeneration.generateTree(seed);
+		System.out.println("Height: "+getHeight(0, 0));
+		tree.translate(0, getHeight(0, 0), 0);
+		terrain.addMesh(tree);
 		//distance between each point in the grid
 		float gridUnit = 2f;
 		//determines how zoomed in on the perlin noise the cave will be
@@ -65,10 +69,9 @@ public class World {
 				list.add(p.getPoints()[i].get(0));
 				list.add(p.getPoints()[i].get(1));
 				list.add(p.getPoints()[i].get(2));
-				
-				list.add(0f);
-				list.add((float)(getGreenColor(p.getPoints()[i].get(1))));
-				list.add(0f);
+				list.add(p.fColor[0]);
+				list.add(p.fColor[1]);
+				list.add(p.fColor[2]);
 			}
 		}
 		vertices = new float[list.size()];
@@ -211,7 +214,7 @@ public class World {
 		for(int row = 0; row < grid[0].length-1; row++) {
 			float[][] pts = {{0+xShift,grid[0][row],row+zShift}, {0+xShift,grid[0][row+1], row+1+zShift}, {1+xShift, grid[1][row], row+zShift}};
 			Polygon poly = new Polygon(pts[0], pts[1], pts[2]);
-			poly.setColor(new int[] {0,(int)(255*((pts[0][1]+40)/120.0)),0});
+			poly.setFColor(new float[] {0, (float)(getGreenColor(grid[0][row])), 0} );
 			map.addToMesh(poly);
 			boolean up = false;
 			int x = 1;
@@ -230,10 +233,7 @@ public class World {
 				}
 				pts = shiftPoint(pts, p);
 				poly = new Polygon(pts[0], pts[1], pts[2]);
-				if((xShift+zShift)%200 == 0)
-					poly.setColor(new int[] {0,(int)(255*((pts[0][1]+40)/120.0)),0});
-				else
-					poly.setColor(new int[] {(int)(255*((pts[0][1]+40)/120.0)),0,0});
+				poly.setFColor(new float[] {0, (float)(getGreenColor(p[1])), 0} );
 				map.addToMesh(poly);
 				if(up) {
 					x++;
