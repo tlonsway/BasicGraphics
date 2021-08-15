@@ -106,7 +106,7 @@ public class GPUDisplaying {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(VAO);
 		
-		Camera cam = new Camera(screenDims);
+		engine.Camera cam = new engine.Camera(screenDims);
 		
 		
 		//Projection proj = new Projection();
@@ -206,7 +206,7 @@ public class GPUDisplaying {
 			glfwPollEvents();
 			//cam.rotate('y',0.01f);
 			if(shiftDown) {
-				shift = 6.0f;
+				shift = 20.0f;
 			}
 			else {
 				shift = 1;
@@ -235,9 +235,11 @@ public class GPUDisplaying {
 			if(qDown) {
 				cam.rotate('y', -0.02f);
 			}
-			//System.out.println("X: "+ cam.getCamMat().get(0,3)+ " Z: "+cam.getCamMat().get(2,3));
-			//cam.setY(world.getHeight(cam.getCamMat().get(0,3), cam.getCamMat().get(2,3))+1);
-			Operations.printMat(cam.getCamMat());
+
+			if(cam.getCamPos()[1]-1.5f != world.getHeight(cam.getCamPos()[0], cam.getCamPos()[2])) {
+				cam.translate(0f,-1.0f*(float)((world.getHeight(cam.getCamPos()[0], cam.getCamPos()[2]))-(cam.getCamPos()[1]-1.5)) , 0f);
+			}
+			
 			float[] fullMat = combineMats(proj.getProjMatFMat(),cam.getCamMat());
 			glUniformMatrix4fv(fullMatLoc, false, fullMat);
 		}
