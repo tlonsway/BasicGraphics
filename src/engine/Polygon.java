@@ -75,6 +75,15 @@ public class Polygon implements Comparable {
 			points[i] = new FloatMatrix(new float[] {p1, p2, p3});
 		}
 	}
+	public void rotate(float[] rotationPoint, char axis, float angle) {
+		for(int i = 0; i < points.length; i++) {
+			FloatMatrix t = new FloatMatrix(new float[] {points[i].get(0)-rotationPoint[0], points[i].get(1)-rotationPoint[1], points[i].get(2)-rotationPoint[2]} );
+			FloatMatrix t2 = game.Operations.rotatePoint(t, axis, angle);
+			points[i].put(0, t2.get(0)+rotationPoint[0]);
+			points[i].put(1, t2.get(1)+rotationPoint[1]);
+			points[i].put(2, t2.get(2)+rotationPoint[2]);
+		}
+	}
 	public FloatMatrix getNorm() {
 		FloatMatrix v1 = points[0];
 		FloatMatrix v2 = points[1];

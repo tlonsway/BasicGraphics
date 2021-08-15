@@ -30,4 +30,9 @@ public class Mesh {
 			p.translate(x, y, z);
 		}
 	}
+	public void rotate(float[] rotationPoint, char axis, float angle) {
+		for(Polygon p: polygons) {
+			p.rotate(rotationPoint, axis, angle);
+		}
+	}
 }

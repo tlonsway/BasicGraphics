@@ -22,14 +22,14 @@ public class World {
 		//terrain = generateChunk(seed, xShift, zShift);
 		for(int x = 0; x < 5; x++) {
 			for(int z = 0; z < 5; z++) {
-				Mesh chunk = generateChunk(seed, x*100, z*100);
+				Mesh chunk = generateChunk(seed, x*width, z*length, width, length);
 				terrain.addMesh(chunk);
 			}
 		}
-		Mesh tree = ObjectGeneration.generateTree(seed);
+		Mesh tree = ObjectGeneration.generateTree(seed, 7);
 		System.out.println("Height: "+getHeight(0, 0));
 		tree.translate(0, getHeight(0, 0), 0);
-		terrain.addMesh(tree);
+		//terrain.addMesh(tree);
 		//distance between each point in the grid
 		float gridUnit = 2f;
 		//determines how zoomed in on the perlin noise the cave will be
@@ -203,9 +203,9 @@ public class World {
 	public float[] getRedColor(float y){
 		return new float[] {(float)((y+40)/85.0),0,0};
 	}
-	public Mesh generateChunk(int seed, int xShift, int zShift) {
+	public Mesh generateChunk(int seed, int xShift, int zShift, int chunkW, int chunkL) {
 		Mesh map = new Mesh(null);
-		float[][] grid = new float[width+1][length+1];
+		float[][] grid = new float[chunkW+1][chunkL+1];
 		for(int x = 0; x < grid.length; x++) {
 			for(int y = 0; y < grid[0].length; y++) {
 				grid[x][y] = getHeight(x+xShift, y+zShift);

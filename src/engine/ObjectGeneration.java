@@ -1,15 +1,33 @@
 package engine;
 
 public class ObjectGeneration {
-	public static Mesh generateTree(int seed) {
+	public static Mesh generateTree(int seed, int resolution) {
 		Noise noise = new Noise();
 		Mesh tree = new Mesh();
 		float trunkRadius = (float)(Math.abs(noise.noise(seed/10.0)+0.3)*2.5);
 		float trunkHeight = (float)(Math.abs(noise.noise(seed/10.0+0.3f)+0.5)*9);
-		float branchLength = (float)noise.noise(seed+0.6f);
-		tree.addMesh(generateCylinder(trunkRadius, trunkHeight, 10));
+		float branchLength = (float)noise.noise(seed/10.0+0.6f);
+		int numBranches = (int)((noise.noise(seed/10.0+0.9f)+1)*4)+2;
+		tree.addMesh(generateCylinder(trunkRadius, trunkHeight, resolution));
+		
 		System.out.println("Created a tree with "+tree.getPolygons().size()+" polygons a height of: "+trunkHeight+" and a radius of: "+trunkRadius);
 		return tree;
+	}
+	private Mesh generateBranch(int level, float bl, float bw, int resolution, int numBranches, float[] vector, float[] endPoint) {
+		Mesh branch = generateCylinder(bw, bl, resolution);
+		float xRot = (float)Math.acos(Math.sqrt(vector[0]/(Math.pow(vector[0],2)+Math.pow(vector[1]-endPoint[1], 2))));
+		float yRot = (float)Math.acos(Math.sqrt(vector[0]/(Math.pow(vector[0],2)+Math.pow(vector[2]-endPoint[2], 2))));
+		float zRot = Math.acos();
+		if(level != 0) {
+			if(numBranches != 2) {
+				numBranches--;
+			}
+			for(int i = 0; i < numBranches; i++) {
+				Mesh b = generateBranch(level-1, bl*0.8f, bw*0.75f, resolution, numBranches, );
+				branch.addMesh(b);
+			}
+		}	
+		return branch;
 	}
 	private static Mesh generateCylinder(float radius, float height, int resolution) {
 		Mesh cyl = new Mesh();
