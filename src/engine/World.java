@@ -13,10 +13,19 @@ public class World {
 		noise = new Noise();
 		//int seed = 10000;
 		height = 100;
-		width = 1000;
-		length = 1000;
+		width = 100;
+		length = 100;
 		seed = (int)(Math.random()*100000000);
-		terrain = generateWorld((int)seed);
+		int xShift = 0; 
+		int zShift = 0;
+		terrain = new Mesh();
+		//terrain = generateChunk(seed, xShift, zShift);
+		for(int x = 0; x < 6; x++) {
+			for(int z = 0; z < 6; z++) {
+				Mesh chunk = generateChunk(seed, x*100, z*100);
+				terrain.addMesh(chunk);
+			}
+		}
 		//distance between each point in the grid
 		float gridUnit = 2f;
 		//determines how zoomed in on the perlin noise the cave will be
@@ -24,7 +33,6 @@ public class World {
 		//display the points or not
 		boolean pointsVisible = false;
 		//terrain = generateCaves(seed, gridUnit, perlinScaler, pointsVisible);
-		//generateElementList();
 		generateVerticeList();
 		indices = new int[10];
 		//terrain = new Mesh();
@@ -44,61 +52,9 @@ public class World {
 	}
 	
 	public float getHeight(float x, float z) {
-		return (float)(noise.noise(x/30.0+seed, z/30.0+seed)*10);	
-	}
-	
-	private void generateElementList() {
-		ArrayList<Polygon> polys = terrain.getPolygons();
-		ArrayList<ArrayList<Float>> v = new ArrayList<ArrayList<Float>>();
-		ArrayList<Integer> i = new ArrayList<Integer>();
-		ArrayList<Float> point;
-		System.out.println("There are "+polys.size()+" polygons");
-		for(Polygon p: polys) {
-			 for(int x = 0; x < 3; x++) {
-				 point = new ArrayList<Float>();
-				 point.add(p.getPoints()[x].get(0));
-				 point.add(p.getPoints()[x].get(1));
-				 point.add(p.getPoints()[x].get(2));
-				 if(!containsPoint(v, point)) {
-					 point.add((float)(p.getColorAsInt()[0]/256.0));
-					 point.add((float)(p.getColorAsInt()[1]/256.0));
-					 point.add((float)(p.getColorAsInt()[2]/256.0));
-					 v.add(point);
-					 i.add(v.size()-1);
-				 }
-				 else {
-					 for(int y = 0; y < v.size(); y++) {
-						 if(vertexEquals(v.get(y), point)) {
-							 point.add((float)(p.getColorAsInt()[0]/256.0));
-							 point.add((float)(p.getColorAsInt()[1]/256.0));
-							 point.add((float)(p.getColorAsInt()[2]/256.0));
-							 i.add(y);
-							 break;
-						 }
-					 }
-					 
-				 }
-			}
-		}
-		System.out.println( "there are " + v.size() + " points and "+i.size()+ " indices");
-		vertices = new float[v.size()*6];
-		indices = new int[i.size()];
-		for(int a = 0; a < i.size(); a++) {
-			if(a < v.size()) {
-				for(int z = 0; z < 6; z++) {
-					vertices[a*6+z] = v.get(a).get(z);
-				}
-			}
-			indices[a] = i.get(a);
-		}
-		/*
-		for(int a = 0; a < vertices.length; a++) {
-			if(a%6 == 0) {
-				System.out.println();
-			}
-			System.out.print(vertices[a]+ " ");
-			
-		}*/
+		float y = (float)(Math.tan((noise.noise(x/250, z/250)+1)*(1.5/2))*60);
+		//float y = (float)((Math.tan(noise.noise(x/200.0, z/200.0)*(Math.PI/2.0))/2+(Math.pow(noise.noise(x/200.0, z/200.0), 2)))*40);
+		return y+(float)(noise.noise(x/30.0+seed, z/30.0+seed)*5);	
 	}
 	
 	public void generateVerticeList() {
@@ -109,9 +65,10 @@ public class World {
 				list.add(p.getPoints()[i].get(0));
 				list.add(p.getPoints()[i].get(1));
 				list.add(p.getPoints()[i].get(2));
-				list.add((float)(p.getColorAsInt()[0]/256.0));
-				list.add((float)(p.getColorAsInt()[1]/256.0));
-				list.add((float)(p.getColorAsInt()[2]/256.0));
+				
+				list.add(0f);
+				list.add((float)(getGreenColor(p.getPoints()[i].get(1))));
+				list.add(0f);
 			}
 		}
 		vertices = new float[list.size()];
@@ -141,7 +98,6 @@ public class World {
 		}
 		return false;
 	}
-	
 	public Mesh generateCaves(double seed, float gridUnit, double perlinScaler, boolean pointsVisible) {
 		Mesh caves = new Mesh(); 	
 		//creates a grid of open and closed points
@@ -238,20 +194,24 @@ public class World {
 		}
 		return false;
 	}
-	
-	public Mesh generateWorld(int seed) {
+	public float getGreenColor(float y){
+		return (float)((y+5)/153.0);
+	}
+	public float[] getRedColor(float y){
+		return new float[] {(float)((y+40)/85.0),0,0};
+	}
+	public Mesh generateChunk(int seed, int xShift, int zShift) {
 		Mesh map = new Mesh(null);
 		float[][] grid = new float[width+1][length+1];
 		for(int x = 0; x < grid.length; x++) {
 			for(int y = 0; y < grid[0].length; y++) {
-				grid[x][y] = (float)(noise.noise(x/30.0+seed, y/30.0+seed)*10);
+				grid[x][y] = getHeight(x+xShift, y+zShift);
 			}
-			System.out.println();
 		}
 		for(int row = 0; row < grid[0].length-1; row++) {
-			float[][] pts = {{0,grid[0][row],row}, {0,grid[0][row+1], row+1}, {1, grid[1][row], row}};
+			float[][] pts = {{0+xShift,grid[0][row],row+zShift}, {0+xShift,grid[0][row+1], row+1+zShift}, {1+xShift, grid[1][row], row+zShift}};
 			Polygon poly = new Polygon(pts[0], pts[1], pts[2]);
-			poly.setColor(new int[] {0,(int)(255*((pts[0][1]+10)/20.0)),0});
+			poly.setColor(new int[] {0,(int)(255*((pts[0][1]+40)/120.0)),0});
 			map.addToMesh(poly);
 			boolean up = false;
 			int x = 1;
@@ -259,18 +219,21 @@ public class World {
 				up = !up;
 				float[] p = new float[3];
 				if(up) {
-					p[0] = x;
+					p[0] = x+xShift;
 					p[1] = grid[x][row+1];
-					p[2] = row+1;
+					p[2] = row+1+zShift;
 				}
 				else {
-					p[0] = x;
+					p[0] = x+xShift;
 					p[1] = grid[x][row];
-					p[2] = row;
+					p[2] = row+zShift;
 				}
 				pts = shiftPoint(pts, p);
 				poly = new Polygon(pts[0], pts[1], pts[2]);
-				poly.setColor(new int[] {0,(int)(255*((pts[0][1]+10)/20.0)),0});
+				if((xShift+zShift)%200 == 0)
+					poly.setColor(new int[] {0,(int)(255*((pts[0][1]+40)/120.0)),0});
+				else
+					poly.setColor(new int[] {(int)(255*((pts[0][1]+40)/120.0)),0,0});
 				map.addToMesh(poly);
 				if(up) {
 					x++;

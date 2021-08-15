@@ -17,7 +17,11 @@ public class Mesh {
 	public void addToMesh(Polygon p) {
 		polygons.add(p);
 	}
-	
+	public void addMesh(Mesh m) {
+		for(Polygon p: m.getPolygons()) {
+			polygons.add(p);
+		}
+	}
 	public ArrayList<Polygon> getPolygons(){
 		return polygons;
 	}

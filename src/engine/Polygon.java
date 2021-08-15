@@ -7,6 +7,7 @@ import java.awt.Color;
 public class Polygon implements Comparable {
 	private FloatMatrix[] points;
 	private int[] color;
+	float[] fColor;
 	private float distance;
 	FloatMatrix[] renderedPoints;
 	
@@ -36,7 +37,9 @@ public class Polygon implements Comparable {
 			points[i] = tFMat;
 		}
 	}
-	
+	public void setFColor(float[] c) {
+		fColor = c;
+	}
 	public Polygon(FloatMatrix p1, FloatMatrix p2, FloatMatrix p3) {
 		points = new FloatMatrix[3];
 		points[0] = p1; points[1] = p2; points[2] = p3;
