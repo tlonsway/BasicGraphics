@@ -35,6 +35,7 @@ public class Shader {
 		}
 		type = shaderType;
 		
+		shaderCode = "";
 		try {
 			BufferedReader fReader = new BufferedReader(new FileReader(shaderFile));
 			String line = fReader.readLine();
