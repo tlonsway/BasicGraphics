@@ -1,25 +1,29 @@
 package engine;
 import java.util.*;
+import org.jblas.*;
 public class World {
 	Mesh terrain;
 	ArrayList<Mesh> objects;
 	int width, length, height;
-	
+	float[] vertices;
+	int[] indices;
 	public World() {
 		//int seed = 10000;
 		height = 30;
-		width = 100;
-		length = 100;
+		width = 2;
+		length = 2;
 		double seed = (Math.random()*100000000);
-		//terrain = generateWorld((int)seed);
+		terrain = generateWorld((int)seed);
 		//distance between each point in the grid
 		float gridUnit = 2f;
 		//determines how zoomed in on the perlin noise the cave will be
 		double perlinScaler = 25;
 		//display the points or not
 		boolean pointsVisible = false;
-		terrain = generateCaves(seed, gridUnit, perlinScaler, pointsVisible);
+		//terrain = generateCaves(seed, gridUnit, perlinScaler, pointsVisible);
+		generateElementList();
 		//terrain = new Mesh();
+		System.out.println("Generated "+terrain.getPolygons().size()+" Polygons");
 		Polygon xaxis = new Polygon(new float[] {-10, 0, -0.5f}, new float[] {-10, 0, 0.5f}, new float[] {10, 0, 0});
 		xaxis.setColor(new int[] {255,0,0});
 		terrain.addToMesh(xaxis);
@@ -29,9 +33,84 @@ public class World {
 		Polygon zaxis = new Polygon(new float[] {-0.5f, 0, -10}, new float[] {0.5f, 0, -10}, new float[] {0, 0, 10});
 		zaxis.setColor(new int[] {0,0,255});
 		terrain.addToMesh(zaxis);
-		System.out.println("Generated "+terrain.getPolygons().size()+" Polygons");
+		
 		System.out.println("Seed: "+seed);
 		objects = new ArrayList<Mesh>();
+	}
+	
+	private void generateElementList() {
+		ArrayList<Polygon> polys = terrain.getPolygons();
+		ArrayList<ArrayList<Float>> v = new ArrayList<ArrayList<Float>>();
+		ArrayList<Integer> i = new ArrayList<Integer>();
+		ArrayList<Float> point;
+		System.out.println("There are "+polys.size()+" polygons");
+		for(Polygon p: polys) {
+			 for(int x = 0; x < 3; x++) {
+				 point = new ArrayList<Float>();
+				 point.add(p.getPoints()[x].get(0));
+				 point.add(p.getPoints()[x].get(1));
+				 point.add(p.getPoints()[x].get(2));
+				 if(!containsPoint(v, point)) {
+					 point.add((float)(p.getColorAsInt()[0]/256.0));
+					 point.add((float)(p.getColorAsInt()[1]/256.0));
+					 point.add((float)(p.getColorAsInt()[2]/256.0));
+					 v.add(point);
+					 i.add(v.size()-1);
+				 }
+				 else {
+					 for(int y = 0; y < v.size(); y++) {
+						 if(vertexEquals(v.get(y), point)) {
+							 point.add((float)(p.getColorAsInt()[0]/256.0));
+							 point.add((float)(p.getColorAsInt()[1]/256.0));
+							 point.add((float)(p.getColorAsInt()[2]/256.0));
+							 i.add(y);
+							 break;
+						 }
+					 }
+					 
+				 }
+			}
+		}
+		System.out.println( "there are " + v.size() + " points and "+i.size()+ " indices");
+		vertices = new float[v.size()*6];
+		indices = new int[i.size()];
+		for(int a = 0; a < i.size(); a++) {
+			if(a < v.size()) {
+				for(int z = 0; z < 6; z++) {
+					vertices[a*6+z] = v.get(a).get(z);
+				}
+			}
+			indices[a] = i.get(a);
+		}
+		/*
+		for(int a = 0; a < vertices.length; a++) {
+			if(a%6 == 0) {
+				System.out.println();
+			}
+			System.out.print(vertices[a]+ " ");
+			
+		}*/
+	}
+	private boolean vertexEquals(ArrayList<Float> p1, ArrayList<Float> p2) {
+		boolean equals = true;
+		for(Float f: p1) {
+			if(p2.indexOf(f) > -1 && p2.indexOf(f) < 3) {
+				equals = false;
+				break;
+			}
+		}
+		if(equals)
+			return true;
+		else
+			return false;
+	}
+	private boolean containsPoint(ArrayList<ArrayList<Float>> points, ArrayList<Float> point) {
+		for(ArrayList<Float> p: points) {
+			if(vertexEquals(p, point)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public Mesh generateCaves(double seed, float gridUnit, double perlinScaler, boolean pointsVisible) {

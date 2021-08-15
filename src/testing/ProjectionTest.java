@@ -22,6 +22,8 @@ public class ProjectionTest {
 	static boolean aDown = false;
 	static boolean sDown = false;
 	static boolean dDown = false;
+	static boolean spaceDown = false;
+	static boolean ctrlDown = false;
 	
 	
 	static String vertexShaderSource = "#version 410 core\n"
@@ -130,6 +132,18 @@ public class ProjectionTest {
 			if (key==GLFW_KEY_D && action == GLFW_RELEASE) {
 				dDown=false;
 			}
+			if (key==GLFW_KEY_SPACE && action == GLFW_PRESS) {
+				spaceDown=true;
+			}
+			if (key==GLFW_KEY_SPACE && action == GLFW_RELEASE) {
+				spaceDown=false;
+			}
+			if (key==GLFW_KEY_LEFT_CONTROL && action == GLFW_PRESS) {
+				ctrlDown=true;
+			}
+			if (key==GLFW_KEY_LEFT_CONTROL && action == GLFW_RELEASE) {
+				ctrlDown=false;
+			}
 		});
 		
 		while(!glfwWindowShouldClose(window)) {
@@ -149,6 +163,12 @@ public class ProjectionTest {
 			}
 			if (dDown) {
 				cam.translate(-0.01f, 0f, 0.f);
+			}
+			if(spaceDown) {
+				cam.translate(0.0f, -0.01f, 0f);
+			}
+			if(ctrlDown) {
+				cam.translate(0f,  0.01f,  0f);
 			}
 			
 			
