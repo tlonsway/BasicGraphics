@@ -53,6 +53,7 @@ public class Graphics {
 		glLinkProgram(shaderProgram);
 		
 		glUseProgram(shaderProgram);
+		
 		//int err = glGetError();
 		//System.out.println("Error found: " + err);
 		//System.exit(-1);
@@ -74,8 +75,10 @@ public class Graphics {
 	}
 	
 	public void loop() {
+		System.out.println("GOT HERE 1");
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
+		System.out.println("GOT HERE 2");
 		while(!glfwWindowShouldClose(window)) {
 			if (vertices == null || indices == null || numElements == 0) {
 				try {
@@ -89,7 +92,7 @@ public class Graphics {
 			glUseProgram(shaderProgram);
 			glBindVertexArray(VAO);
 			//glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,0);
-			glDrawArrays(GL_TRIANGLES,0,3);
+			glDrawArrays(GL_TRIANGLES,0,numElements);
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 			float[] translateT = keyboardThread.getTranslate();
@@ -122,15 +125,16 @@ public class Graphics {
 		glBufferData(GL_ARRAY_BUFFER, vertices, GL_STREAM_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STREAM_DRAW);
-		//glVertexAttribPointer(0,3,GL_FLOAT,false,24,0l);
-		//glEnableVertexAttribArray(0);
-		//glVertexAttribPointer(0,3,GL_FLOAT,false,24,12l);
-		//glEnableVertexAttribArray(1);
-		glVertexAttribPointer(0,3,GL_FLOAT,false,12,0l);
+		glVertexAttribPointer(0,3,GL_FLOAT,false,24,0l);
 		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(1,3,GL_FLOAT,false,24,12l);
+		glEnableVertexAttribArray(1);
+		
+		//glVertexAttribPointer(0,3,GL_FLOAT,false,12,0l);
+		//glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER,0);
 		glBindVertexArray(VAO);
-		numElements = indices.length;
+		numElements = vertices.length;
 		//int err = glGetError();
 		//System.out.println("Error: " + err);
 		//glBindVertexArray(0);
