@@ -35,7 +35,6 @@ public class Graphics {
 		String windowTitle = "Game Window";
 		window = Setup.start(screenDims, windowTitle);
 		keyboardThread = new KeyboardManager(this);
-		//(new Thread(keyboardThread)).start();
 		init();
 	}
 	
@@ -45,20 +44,10 @@ public class Graphics {
 		vertShader = new Shader("Shaders/basicProjection.vtxs",GL_VERTEX_SHADER);
 		fragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
 		shaderProgram = glCreateProgram();
-		
 		glAttachShader(shaderProgram,vertShader.getShader());
-		
 		glAttachShader(shaderProgram,fragShader.getShader());
-		
 		glLinkProgram(shaderProgram);
-		
 		glUseProgram(shaderProgram);
-		
-		//int err = glGetError();
-		//System.out.println("Error found: " + err);
-		//System.exit(-1);
-		//vertShader.printShaderCode();
-		
 		glDeleteShader(vertShader.getShader());
 		glDeleteShader(fragShader.getShader());
 		vertices = null;
@@ -75,10 +64,8 @@ public class Graphics {
 	}
 	
 	public void loop() {
-		System.out.println("GOT HERE 1");
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
-		System.out.println("GOT HERE 2");
 		while(!glfwWindowShouldClose(window)) {
 			if (vertices == null || indices == null || numElements == 0) {
 				try {
@@ -96,19 +83,15 @@ public class Graphics {
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 			float[] translateT = keyboardThread.getTranslate();
-			//System.out.println("x trans: " + translateT[0]);
 			cam.translate(translateT[0], translateT[1], translateT[2]);
 			this.updateTransformMatrix();
 		}
 	}
 	
 	private void updateTransformMatrix() {
-		
-		//System.exit(0);
 		float[] matCom = combineMats(project.getProjMatFMat(),cam.getCamMat());
 		int fullMatLoc = glGetUniformLocation(shaderProgram,"fullMat");
 		glUniformMatrix4fv(fullMatLoc, false, matCom);
-		//System.out.println("matLoc: " + fullMatLoc);
 		
 	}
 	
@@ -129,14 +112,11 @@ public class Graphics {
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(1,3,GL_FLOAT,false,24,12l);
 		glEnableVertexAttribArray(1);
-		
 		//glVertexAttribPointer(0,3,GL_FLOAT,false,12,0l);
 		//glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER,0);
 		glBindVertexArray(VAO);
 		numElements = vertices.length;
-		//int err = glGetError();
-		//System.out.println("Error: " + err);
 		//glBindVertexArray(0);
 	}
 	
