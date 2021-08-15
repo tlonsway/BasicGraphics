@@ -16,16 +16,16 @@ public class Init {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(1920,1080);
 		frame.setResizable(false);
-		World world = new World();
+		//World world = new World();
 		//frame.setVisible(true);
 		Screen scr = new Screen(new int[] {1920,1080});
 		//for(int i=0;i<30;i++) {
 		//	for(int i2=0;i2<30;i2++) {
 				//System.out.println("Adding cube");
 				//scr.getScene().addCube(new FloatMatrix(new float[] {i,0,-i2}), new FloatMatrix(new float[] {1,1,1}), new int[] {i+50,0,i2+50});
-				for(Polygon p: world.getPolygons()) {
-					scr.getScene().addPolygon(p);
-				}
+				//for(Polygon p: world.getPolygons()) {
+				//	scr.getScene().addPolygon(p);
+				//}
 				try {
 					//Thread.sleep(50);
 				} catch (Exception e) {

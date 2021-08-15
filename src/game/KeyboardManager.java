@@ -11,7 +11,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
-public class KeyboardManager implements Runnable {
+public class KeyboardManager {
 	
 	Graphics g;
 	boolean wDown = false;
@@ -30,6 +30,7 @@ public class KeyboardManager implements Runnable {
 	}
 	
 	public void keyEvent(int key, int action) {
+		System.out.println("Got Key Press");
 		if (key==GLFW_KEY_W && action == GLFW_PRESS) {
 			wDown=true;
 		}
@@ -68,40 +69,27 @@ public class KeyboardManager implements Runnable {
 		}
 	}
 	
-	public void run() {
-		try {
-			Thread.sleep(100);
-		} catch (Exception e) {
-			e.printStackTrace();
+	public float[] getTranslate() {
+		float xTr,yTr,zTr;
+		xTr=yTr=zTr=0;
+		if (wDown) {
+			zTr+=.01f;
 		}
-		while(true) {
-			float xTr,yTr,zTr;
-			xTr=yTr=zTr=0;
-			if (wDown) {
-				zTr+=.01f;
-			}
-			if (aDown) {
-				xTr+=.01f;
-			}
-			if (sDown) {
-				zTr-=.01f;
-			}
-			if (dDown) {
-				xTr-=.01f;
-			}
-			if (spaceDown) {
-				yTr-=.01f;
-			}
-			if (ctrlDown) {
-				yTr+=.01f;
-			}
-			g.getCamera().translate(xTr,yTr,zTr);
-			try {
-				Thread.sleep(1000/60);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		if (aDown) {
+			xTr+=.01f;
 		}
+		if (sDown) {
+			zTr-=.01f;
+		}
+		if (dDown) {
+			xTr-=.01f;
+		}
+		if (spaceDown) {
+			yTr-=.01f;
+		}
+		if (ctrlDown) {
+			yTr+=.01f;
+		}
+		return new float[] {xTr,yTr,zTr};
 	}
-	
 }

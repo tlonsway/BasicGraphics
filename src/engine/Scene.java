@@ -22,6 +22,8 @@ public class Scene {
 		
 		
 		FloatMatrix camMatTemp = camera.getCamMat();
+		//camera.getCamPos();
+		//Operations.printMat(camMatTemp);
 		//ArrayList<FloatMatrix>
 		//FloatMatrix[][] renderedPolys = new FloatMatrix[polygons.size()][2];
 		

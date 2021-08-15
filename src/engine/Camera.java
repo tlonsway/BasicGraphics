@@ -1,6 +1,9 @@
 package engine;
 
 import org.jblas.*;
+import org.jblas.Solve;
+
+import com.sun.corba.se.impl.interceptors.PINoOpHandlerImpl;
 
 public class Camera {
 	private FloatMatrix camMat;
@@ -30,7 +33,7 @@ public class Camera {
 	}
 	
 	public void translate(float x, float y, float z) {
-		//camPos[0] += x; camPos[1] += y; camPos[2] += z;
+		camPos[0] += x; camPos[1] += y; camPos[2] += z;
 		camMat = Operations.translateMat(camMat, x, y, z);
 		//Operations.printMat(camMat);
 	}
@@ -41,6 +44,12 @@ public class Camera {
 	
 	public void rotate(char dir, float degree) {
 		camMat = Operations.rotateMat(camMat, dir, degree);
+	}
+	
+	public float[] getCamPos() {
+		FloatMatrix inverse = Solve.pinv(camMat);
+		Operations.printMat(inverse);
+		return new float[] {inverse.get(0,3),inverse.get(1,3),inverse.get(2,3)};
 	}
 	
 	public float[] renderPoint(FloatMatrix point, FloatMatrix cameraMat) {

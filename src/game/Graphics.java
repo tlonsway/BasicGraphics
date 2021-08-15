@@ -82,7 +82,17 @@ public class Graphics {
 			glDrawElements(GL_TRIANGLES,numElements,GL_UNSIGNED_INT,0);
 			glfwSwapBuffers(window);
 			glfwPollEvents();
+			float[] translateT = keyboardThread.getTranslate();
+			System.out.println("x trans: " + translateT[0]);
+			cam.translate(translateT[0], translateT[1], translateT[2]);
+			this.updateTransformMatrix();
 		}
+	}
+	
+	private void updateTransformMatrix() {
+		float[] matCom = combineMats(project.getProjMatFMat(),cam.getCamMat());
+		int fullMatLoc = glGetUniformLocation(shaderProgram,"fullMat");
+		glUniformMatrix4fv(fullMatLoc, false, matCom);
 	}
 	
 	public void updateData(float[] vertices, int[] indices) {
@@ -113,6 +123,19 @@ public class Graphics {
 	
 	public Camera getCamera() {
 		return cam;
+	}
+	
+	private static float[] combineMats(FloatMatrix projmat, FloatMatrix camMat) {
+		FloatMatrix res = projmat.mmul(camMat);
+		float[] ret = new float[16];
+		int t = 0;
+		for(int r=0;r<4;r++) {
+			for(int c=0;c<4;c++) {
+				ret[t] = res.get(c,r);
+				t++;
+			}
+		}
+		return ret;
 	}
 	
 	public static void main(String[] args) {

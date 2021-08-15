@@ -10,6 +10,5 @@ public class GraphicsTest {
 		int[] indices = new int[] {1,2,3};
 		g.updateData(vertices, indices);
 		g.loop();
-	}
-	
+	}	
 }
