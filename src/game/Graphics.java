@@ -45,10 +45,19 @@ public class Graphics {
 		vertShader = new Shader("Shaders/basicProjection.vtxs",GL_VERTEX_SHADER);
 		fragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
 		shaderProgram = glCreateProgram();
+		
 		glAttachShader(shaderProgram,vertShader.getShader());
+		
 		glAttachShader(shaderProgram,fragShader.getShader());
+		
 		glLinkProgram(shaderProgram);
+		
 		glUseProgram(shaderProgram);
+		//int err = glGetError();
+		//System.out.println("Error found: " + err);
+		//System.exit(-1);
+		//vertShader.printShaderCode();
+		
 		glDeleteShader(vertShader.getShader());
 		glDeleteShader(fragShader.getShader());
 		vertices = null;
@@ -79,20 +88,25 @@ public class Graphics {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glUseProgram(shaderProgram);
 			glBindVertexArray(VAO);
-			glDrawElements(GL_TRIANGLES,numElements,GL_UNSIGNED_INT,0);
+			//glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,0);
+			glDrawArrays(GL_TRIANGLES,0,3);
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 			float[] translateT = keyboardThread.getTranslate();
-			System.out.println("x trans: " + translateT[0]);
+			//System.out.println("x trans: " + translateT[0]);
 			cam.translate(translateT[0], translateT[1], translateT[2]);
 			this.updateTransformMatrix();
 		}
 	}
 	
 	private void updateTransformMatrix() {
+		
+		//System.exit(0);
 		float[] matCom = combineMats(project.getProjMatFMat(),cam.getCamMat());
 		int fullMatLoc = glGetUniformLocation(shaderProgram,"fullMat");
 		glUniformMatrix4fv(fullMatLoc, false, matCom);
+		//System.out.println("matLoc: " + fullMatLoc);
+		
 	}
 	
 	public void updateData(float[] vertices, int[] indices) {
@@ -115,9 +129,10 @@ public class Graphics {
 		glVertexAttribPointer(0,3,GL_FLOAT,false,12,0l);
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER,0);
+		glBindVertexArray(VAO);
 		numElements = indices.length;
-		int err = glGetError();
-		System.out.println("Error: " + err);
+		//int err = glGetError();
+		//System.out.println("Error: " + err);
 		//glBindVertexArray(0);
 	}
 	
@@ -136,9 +151,5 @@ public class Graphics {
 			}
 		}
 		return ret;
-	}
-	
-	public static void main(String[] args) {
-		new Graphics();
 	}
 }

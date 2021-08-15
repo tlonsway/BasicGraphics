@@ -30,7 +30,6 @@ public class KeyboardManager {
 	}
 	
 	public void keyEvent(int key, int action) {
-		System.out.println("Got Key Press");
 		if (key==GLFW_KEY_W && action == GLFW_PRESS) {
 			wDown=true;
 		}
