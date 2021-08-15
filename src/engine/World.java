@@ -52,7 +52,7 @@ public class World {
 	}
 	
 	public float getHeight(float x, float z) {
-		float y = (float)(Math.tan((noise.noise(x/250, z/250)+1)*(1.5/2))*60);
+		float y = (float)(Math.tan((noise.noise(x/250.0+seed, z/250.0+seed)+1)*(1.5/2))*60);
 		//float y = (float)((Math.tan(noise.noise(x/200.0, z/200.0)*(Math.PI/2.0))/2+(Math.pow(noise.noise(x/200.0, z/200.0), 2)))*40);
 		return y+(float)(noise.noise(x/30.0+seed, z/30.0+seed)*5);	
 	}
