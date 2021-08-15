@@ -58,6 +58,8 @@ public class GPUDisplaying {
 		System.out.println("Generated World");
 		glfwInit();
 		glfwDefaultWindowHints();
+		glfwWindowHint(GLFW_SAMPLES, 4);
+
 		window = glfwCreateWindow(screenDims[0],screenDims[1],"Projection Test",NULL,NULL);
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
@@ -124,10 +126,12 @@ public class GPUDisplaying {
 		
 		glfwSwapInterval(1);
 		glfwShowWindow(window);
-		glClearColor(0.0f,0.0f,0.0f,1.0f);
+		glClearColor(0.275f,0.94f,0.97f,1.0f);
 		
 		glUseProgram(sProg);
 		
+		glEnable(GL_MULTISAMPLE);  
+
 		
 		
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
