@@ -11,6 +11,8 @@ import org.jblas.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.opengl.GL41.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -29,18 +31,20 @@ public class Graphics {
 	int VBO,VAO,EBO;
 	int numElements;
 	KeyboardManager keyboardThread;
+	MouseManager mouseThread;
 	
 	public Graphics() {
 		screenDims = new int[] {1920,1080};
 		String windowTitle = "Game Window";
 		window = Setup.start(screenDims, windowTitle);
 		keyboardThread = new KeyboardManager(this);
+		mouseThread = new MouseManager();
 		init();
 	}
 	
 	public void init() {
 		cam = new Camera(screenDims);
-		project = new Projection(80f, 0.1f, 10f, screenDims);
+		project = new Projection(90f, 1f, 200f, screenDims);
 		vertShader = new Shader("Shaders/basicProjection.vtxs",GL_VERTEX_SHADER);
 		fragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
 		shaderProgram = glCreateProgram();
@@ -53,12 +57,17 @@ public class Graphics {
 		vertices = null;
 		indices = null;
 		numElements = 0;
-		glClearColor(0.0f,0.0f,0.0f,1.0f);
+		//glClearColor(0.0f,0.0f,0.0f,1.0f);
+		glClearColor(0.275f,0.94f,0.97f,1.0f);
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_MULTISAMPLE); 
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
 				glfwSetWindowShouldClose(window, true);
 			keyboardThread.keyEvent(key, action);
+		});
+		glfwSetCursorPosCallback(window, (window, xpos, ypos) -> {
+			mouseThread.mouseMovement(xpos, ypos);
 		});
 		//loop();
 	}
@@ -84,6 +93,17 @@ public class Graphics {
 			glfwPollEvents();
 			float[] translateT = keyboardThread.getTranslate();
 			cam.translate(translateT[0], translateT[1], translateT[2]);
+			float[] rotateT = mouseThread.getRotation();
+			cam.rotate('x', rotateT[1], false);
+			cam.rotate('y', rotateT[0], true);
+			float[] camPos = cam.getCamPos();
+			//System.out.println("Camera Position: (" + camPos[0] + "," + camPos[1] + "," + camPos[2] + ")");
+			System.out.println("Camera Matrix");
+		    Operations.printMat(cam.getCamMat());
+			//System.out.println("Inverse Camera Matrix");
+			//Operations.printMat(Solve.pinv(cam.getCamMat()));
+			
+			//cam.rotate(rotateT[1], rotateT[0], 0f);
 			this.updateTransformMatrix();
 		}
 	}

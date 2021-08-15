@@ -20,7 +20,11 @@ public class Setup {
 	public static long start(int[] screenDims, String windowTitle) {
 		glfwInit();
 		glfwDefaultWindowHints();
+		glfwWindowHint(GLFW_SAMPLES, 4);
 		long window = glfwCreateWindow(screenDims[0],screenDims[1],windowTitle,NULL,NULL);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		if (glfwRawMouseMotionSupported())
+		    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
 		glfwSwapInterval(1); //enable v-sync

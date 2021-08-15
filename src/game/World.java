@@ -13,8 +13,8 @@ public class World {
 		noise = new Noise();
 		//int seed = 10000;
 		height = 100;
-		width = 1000;
-		length = 1000;
+		width = 200;
+		length = 200;
 		seed = (int)(Math.random()*100000000);
 		terrain = generateWorld((int)seed);
 		//distance between each point in the grid
