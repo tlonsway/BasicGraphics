@@ -25,6 +25,10 @@ public class Camera {
 		this.projection = new Projection();
 	}
 	
+	public void setY(float newY) {
+		camMat.put(1, 3, newY);
+	}
+	
 	public void translate(float x, float y, float z) {
 		//camPos[0] += x; camPos[1] += y; camPos[2] += z;
 		camMat = Operations.translateMat(camMat, x, y, z);

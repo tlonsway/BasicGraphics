@@ -19,6 +19,10 @@ public class Camera {
 		this.screenDims = screenDims;
 	}
 	
+	public void setY(float newY) {
+		camMat.put(1, 3, newY);
+	}
+	
 	public void translate(float x, float y, float z) {
 		camMat = Operations.translateMat(camMat, x, y, z);
 	}
