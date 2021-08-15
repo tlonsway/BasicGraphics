@@ -33,6 +33,11 @@ public class Graphics {
 	KeyboardManager keyboardThread;
 	MouseManager mouseThread;
 	
+	float[] vertices2;
+	int[] indices2;
+	int VAO2;
+	int numElements2;
+	
 	public Graphics() {
 		screenDims = new int[] {1920,1080};
 		String windowTitle = "Game Window";
@@ -89,6 +94,10 @@ public class Graphics {
 			glBindVertexArray(VAO);
 			//glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,0);
 			glDrawArrays(GL_TRIANGLES,0,numElements);
+			
+			glBindVertexArray(VAO2);
+			glDrawArrays(GL_TRIANGLES,0,numElements2);
+			
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 			float[] translateT = keyboardThread.getTranslate();
@@ -96,10 +105,15 @@ public class Graphics {
 			float[] rotateT = mouseThread.getRotation();
 			cam.rotate('x', rotateT[1], false);
 			cam.rotate('y', rotateT[0], true);
-			float[] camPos = cam.getCamPos();
+			//float[] camRot = cam.getRotations();
+			//System.out.println("Camera rotation: (" + camRot[0] + "," + Math.sin(camRot[1]) + "," + camRot[2] + ")");
+			
+			//float[] camPos = cam.getCamPos();
 			//System.out.println("Camera Position: (" + camPos[0] + "," + camPos[1] + "," + camPos[2] + ")");
-			System.out.println("Camera Matrix");
-		    Operations.printMat(cam.getCamMat());
+			//System.out.println("Camera Matrix");
+		    //Operations.printMat(cam.getCamMat());
+			//System.out.println("Rotation Matrix");
+			//Operations.printMat(cam.getRotMat());
 			//System.out.println("Inverse Camera Matrix");
 			//Operations.printMat(Solve.pinv(cam.getCamMat()));
 			
@@ -139,6 +153,31 @@ public class Graphics {
 		numElements = vertices.length;
 		//glBindVertexArray(0);
 	}
+	
+	public void updateData2(float[] vertices, int[] indices) {
+		this.vertices2 = vertices;
+		this.indices2 = indices;
+		int VBOt,VAOt,EBOt;
+		VBOt = glGenBuffers();
+		VAOt = glGenVertexArrays();
+		EBOt = glGenBuffers();
+		VAO2=VAOt;
+		glBindVertexArray(VAO2);
+		glBindBuffer(GL_ARRAY_BUFFER,VBOt);
+		glBufferData(GL_ARRAY_BUFFER, vertices, GL_STREAM_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOt);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STREAM_DRAW);
+		glVertexAttribPointer(0,3,GL_FLOAT,false,24,0l);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(1,3,GL_FLOAT,false,24,12l);
+		glEnableVertexAttribArray(1);
+		//glVertexAttribPointer(0,3,GL_FLOAT,false,12,0l);
+		//glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER,0);
+		glBindVertexArray(VAO2);
+		numElements2 = vertices.length;
+	}
+	
 	
 	public Camera getCamera() {
 		return cam;
