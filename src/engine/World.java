@@ -3,24 +3,27 @@ import java.util.*;
 import org.jblas.*;
 public class World {
 	Mesh terrain;
+	Noise noise;
 	ArrayList<Mesh> objects;
 	int width, length, height;
 	float[] vertices;
 	int[] indices;
+	int seed;
 	public World() {
+		noise = new Noise();
 		//int seed = 10000;
-		height = 30;
-		width = 100;
-		length = 100;
-		double seed = (Math.random()*100000000);
-		//terrain = generateWorld((int)seed);
+		height = 100;
+		width = 1000;
+		length = 1000;
+		seed = (int)(Math.random()*100000000);
+		terrain = generateWorld((int)seed);
 		//distance between each point in the grid
 		float gridUnit = 2f;
 		//determines how zoomed in on the perlin noise the cave will be
 		double perlinScaler = 25;
 		//display the points or not
 		boolean pointsVisible = false;
-		terrain = generateCaves(seed, gridUnit, perlinScaler, pointsVisible);
+		//terrain = generateCaves(seed, gridUnit, perlinScaler, pointsVisible);
 		//generateElementList();
 		generateVerticeList();
 		indices = new int[10];
@@ -38,6 +41,10 @@ public class World {
 		
 		System.out.println("Seed: "+seed);
 		objects = new ArrayList<Mesh>();
+	}
+	
+	public float getHeight(float x, float z) {
+		return (float)(noise.noise(x/30.0+seed, z/30.0+seed)*10);	
 	}
 	
 	private void generateElementList() {
@@ -163,7 +170,6 @@ public class World {
 	}
 	
 	private boolean[][][] createOpenCavities(float gridUnit, double perlinScaler, double seed){
-		Noise noise = new Noise();
 		boolean[][][] openCavities = new boolean[(int)(width/gridUnit)+2][(int)(height/gridUnit)+2][(int)(length/gridUnit)+2];
 		for(int x = 0; x < (int)(width/gridUnit); x++) {
 			for(int y = 0; y < (int)(height/gridUnit); y++) {
@@ -171,7 +177,7 @@ public class World {
 					double value = noise.noise(x/perlinScaler+seed, y/perlinScaler+seed, z/perlinScaler+seed);
 					//if(value > 0.5) {
 					//if(value<0.5 && value > 0.3) {
-					if(value < 0.2 && value > 0.1) {
+					if(value < 0.15 && value > 0.02) {
 						openCavities[x][y][z] = true;
 					}
 					else {
@@ -234,7 +240,6 @@ public class World {
 	}
 	
 	public Mesh generateWorld(int seed) {
-		Noise noise = new Noise();
 		Mesh map = new Mesh(null);
 		float[][] grid = new float[width+1][length+1];
 		for(int x = 0; x < grid.length; x++) {

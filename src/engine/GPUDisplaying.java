@@ -110,7 +110,7 @@ public class GPUDisplaying {
 		
 		
 		//Projection proj = new Projection();
-		Projection proj = new Projection(80f, 0.1f, 100f, screenDims);
+		Projection proj = new Projection(80f, 0.1f, 1000f, screenDims);
 		//float[] projectMat = proj.getProjMat();
 		
 		float[] fullMatTemp = combineMats(proj.getProjMatFMat(),cam.getCamMat());
@@ -170,10 +170,10 @@ public class GPUDisplaying {
 				ctrlDown=false;
 			}
 			//left shift
-			if (key==340 && action == GLFW_PRESS) {
-				shiftDown=false;
+			if (key==GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS) {
+				shiftDown=true;
 			}
-			if (key==340 && action == GLFW_RELEASE) {
+			if (key==GLFW_KEY_LEFT_SHIFT && action == GLFW_RELEASE) {
 				shiftDown=false;
 			}
 			//E
@@ -224,10 +224,10 @@ public class GPUDisplaying {
 				cam.translate(-0.01f*shift, 0f, 0.f);
 			}
 			if(spaceDown) {
-				cam.translate(0.0f, -0.01f*shift, 0f);
+				//cam.translate(0.0f, -0.01f*shift, 0f);
 			}
 			if(ctrlDown) {
-				cam.translate(0f,  0.01f*shift,  0f);
+				//cam.translate(0f,  0.01f*shift,  0f);
 			}
 			if(eDown) {
 				cam.rotate('y', 0.02f);
@@ -235,7 +235,9 @@ public class GPUDisplaying {
 			if(qDown) {
 				cam.rotate('y', -0.02f);
 			}
-			
+			//System.out.println("X: "+ cam.getCamMat().get(0,3)+ " Z: "+cam.getCamMat().get(2,3));
+			//cam.setY(world.getHeight(cam.getCamMat().get(0,3), cam.getCamMat().get(2,3))+1);
+			Operations.printMat(cam.getCamMat());
 			float[] fullMat = combineMats(proj.getProjMatFMat(),cam.getCamMat());
 			glUniformMatrix4fv(fullMatLoc, false, fullMat);
 		}
