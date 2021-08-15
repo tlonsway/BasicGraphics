@@ -131,7 +131,6 @@ public class GPUDisplaying {
 		glUseProgram(sProg);
 		
 		glEnable(GL_MULTISAMPLE);  
-
 		
 		
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {

@@ -12,12 +12,8 @@ public class GraphicsTest {
 		//g.updateData(vertices, indices);
 		World world = new World();
 		float[] vert = world.vertices;
-		int[] ind = world.indices;
-		World world2 = new World();
-		float[] vert2 = world2.vertices;
-		int[] ind2 = world2.indices;
+		int[] ind = world.indices;;
 		g.updateData(vert, ind);
-		g.updateData2(vert2, ind2);
 		g.loop();
 	}	
 }
