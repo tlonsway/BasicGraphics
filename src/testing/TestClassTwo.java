@@ -57,15 +57,16 @@ public class TestClassTwo {
 	    glLinkProgram(shaderProgram);
 	    glDeleteShader(vertexShader);
 	    glDeleteShader(fragmentShader);
-	    float[] vertices = { 0.5f, -0.5f, 0.0f, 
-	    					-0.5f, -0.5f, 0.0f,
-	    					 0.0f,  0.5f, 0.0f};
+	    float[] vertices = { 0.5f, -0.5f, 0.0f, 0, 0, 0, 
+	    					-0.5f, -0.5f, 0.0f, 0, 0, 0, 
+	    					 0.0f,  0.5f, 0.0f, 0, 0, 0, 
+	    					 1.0f, 0.5f, 0, 0, 0, 0};
 	    float[] texCoords = {
 	    	    0.0f, 0.0f,  // lower-left corner  
 	    	    1.0f, 0.0f,  // lower-right corner
 	    	    0.5f, 1.0f   // top-center corner
 	    	};	    		
-	    int[] indices = new int[] {0, 1, 2}; 
+	    int[] indices = new int[] {0, 1, 2, 0, 2, 3}; 
 	    						   //0, 2, 3};
 	    int VBO, VAO, EBO;
 	    VAO = glGenVertexArrays();
@@ -79,11 +80,11 @@ public class TestClassTwo {
 	    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW); 
 	    
-	    glVertexAttribPointer(0, 3, GL_FLOAT, false, 12, 0l);
+	    glVertexAttribPointer(0, 3, GL_FLOAT, false, 24, 0l);
 	    glEnableVertexAttribArray(0);
 	    
-	    //glVertexAttribPointer(1, 3, GL_FLOAT, false, 24, 0l);
-	    //glEnableVertexAttribArray(1);
+	    glVertexAttribPointer(1, 3, GL_FLOAT, false, 24, 12l);
+	    glEnableVertexAttribArray(1);
 	    
 	    //glBindBuffer(GL_ARRAY_BUFFER, 0); 
 	    //glBindVertexArray(0); 
@@ -104,10 +105,10 @@ public class TestClassTwo {
 	        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 	        */
 	        glBindVertexArray(VAO);
-	        glDrawArrays(GL_TRIANGLES, 0, 3);
+	        //glDrawArrays(GL_TRIANGLES, 0, 3);
 	        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	        //glBindVertexArray(0);
 	        glfwSwapBuffers(window);
 	        glfwPollEvents();

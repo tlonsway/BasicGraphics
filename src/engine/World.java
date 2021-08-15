@@ -10,18 +10,20 @@ public class World {
 	public World() {
 		//int seed = 10000;
 		height = 30;
-		width = 2;
-		length = 2;
+		width = 100;
+		length = 100;
 		double seed = (Math.random()*100000000);
-		terrain = generateWorld((int)seed);
+		//terrain = generateWorld((int)seed);
 		//distance between each point in the grid
 		float gridUnit = 2f;
 		//determines how zoomed in on the perlin noise the cave will be
 		double perlinScaler = 25;
 		//display the points or not
 		boolean pointsVisible = false;
-		//terrain = generateCaves(seed, gridUnit, perlinScaler, pointsVisible);
-		generateElementList();
+		terrain = generateCaves(seed, gridUnit, perlinScaler, pointsVisible);
+		//generateElementList();
+		generateVerticeList();
+		indices = new int[10];
 		//terrain = new Mesh();
 		System.out.println("Generated "+terrain.getPolygons().size()+" Polygons");
 		Polygon xaxis = new Polygon(new float[] {-10, 0, -0.5f}, new float[] {-10, 0, 0.5f}, new float[] {10, 0, 0});
@@ -91,6 +93,26 @@ public class World {
 			
 		}*/
 	}
+	
+	public void generateVerticeList() {
+		ArrayList<Polygon> polys = terrain.getPolygons();
+		ArrayList<Float> list = new ArrayList<Float>();
+		for(Polygon p: polys) {
+			for(int i = 0; i < p.getPoints().length; i++) {
+				list.add(p.getPoints()[i].get(0));
+				list.add(p.getPoints()[i].get(1));
+				list.add(p.getPoints()[i].get(2));
+				list.add((float)(p.getColorAsInt()[0]/256.0));
+				list.add((float)(p.getColorAsInt()[1]/256.0));
+				list.add((float)(p.getColorAsInt()[2]/256.0));
+			}
+		}
+		vertices = new float[list.size()];
+		for(int i = 0; i < list.size(); i++) {
+			vertices[i] = list.get(i);
+		}
+	}
+	
 	private boolean vertexEquals(ArrayList<Float> p1, ArrayList<Float> p2) {
 		boolean equals = true;
 		for(Float f: p1) {
