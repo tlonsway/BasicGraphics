@@ -29,6 +29,7 @@ public class ColorTriangleTest {
 			//+ "ourColor = (transform * vec4(aPos,1.0)).x;\n"
 			+ "ourColor = vec4((tempVec.x+1)/2,(tempVec.y+1)/2,(tempVec.z+1)/2,1.0f);\n"
 			+ "gl_Position = transform * vec4(aPos,1.0);"
+			//+ "gl_Position = vec4(tempVec.x,tempVec.y,0f,1.0f);\n"
 			//+ "ourColor = aColor;\n"
 			+ "}";
 	
@@ -78,9 +79,9 @@ public class ColorTriangleTest {
 		/*float[] vertices = new float[] {0.4f, 0.4f, 0.5f,
 			    -0.4f, -0.4f, 0.5f,
 			     0.0f,  0.4f, 0.5f};*/
-		float[] vertices = new float[] {0.61568f, 0.61568f, 0.5f,
-			    -0.6235f, -0.6235f, 0.5f,
-			     0.0039f, 0.61568f, 0.5f};
+		float[] vertices = new float[] {0.61568f, 0.61568f, -1.5f,
+			    -0.6235f, -0.6235f, -1.5f,
+			     0.0039f, 0.61568f, -1.5f};
 		
 		int VBO, VAO;
 		VBO = glGenBuffers();
