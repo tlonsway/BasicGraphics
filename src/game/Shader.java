@@ -19,9 +19,9 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class Shader {
 	
-	String shaderCode;
-	int shaderPointer;
-	int type;
+	private String shaderCode;
+	private int shaderPointer;
+	private int type;
 	
 	public Shader(String fileName, int shaderType) {
 		File shaderFile = new File(fileName);
@@ -33,6 +33,7 @@ public class Shader {
 			System.err.println("Shader of type" + shaderType + " is not supported");
 			return;
 		}
+		type = shaderType;
 		
 		try {
 			BufferedReader fReader = new BufferedReader(new FileReader(shaderFile));
@@ -53,11 +54,22 @@ public class Shader {
 		shaderPointer = glCreateShader(shaderType);
 		glShaderSource(shaderPointer, shaderCode);
 		glCompileShader(shaderPointer);
-		
-		
-		
+		int err = glGetError();
+		if (err != 0) {
+			System.err.println("Error occured while compiling shader with filename: " + fileName);
+			return;
+		}
 	}
-	
-	
-	
+	public void printShaderCode() {
+		System.out.println("Shader code: " + shaderCode);
+	}
+	public String getShaderCode() {
+		return shaderCode;
+	}
+	public int getShader() {
+		return shaderPointer;
+	}
+	public int getType() {
+		return type;
+	}
 }
