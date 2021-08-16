@@ -24,12 +24,17 @@ public class World {
 			for(int z = 0; z < 5; z++) {
 				Mesh chunk = generateChunk(seed, x*width, z*length, width, length);
 				terrain.addMesh(chunk);
+				int numTrees = (int)(Math.random()*10);
+				for(int i = 0; i < numTrees; i++) {
+					float a = (float)(Math.random()*100);
+					float b = (float)(Math.random()*100);
+					Mesh tree = ObjectGeneration.generateTree(seed+(x*5)+z, 7);
+					tree.translate(a+x*width, getHeight(a+x*width,b+z*length)-15f, b+z*length);
+					terrain.addMesh(tree);
+				}
 			}
 		}
-		Mesh tree = ObjectGeneration.generateTree(seed, 7);
-		System.out.println("Height: "+getHeight(0, 0));
-		tree.translate(0, getHeight(0, 0), 0);
-		//terrain.addMesh(tree);
+		
 		//distance between each point in the grid
 		float gridUnit = 2f;
 		//determines how zoomed in on the perlin noise the cave will be
@@ -41,16 +46,6 @@ public class World {
 		indices = new int[10];
 		//terrain = new Mesh();
 		System.out.println("Generated "+terrain.getPolygons().size()+" Polygons");
-		Polygon xaxis = new Polygon(new float[] {-10, 0, -0.5f}, new float[] {-10, 0, 0.5f}, new float[] {10, 0, 0});
-		xaxis.setColor(new int[] {255,0,0});
-		terrain.addToMesh(xaxis);
-		Polygon yaxis = new Polygon(new float[] {-0.5f, -10, 0}, new float[] {0.5f, -10, 0}, new float[] {0, 10, 0});
-		yaxis.setColor(new int[] {0,255,0});
-		terrain.addToMesh(yaxis);
-		Polygon zaxis = new Polygon(new float[] {-0.5f, 0, -10}, new float[] {0.5f, 0, -10}, new float[] {0, 0, 10});
-		zaxis.setColor(new int[] {0,0,255});
-		terrain.addToMesh(zaxis);
-		
 		System.out.println("Seed: "+seed);
 		objects = new ArrayList<Mesh>();
 	}
@@ -93,6 +88,7 @@ public class World {
 		else
 			return false;
 	}
+	
 	private boolean containsPoint(ArrayList<ArrayList<Float>> points, ArrayList<Float> point) {
 		for(ArrayList<Float> p: points) {
 			if(vertexEquals(p, point)) {
