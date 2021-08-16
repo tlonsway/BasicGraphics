@@ -37,6 +37,8 @@ public class Graphics {
 	World world;
 	ArrayList<GameObject> objects;
 	
+	static final float[] iMatFlat = new float[] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
+	
 	public Graphics() {
 		screenDims = new int[] {1920,1080};
 		String windowTitle = "Game Window";
@@ -50,8 +52,10 @@ public class Graphics {
 	
 	public void init() {
 		cam = new Camera(screenDims);
-		project = new Projection(90f, 1f, 200f, screenDims);
-		vertShader = new Shader("Shaders/basicProjection.vtxs",GL_VERTEX_SHADER);
+		gravity.setCamera(cam);
+		project = new Projection(90f, 1f, 500f, screenDims);
+		//vertShader = new Shader("Shaders/basicProjection.vtxs",GL_VERTEX_SHADER);
+		vertShader = new Shader("Shaders/basicProjWithModel.vtxs",GL_VERTEX_SHADER);
 		fragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
 		shaderProgram = glCreateProgram();
 		glAttachShader(shaderProgram,vertShader.getShader());
@@ -75,6 +79,7 @@ public class Graphics {
 		glfwSetCursorPosCallback(window, (window, xpos, ypos) -> {
 			mouseThread.mouseMovement(xpos, ypos);
 		});
+		cam.translate(0f, -60f, 0f);
 		//loop();
 	}
 	
@@ -92,18 +97,43 @@ public class Graphics {
 			}
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glUseProgram(shaderProgram);
+			
+			int modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+			glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
+			
 			glBindVertexArray(VAO);
-			//glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,0);
 			glDrawArrays(GL_TRIANGLES,0,numElements);
+			
+			for(GameObject go : objects) {
+				modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+				glUniformMatrix4fv(modelMatLoc, false, go.getModelMatFlat());
+				//System.out.println("Object Model Matrix: " );
+				//for(float f : go.getModelMatFlat()) {
+				//	System.out.print(f + " ");
+				//}
+				//System.out.println();
+				glBindVertexArray(go.getVAO());
+				glDrawArrays(GL_TRIANGLES,0,go.getVertices().length);
+			}
+			
+			
+			//glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,0);
+			
 			
 			glfwSwapBuffers(window);
 			glfwPollEvents();
+			
+			//apply camera/game updates
+			
+			float[] camPos = cam.getCamPos();
+			//System.out.println("Camera Position: (" + camPos[0] + "," + camPos[1] + "," + camPos[2]);
 			float[] translateT = keyboardThread.getTranslate();
 			cam.translate(translateT[0], translateT[1], translateT[2]);
 			float[] rotateT = mouseThread.getRotation();
 			cam.rotate('x', rotateT[1], false);
 			cam.rotate('y', rotateT[0], true);
 			this.updateTransformMatrix();
+			gravity.setGameObjects(objects);
 			gravity.run();
 		}
 	}
@@ -115,8 +145,50 @@ public class Graphics {
 		
 	}
 	
+	public void setWorld(World w) {
+		this.world = w;
+		cam.setWorld(world);
+	}
+	
 	public void setGameObjects(ArrayList<GameObject> newObjs) {
-		
+		this.objects = newObjs;
+		for(GameObject go : objects) {
+			//process buffers, add the VAO to gameobject
+			processGameObject(go);
+		}
+	}
+	
+	public void addGameObject(GameObject go) {
+		this.objects.add(go);
+		processGameObject(go);
+	}
+	
+	public void addGameObjects(ArrayList<GameObject> newObjs) {
+		for(GameObject go : newObjs) {
+			this.objects.add(go);
+			processGameObject(go);
+		}
+	}
+	
+	private void processGameObject(GameObject go) {
+		float[] tempVert = go.getVertices();
+		int[] tempInd = go.getIndices();
+		int VBOt,VAOt,EBOt;
+		VBOt = glGenBuffers();
+		VAOt = glGenVertexArrays();
+		EBOt = glGenBuffers();
+		glBindVertexArray(VAOt);
+		glBindBuffer(GL_ARRAY_BUFFER,VBOt);
+		glBufferData(GL_ARRAY_BUFFER, tempVert, GL_STREAM_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOt);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, tempInd, GL_STREAM_DRAW);
+		glVertexAttribPointer(0,3,GL_FLOAT,false,24,0l);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(1,3,GL_FLOAT,false,24,12l);
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER,0);
+		glBindVertexArray(0);
+		go.setVAO(VAOt);
 	}
 	
 	public void updateData(float[] vertices, int[] indices) {

@@ -2,11 +2,14 @@ package game;
 
 import java.util.*;
 import org.jblas.*;
+
+
 import java.awt.Color;
 
 public class Polygon implements Comparable {
 	private FloatMatrix[] points;
 	private int[] color;
+	float[] fColor;
 	private float distance;
 	FloatMatrix[] renderedPoints;
 	
@@ -36,7 +39,9 @@ public class Polygon implements Comparable {
 			points[i] = tFMat;
 		}
 	}
-	
+	public void setFColor(float[] c) {
+		fColor = c;
+	}
 	public Polygon(FloatMatrix p1, FloatMatrix p2, FloatMatrix p3) {
 		points = new FloatMatrix[3];
 		points[0] = p1; points[1] = p2; points[2] = p3;
@@ -63,7 +68,24 @@ public class Polygon implements Comparable {
 	public FloatMatrix[] getPoints() {
 		return points;
 	}
-	
+	public void translate(float x, float y, float z) {
+		for(int i = 0; i < points.length; i++) {
+			float p1, p2, p3;
+			p1 = points[i].get(0)+x;
+			p2 = points[i].get(1)+y;
+			p3 = points[i].get(2)+z;
+			points[i] = new FloatMatrix(new float[] {p1, p2, p3});
+		}
+	}
+	public void rotate(float[] rotationPoint, char axis, float angle) {
+		for(int i = 0; i < points.length; i++) {
+			FloatMatrix t = new FloatMatrix(new float[] {points[i].get(0)-rotationPoint[0], points[i].get(1)-rotationPoint[1], points[i].get(2)-rotationPoint[2]} );
+			FloatMatrix t2 = game.Operations.rotatePoint(t, axis, angle);
+			points[i].put(0, t2.get(0)+rotationPoint[0]);
+			points[i].put(1, t2.get(1)+rotationPoint[1]);
+			points[i].put(2, t2.get(2)+rotationPoint[2]);
+		}
+	}
 	public FloatMatrix getNorm() {
 		FloatMatrix v1 = points[0];
 		FloatMatrix v2 = points[1];
@@ -72,7 +94,6 @@ public class Polygon implements Comparable {
         float s3 = (v1.get(0)*v2.get(1))-(v1.get(1)*v2.get(0));
         return new FloatMatrix(new float[] {s1,s2,s3});
 	}
-	
 	
 	public int compareTo(Object other) {
 		Polygon op = (Polygon)other;

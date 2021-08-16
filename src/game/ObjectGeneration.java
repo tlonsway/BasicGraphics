@@ -1,4 +1,4 @@
-package engine;
+package game;
 
 public class ObjectGeneration {
 	public static Mesh generateTree(int seed, int resolution) {

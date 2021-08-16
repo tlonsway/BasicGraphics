@@ -7,10 +7,15 @@ public class Camera {
 	private FloatMatrix rotMat;
 	private FloatMatrix transMat;
 	private float[] rotations;
-	//private 
 	public int[] screenDims; //{width,height} in pixels
-	//left, right, forward, backwards, up, down, shift
-	public boolean[] translationState = {false, false, false, false, false, false, false};
+	World world;
+	
+	AABB bounds;
+	
+	float[] velocity;
+	float[] acceleration;
+	public boolean falling = false;
+	
 	public Camera(int[] screenDims) {
 		float[][] identMat = new float[][] {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
 		camMat = new FloatMatrix(identMat);
@@ -18,15 +23,28 @@ public class Camera {
 		transMat = new FloatMatrix(identMat);
 		rotations = new float[3];
 		this.screenDims = screenDims;
+		bounds = new AABB(new float[] {-1.0f,-2.0f,-1.0f},new float[] {1.0f,1.0f,1.0f});
+		GameObject cameraObj = new GameObject("Temp");
+		cameraObj.setPosition(this.getCamPos());
+		bounds.setObject(cameraObj);
+		velocity = new float[3];
+		acceleration = new float[3];
 	}
 	
-	public Camera(float[] camPos, int[] screenDims) {
+	public Camera(float[] camPos, int[] screenDims, World world) {
+		System.exit(-22);
 		float[][] identMat = new float[][] {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
 		camMat = new FloatMatrix(identMat);
 		rotMat = new FloatMatrix(identMat);
 		transMat = new FloatMatrix(identMat);
 		rotations = new float[3];
 		this.screenDims = screenDims;
+		velocity = new float[3];
+		acceleration = new float[3];
+	}
+	
+	public void setWorld(World w) {
+		this.world = w;
 	}
 	
 	public float[] getCamPos() {
@@ -38,6 +56,32 @@ public class Camera {
 	private void recompose() {
 		camMat = rotMat.mmul(transMat);
 		//camMat = transMat.mmul(rotMat);
+	}
+	
+	public float[] getVelocity() {
+		return velocity;
+	}
+	public float[] getAcceleration() {
+		return acceleration;
+	}
+	public void setVelocity(float[] f) {
+		velocity = f;
+	}
+	public void setAcceleration(float[] f) {
+		acceleration = f;
+	}
+	public void updatePosition() {
+		velocity[0] += acceleration[0];
+		velocity[1] += acceleration[1];
+		velocity[2] += acceleration[2];
+		this.translate(velocity[0], velocity[1], velocity[2]);
+	}
+	
+	public void setPosition(float[] newPos) {
+		transMat.put(0,3,newPos[0]);
+		transMat.put(1,3,newPos[1]);
+		transMat.put(2,3,newPos[2]);
+		this.recompose();
 	}
 	
 	public void translate(float x, float y, float z) {
@@ -116,5 +160,20 @@ public class Camera {
 			}
 		}
 		return ret;
+	}
+	
+	public boolean touchingGround() {
+		Mesh groundBelow = world.generateChunk(world.seed, (int)(getCamPos()[0]), (int)(getCamPos()[2]), (int)bounds.getXWidth()*2, (int)bounds.getZLength()*2);
+		//System.out.println("Number of POLYS: " + groundBelow.getPolygons().size());
+		//System.exit(-1);
+		if (bounds.intersectsMesh(groundBelow)) {
+			//System.out.println("Ground mesh intersection detected");
+			return true;
+		}
+		if (-getCamPos()[1] < world.getHeight(getCamPos()[0], getCamPos()[2])) {
+			this.setPosition(new float[] {getCamPos()[0], -world.getHeight(getCamPos()[0], getCamPos()[2]),getCamPos()[2]});
+			return true;
+		}
+		return false;
 	}
 }
