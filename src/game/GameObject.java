@@ -14,12 +14,15 @@ public class GameObject {
 	Mesh mesh;
 	AABB bounds;
 	int tempVAO;
+	public float[] vertT;
 	
 	float[] velocity;
 	float[] acceleration;
 	public boolean falling = false;
+	public boolean gravDisabled;
 	
 	final static float[][] identMat = new float[][] {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
+	
 	
 	public GameObject(String name) {
 		this.name = name;
@@ -30,6 +33,7 @@ public class GameObject {
 		mesh = new Mesh();
 		velocity = new float[3];
 		acceleration = new float[3];
+		gravDisabled = false;
 	}
 	
 	public GameObject(String name, World world) {
@@ -42,6 +46,7 @@ public class GameObject {
 		mesh = new Mesh();
 		velocity = new float[3];
 		acceleration = new float[3];
+		gravDisabled = false;
 	}
 	
 	public GameObject(String name, World world, Mesh mesh) {
@@ -58,6 +63,7 @@ public class GameObject {
 		bounds = genBounds(mesh);
 		velocity = new float[3];
 		acceleration = new float[3];
+		gravDisabled = false;
 	}
 	
 	public GameObject(String name, World world, Mesh mesh, AABB boundingBox) {
@@ -75,6 +81,11 @@ public class GameObject {
 		this.translate(cent[0], cent[1], cent[2]);
 		velocity = new float[3];
 		acceleration = new float[3];
+		gravDisabled = false;
+	}
+	
+	public void disableGravity() {
+		gravDisabled = true;
 	}
 	
 	public float[] getVelocity() {

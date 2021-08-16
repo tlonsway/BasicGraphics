@@ -39,6 +39,9 @@ public class Graphics {
 	
 	static final float[] iMatFlat = new float[] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
 	
+	long timeTemp;
+	long fpsTime;
+	
 	public Graphics() {
 		screenDims = new int[] {1920,1080};
 		String windowTitle = "Game Window";
@@ -47,6 +50,7 @@ public class Graphics {
 		mouseThread = new MouseManager();
 		gravity = new GravityThread();
 		objects = new ArrayList<GameObject>();
+		fpsTime = System.currentTimeMillis();
 		init();
 	}
 	
@@ -91,10 +95,22 @@ public class Graphics {
 		//loop();
 	}
 	
+	private void startTimer() {
+		timeTemp = System.nanoTime();
+	}
+	
+	private void endTimer(String title) {
+		System.out.println("TIME [" + title + "]: " + (System.nanoTime()-timeTemp));
+		startTimer();
+	}
+	
 	public void loop() {
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
 		while(!glfwWindowShouldClose(window)) {
+			updateFPS();
+			
+			//startTimer();
 			if (vertices == null || indices == null || numElements == 0) {
 				try {
 					Thread.sleep(50);
@@ -109,20 +125,36 @@ public class Graphics {
 			int modelMatLoc = glGetUniformLocation(shaderProgram,"model");
 			glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
 			
+			//endTimer("LoopInit");
+			
 			glBindVertexArray(VAO);
 			glDrawArrays(GL_TRIANGLES,0,numElements);
 			
+			//endTimer("Draw Ground Mesh");
+			
+			int objID = 0;
 			for(GameObject go : objects) {
+				//startTimer();
+				//System.out.println("Rendering Object ID " + objID);
 				modelMatLoc = glGetUniformLocation(shaderProgram,"model");
 				glUniformMatrix4fv(modelMatLoc, false, go.getModelMatFlat());
+				//endTimer("Uniform Updating");
 				//System.out.println("Object Model Matrix: " );
 				//for(float f : go.getModelMatFlat()) {
 				//	System.out.print(f + " ");
 				//}
 				//System.out.println();
 				glBindVertexArray(go.getVAO());
-				glDrawArrays(GL_TRIANGLES,0,go.getVertices().length);
+				//endTimer("Bind VAO");
+				//int numE = go.getVertices().length;
+				int numE = go.vertT.length;
+				//endTimer("Get Arr Len");
+				glDrawArrays(GL_TRIANGLES,0,numE);
+				//endTimer("Draw Call");
+				objID++;
 			}
+			
+			//endTimer("Draw GameObjects");
 			
 			
 			//glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,0);
@@ -130,7 +162,6 @@ public class Graphics {
 			
 			glfwSwapBuffers(window);
 			glfwPollEvents();
-			
 			//apply camera/game updates
 			
 			float[] camPos = cam.getCamPos();
@@ -141,9 +172,21 @@ public class Graphics {
 			cam.rotate('x', rotateT[1], false);
 			cam.rotate('y', rotateT[0], true);
 			this.updateTransformMatrix();
+			
+			//endTimer("Camera Transforms");
+			
 			gravity.setGameObjects(objects);
 			gravity.run();
+			
+			//endTimer("Gravity Thread");
 		}
+	}
+	
+	private void updateFPS() {
+		long frameTime = System.currentTimeMillis()-fpsTime;
+		double fps = 1000.0/frameTime;
+		glfwSetWindowTitle(window, ""+fps);
+		fpsTime = System.currentTimeMillis();
 	}
 	
 	private void updateTransformMatrix() {
@@ -180,6 +223,7 @@ public class Graphics {
 	
 	private void processGameObject(GameObject go) {
 		float[] tempVert = go.getVertices();
+		go.vertT = tempVert;
 		int[] tempInd = go.getIndices();
 		int VBOt,VAOt,EBOt;
 		VBOt = glGenBuffers();

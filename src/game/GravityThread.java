@@ -47,21 +47,23 @@ public class GravityThread {
 		
 		for(GameObject go : gameObjects) {
 			go.updatePosition();
-			if (!go.touchingGround()) {
-				if (!go.falling) {
-					go.falling = true;
-					float[] objAcc = go.getAcceleration();
-					go.setAcceleration(new float[] {objAcc[0],objAcc[1]+gravAcc,objAcc[2]});
-				}
-				//go.translate(0f,-gravAmt,0f);
-			} else {
-				//go.updatePosition();
-				if (go.falling) {
-					go.falling = false;
-					float[] objAcc = go.getAcceleration();
-					float[] objVec = go.getVelocity();
-					go.setVelocity(new float[] {objVec[0],0f,objVec[2]});
-					go.setAcceleration(new float[] {objAcc[0],0f,objAcc[2]});
+			if (!go.gravDisabled) {
+				if (!go.touchingGround()) {
+					if (!go.falling) {
+						go.falling = true;
+						float[] objAcc = go.getAcceleration();
+						go.setAcceleration(new float[] {objAcc[0],objAcc[1]+gravAcc,objAcc[2]});
+					}
+					//go.translate(0f,-gravAmt,0f);
+				} else {
+					//go.updatePosition();
+					if (go.falling) {
+						go.falling = false;
+						float[] objAcc = go.getAcceleration();
+						float[] objVec = go.getVelocity();
+						go.setVelocity(new float[] {objVec[0],0f,objVec[2]});
+						go.setAcceleration(new float[] {objAcc[0],0f,objAcc[2]});
+					}
 				}
 			}
 			
