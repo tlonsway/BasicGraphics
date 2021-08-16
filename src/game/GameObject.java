@@ -224,6 +224,7 @@ public class GameObject {
 	
 	public void rotate(char dir, float degree, boolean flip) {
 		//flip will switch the side of matrix multiplication, needed for chaining 2-axis rotation without affecting 3rd axis
+		
 		modelRotMat = Operations.rotateMat(modelRotMat, dir, degree, flip);
 		int in = 0;
 		switch(dir) {
@@ -272,7 +273,7 @@ public class GameObject {
 	public boolean touchingGround() {
 		//System.out.println("Object bound minimum at " + bounds.minY);
 		//System.out.println("Object XZ: (" + getPosition()[0] + "," + getPosition()[2] + ")");
-		int startPosX = (int)(getPosition()[0]);
+		/*int startPosX = (int)(getPosition()[0]);
 		int startPosZ = (int)(getPosition()[2]);
 		int widthX = (int)(bounds.getXWidth()+0.51f);
 		int lengthZ = (int)(bounds.getZLength()+0.51f);
@@ -287,11 +288,11 @@ public class GameObject {
 		startPosZ -= 4*(int)((float)lengthZ);
 		
 		widthX *= 4;
-		lengthZ *= 4;
+		lengthZ *= 4;*/
 		
 		//System.out.println("startPosX: " + startPosX + ", startPosZ: " + startPosZ + ", widthX: " + widthX + ", lengthZ: " + lengthZ);
 		
-		Mesh groundBelow = world.generateChunk(world.seed, (int)(getPosition()[0]), (int)(getPosition()[2]), (int)bounds.getZLength()*2, (int)bounds.getZLength()*2);
+		Mesh groundBelow = world.generateChunk(world.seed, (int)(getPosition()[0]), (int)(getPosition()[2]), (int)bounds.getZLength(), (int)bounds.getZLength());
 		//Mesh groundBelow = world.generateChunk(world.seed, startPosX, startPosZ, widthX, lengthZ);
 		//System.out.println("Number of polygons in mesh: " + groundBelow.getPolygons().size());
 		if (bounds.intersectsMesh(groundBelow)) {
@@ -306,7 +307,8 @@ public class GameObject {
 	}
 	
 	private void recompose() {
-		modelMat = modelRotMat.mmul(modelTransMat);
+		//modelMat = modelRotMat.mmul(modelTransMat);
+		modelMat = modelTransMat.mmul(modelRotMat);
 	}
 	
 }

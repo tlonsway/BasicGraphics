@@ -74,6 +74,14 @@ public class Graphics {
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
 				glfwSetWindowShouldClose(window, true);
+			if ( key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+				cam.jump();
+			}
+			if (key == GLFW_KEY_0 && action == GLFW_PRESS) {
+				for(GameObject go : objects) {
+					go.rotate('y', (float)(Math.PI/8), false);
+				}
+			}
 			keyboardThread.keyEvent(key, action);
 		});
 		glfwSetCursorPosCallback(window, (window, xpos, ypos) -> {
