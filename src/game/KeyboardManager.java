@@ -69,25 +69,26 @@ public class KeyboardManager {
 	}
 	
 	public float[] getTranslate() {
+		float movespeed = 0.1f;
 		float xTr,yTr,zTr;
 		xTr=yTr=zTr=0;
 		if (wDown) {
-			zTr+=.01f;
+			zTr+=movespeed;
 		}
 		if (aDown) {
-			xTr+=.01f;
+			xTr+=movespeed;
 		}
 		if (sDown) {
-			zTr-=.01f;
+			zTr-=movespeed;
 		}
 		if (dDown) {
-			xTr-=.01f;
+			xTr-=movespeed;
 		}
 		if (spaceDown) {
-			yTr-=.01f;
+			yTr-=movespeed;
 		}
 		if (ctrlDown) {
-			yTr+=.01f;
+			yTr+=movespeed;
 		}
 		return new float[] {xTr,yTr,zTr};
 	}

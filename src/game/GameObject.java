@@ -1,8 +1,11 @@
 package game;
 
 import org.jblas.*;
+import java.util.*;
 
-public abstract class GameObject {
+public class GameObject {
+	
+	String name;
 	FloatMatrix modelMat;
 	FloatMatrix modelRotMat;
 	FloatMatrix modelTransMat;
@@ -10,28 +13,56 @@ public abstract class GameObject {
 	World world;
 	Mesh mesh;
 	AABB bounds;
+	int tempVAO;
+	
+	float[] velocity;
+	float[] acceleration;
+	public boolean falling = false;
 	
 	final static float[][] identMat = new float[][] {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
 	
-	public GameObject(World world) {
+	public GameObject(String name) {
+		this.name = name;
+		modelMat = new FloatMatrix(identMat);
+		modelRotMat = new FloatMatrix(identMat);
+		modelTransMat = new FloatMatrix(identMat);
+		rotations = new float[3];
+		mesh = new Mesh();
+		velocity = new float[3];
+		acceleration = new float[3];
+	}
+	
+	public GameObject(String name, World world) {
+		this.name = name;
 		modelMat = new FloatMatrix(identMat);
 		modelRotMat = new FloatMatrix(identMat);
 		modelTransMat = new FloatMatrix(identMat);
 		rotations = new float[3];
 		this.world = world;
 		mesh = new Mesh();
+		velocity = new float[3];
+		acceleration = new float[3];
 	}
 	
-	public GameObject(World world, Mesh mesh) {
+	public GameObject(String name, World world, Mesh mesh) {
+		this.name = name;
 		modelMat = new FloatMatrix(identMat);
 		modelRotMat = new FloatMatrix(identMat);
 		modelTransMat = new FloatMatrix(identMat);
 		rotations = new float[3];
 		this.world = world;
 		this.mesh = mesh;
+		float[] cent = findCenter(mesh);
+		mesh.translate(-cent[0], -cent[1], -cent[2]);
+		this.translate(cent[0], cent[1], cent[2]);
+		bounds = genBounds(mesh);
+		velocity = new float[3];
+		acceleration = new float[3];
 	}
 	
-	public GameObject(World world, Mesh mesh, AABB boundingBox) {
+	public GameObject(String name, World world, Mesh mesh, AABB boundingBox) {
+		System.exit(-21);
+		this.name = name;
 		modelMat = new FloatMatrix(identMat);
 		modelRotMat = new FloatMatrix(identMat);
 		modelTransMat = new FloatMatrix(identMat);
@@ -39,10 +70,97 @@ public abstract class GameObject {
 		this.world = world;
 		this.mesh = mesh;
 		this.bounds = boundingBox;
+		float[] cent = findCenter(mesh);
+		mesh.translate(-cent[0], -cent[1], -cent[2]);
+		this.translate(cent[0], cent[1], cent[2]);
+		velocity = new float[3];
+		acceleration = new float[3];
+	}
+	
+	public float[] getVelocity() {
+		return velocity;
+	}
+	
+	public float[] getAcceleration() {
+		return acceleration;
+	}
+	
+	public void setVelocity(float[] f) {
+		velocity = f;
+	}
+	
+	public void setAcceleration(float[] f) {
+		acceleration = f;
+	}
+	
+	private AABB genBounds(Mesh m) {
+		ArrayList<Polygon> polys = m.getPolygons();
+		float[] pMinT = new float[] {polys.get(0).getPoints()[0].get(0),polys.get(0).getPoints()[0].get(1),polys.get(0).getPoints()[0].get(2)};
+		float[] pMaxT = new float[] {polys.get(0).getPoints()[0].get(0),polys.get(0).getPoints()[0].get(1),polys.get(0).getPoints()[0].get(2)};
+		for(Polygon poly : polys) {
+			FloatMatrix[] points = poly.getPoints();
+			for(FloatMatrix point : points) {
+				float pXT = point.get(0);
+				float pYT = point.get(1);
+				float pZT = point.get(2);
+				if(pXT < pMinT[0]) {
+					pMinT[0] = pXT;
+				}
+				if(pXT > pMaxT[0]) {
+					pMaxT[0] = pXT;
+				}
+				
+				if(pYT < pMinT[1]) {
+					pMinT[1] = pYT;
+				}
+				if(pYT > pMaxT[1]) {
+					pMaxT[1] = pYT;
+				}
+				
+				if(pZT < pMinT[2]) {
+					pMinT[2] = pZT;
+				}
+				if(pZT > pMaxT[2]) {
+					pMaxT[2] = pZT;
+				}
+			}
+		}
+		return new AABB(pMinT,pMaxT,this);
+	}
+	
+	private float[] findCenter(Mesh m) {
+		ArrayList<Polygon> meshPolys = m.getPolygons();
+		double xTot,yTot,zTot;
+		xTot=yTot=zTot=0;
+		for(Polygon p :meshPolys) {
+			FloatMatrix[] points = p.getPoints();
+			for(FloatMatrix tempPoint : points) {
+				xTot += tempPoint.get(0);
+				yTot += tempPoint.get(1);
+				zTot += tempPoint.get(2);
+			}
+		}
+		float xAve = (float)(xTot/(3*meshPolys.size()));
+		float yAve = (float)(yTot/(3*meshPolys.size()));
+		float zAve = (float)(zTot/(3*meshPolys.size()));
+		return new float[] {xAve,yAve,zAve};
+	}
+	
+	
+	public void setVAO(int vao) {
+		this.tempVAO = vao;
+	}
+	
+	public int getVAO() {
+		return tempVAO;
 	}
 	
 	public void setMesh(Mesh mesh) {
 		this.mesh = mesh;
+		float[] cent = findCenter(mesh);
+		mesh.translate(-cent[0], -cent[1], -cent[2]);
+		this.translate(cent[0], cent[1], cent[2]);
+		bounds = genBounds(mesh);
 	}
 	
 	public float[] getPosition() {
@@ -63,6 +181,18 @@ public abstract class GameObject {
 	
 	public FloatMatrix getModelTransMat() {
 		return modelTransMat;
+	}
+	
+	public float[] getModelMatFlat() {
+		float[] ret = new float[16];
+		int t = 0;
+		for(int r=0;r<4;r++) {
+			for(int c=0;c<4;c++) {
+				ret[t] = modelMat.get(c,r);
+				t++;
+			}
+		}
+		return ret;
 	}
 	
 	public void setPosition(float[] newPos) {
@@ -105,11 +235,74 @@ public abstract class GameObject {
 		this.recompose();
 	}
 	
+	public float[] getVertices() {
+		ArrayList<Polygon> polys = mesh.getPolygons();
+		float[] vertices = new float[polys.size()*18];
+		int vertIn = 0;
+		for(Polygon p : polys) {
+			FloatMatrix[] polyPoints = p.getPoints();
+			for(int pi2=0;pi2<3;pi2++) {
+				for(int pi=0;pi<3;pi++) {
+					vertices[vertIn] = polyPoints[pi2].get(pi);
+					vertIn++;
+				}
+				float[] colT = p.fColor;
+				vertices[vertIn] = colT[0];
+				vertices[vertIn+1] = colT[1];
+				vertices[vertIn+2] = colT[2];
+				vertIn+=3;
+			}
+		}
+		return vertices;
+	}
+	
+	public int[] getIndices() {
+		ArrayList<Polygon> polys = mesh.getPolygons();
+		int[] indices = new int[polys.size()*18];
+		return indices;
+	}
+	
+	public void updatePosition() {
+		velocity[0] += acceleration[0];
+		velocity[1] += acceleration[1];
+		velocity[2] += acceleration[2];
+		this.translate(velocity[0], velocity[1], velocity[2]);
+	}
+	
 	public boolean touchingGround() {
-		if (bounds.minY-.05f <= world.getHeight(getPosition()[0],getPosition()[2])) {
+		//System.out.println("Object bound minimum at " + bounds.minY);
+		//System.out.println("Object XZ: (" + getPosition()[0] + "," + getPosition()[2] + ")");
+		int startPosX = (int)(getPosition()[0]);
+		int startPosZ = (int)(getPosition()[2]);
+		int widthX = (int)(bounds.getXWidth()+0.51f);
+		int lengthZ = (int)(bounds.getZLength()+0.51f);
+		
+		if (widthX == 0) {
+			widthX = 3;
+		}
+		if (lengthZ == 0) {
+			lengthZ = 3;
+		}
+		startPosX -= 4*(int)((float)widthX);
+		startPosZ -= 4*(int)((float)lengthZ);
+		
+		widthX *= 4;
+		lengthZ *= 4;
+		
+		//System.out.println("startPosX: " + startPosX + ", startPosZ: " + startPosZ + ", widthX: " + widthX + ", lengthZ: " + lengthZ);
+		
+		Mesh groundBelow = world.generateChunk(world.seed, (int)(getPosition()[0]), (int)(getPosition()[2]), (int)bounds.getZLength()*2, (int)bounds.getZLength()*2);
+		//Mesh groundBelow = world.generateChunk(world.seed, startPosX, startPosZ, widthX, lengthZ);
+		//System.out.println("Number of polygons in mesh: " + groundBelow.getPolygons().size());
+		if (bounds.intersectsMesh(groundBelow)) {
 			return true;
 		}
 		return false;
+		/*
+		if ((getPosition()[1]+bounds.minY) <= world.getHeight(getPosition()[0],getPosition()[2])) {
+			return true;
+		}e
+		return false;*/
 	}
 	
 	private void recompose() {
