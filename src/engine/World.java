@@ -229,10 +229,7 @@ public class World {
 				}
 				pts = shiftPoint(pts, p);
 				poly = new Polygon(pts[0], pts[1], pts[2]);
-				poly.setFColor(new float[] {0, (float)(getGreenColor(p[1])), 0} );
-				if(up) {
-					poly.setFColor(new float[] {0, 0, 1f});
-				}
+				poly.setFColor(new float[] {0, (float)(getGreenColor(p[1])), 0});
 				map.addToMesh(poly);
 				if(up) {
 					x++;

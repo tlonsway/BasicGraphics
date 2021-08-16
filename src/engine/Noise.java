@@ -40,6 +40,12 @@ public static float genfloat(float seed, float min, float max) {
 	num = num + min;
 	return num;
 }
+public static int genInt(float seed,  int min, int max) {
+	float num = Math.abs((float)noise(seed/20f+0.3f));
+	num = num * (Math.abs(max)+Math.abs(min));
+	num = num + min;
+	return (int)num;
+}
 private static double lerp(double t, double a, double b) {
    return a + t * (b - a);
 }
