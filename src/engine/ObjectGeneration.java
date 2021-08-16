@@ -1,31 +1,42 @@
 package engine;
 
+import org.jblas.*;
 public class ObjectGeneration {
 	public static Mesh generateTree(int seed, int resolution) {
 		Noise noise = new Noise();
-		Mesh tree = new Mesh();
-		float trunkRadius = (float)(Math.abs(noise.noise(seed/10.0)+0.3)*2.5);
-		float trunkHeight = (float)(Math.abs(noise.noise(seed/10.0+0.3f)+0.5)*9);
-		float branchLength = (float)noise.noise(seed/10.0+0.6f);
+		Mesh tree;
+		float trunkRadius = (float)(Math.abs(noise.noise(seed/10.0)+0.3)*2);
+		float trunkHeight = (float)(Math.abs(noise.noise(seed/10.0+0.3f)*5+13));
+		float branchLength = (float)((Math.abs(noise.noise(seed/10.0+0.6f))+0.3)*4);
+		float branchAngle = (float)(Math.abs(noise.noise(seed/10.0+0.6f))+0.3); 
 		int numBranches = (int)((noise.noise(seed/10.0+0.9f)+1)*4)+2;
-		tree.addMesh(generateCylinder(trunkRadius, trunkHeight, resolution));
-		
-		System.out.println("Created a tree with "+tree.getPolygons().size()+" polygons a height of: "+trunkHeight+" and a radius of: "+trunkRadius);
+		tree = generateBranch(3, trunkHeight, trunkRadius, resolution, 6, 0.8f, new float[] {0, 0, 0}, new float[] {0,trunkHeight, 0});
+		//tree.addMesh(generateCylinder(trunkRadius, trunkHeight, resolution));
+		//System.out.println("Created a tree with "+tree.getPolygons().size()+" polygons a height of: "+trunkHeight+" a radius of: "+trunkRadius+" and "+numBranches+" branches");
 		return tree;
 	}
-	private Mesh generateBranch(int level, float bl, float bw, int resolution, int numBranches, float[] vector, float[] endPoint) {
+	private static Mesh generateBranch(int level, float bl, float bw, int resolution, int numBranches, float branchAngle, float[] rotations, float[] endPoint) {
 		Mesh branch = generateCylinder(bw, bl, resolution);
-		float xRot = (float)Math.acos(Math.sqrt(vector[0]/(Math.pow(vector[0],2)+Math.pow(vector[1]-endPoint[1], 2))));
-		float yRot = (float)Math.acos(Math.sqrt(vector[0]/(Math.pow(vector[0],2)+Math.pow(vector[2]-endPoint[2], 2))));
-		float zRot = Math.acos();
+		branch.translate(endPoint[0], endPoint[1], endPoint[2]);
+		FloatMatrix nextEndPoint = new FloatMatrix(new float[] {0, bl, 0});
+		branch.rotate(endPoint, 'x', rotations[0]);
+		nextEndPoint = game.Operations.rotatePoint(nextEndPoint, 'x', rotations[0]);
+		branch.rotate(endPoint, 'y', rotations[1]);
+		nextEndPoint = game.Operations.rotatePoint(nextEndPoint, 'y', rotations[1]);
+		branch.rotate(endPoint, 'z', rotations[2]);
+		nextEndPoint = game.Operations.rotatePoint(nextEndPoint, 'z', rotations[2]);
+		float[] nep = new float[] {endPoint[0]+nextEndPoint.get(0), endPoint[1]+nextEndPoint.get(1), endPoint[2]+nextEndPoint.get(2)};
 		if(level != 0) {
 			if(numBranches != 2) {
 				numBranches--;
 			}
+			float angle = (float)((Math.PI*2)/numBranches);
 			for(int i = 0; i < numBranches; i++) {
-				Mesh b = generateBranch(level-1, bl*0.8f, bw*0.75f, resolution, numBranches, );
+				//nextVector = game.Operations.rotatePoint(nextVector, 'y', 0.8f);
+				Mesh b = generateBranch(level-1, bl*0.8f, bw*0.75f, resolution, numBranches, branchAngle*0.9f,new float[] {rotations[0]+0.3f, (angle*i), 0}, nep );
 				branch.addMesh(b);
 			}
+			
 		}	
 		return branch;
 	}
