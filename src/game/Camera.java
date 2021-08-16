@@ -15,6 +15,7 @@ public class Camera {
 	float[] velocity;
 	float[] acceleration;
 	public boolean falling = false;
+	public boolean jumping = false;
 	
 	public Camera(int[] screenDims) {
 		float[][] identMat = new float[][] {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
@@ -24,9 +25,10 @@ public class Camera {
 		rotations = new float[3];
 		this.screenDims = screenDims;
 		bounds = new AABB(new float[] {-1.0f,-2.0f,-1.0f},new float[] {1.0f,1.0f,1.0f});
-		GameObject cameraObj = new GameObject("Temp");
-		cameraObj.setPosition(this.getCamPos());
-		bounds.setObject(cameraObj);
+		//GameObject cameraObj = new GameObject("Temp");
+		//cameraObj.setPosition(this.getCamPos());
+		//bounds.setObject(cameraObj);
+		bounds.setCamera(this);
 		velocity = new float[3];
 		acceleration = new float[3];
 	}
@@ -166,14 +168,54 @@ public class Camera {
 		Mesh groundBelow = world.generateChunk(world.seed, (int)(getCamPos()[0]), (int)(getCamPos()[2]), (int)bounds.getXWidth()*2, (int)bounds.getZLength()*2);
 		//System.out.println("Number of POLYS: " + groundBelow.getPolygons().size());
 		//System.exit(-1);
+		//GameObject cameraObj = new GameObject("Temp");
+		
+		//System.out.println("Cam Position:");
+		//Operations.printMat(this.getTransMat());
+		
+		//System.out.println("Ground Height")
+		
+		//cameraObj.setPosition(this.getCamPos());
+		//bounds.setObject(cameraObj);
 		if (bounds.intersectsMesh(groundBelow)) {
 			//System.out.println("Ground mesh intersection detected");
 			return true;
 		}
-		if (-getCamPos()[1] < world.getHeight(getCamPos()[0], getCamPos()[2])) {
-			this.setPosition(new float[] {getCamPos()[0], -world.getHeight(getCamPos()[0], getCamPos()[2]),getCamPos()[2]});
+		float disToGround = (world.getHeight(-getCamPos()[0], -getCamPos()[2])) - (-(getCamPos()[1]+bounds.getYHeight()));
+		
+		//System.out.println("Dist To Ground: " + disToGround);
+		
+		//System.out.println("JUMPING: " + jumping + " FALLING: " + falling + " DISTTOGROUND: " + disToGround);
+		
+		if (disToGround > 0) {
+		//if (-(getCamPos()[1]+bounds.getYHeight()) < world.getHeight(-getCamPos()[0], -getCamPos()[2])) {
+			//this.setPosition(new float[] {getCamPos()[0], -(world.getHeight(-getCamPos()[0], -getCamPos()[2])+bounds.getYHeight()),getCamPos()[2]});
+			snapToGround();
 			return true;
 		}
+		if (disToGround <= 0 && disToGround > -0.1 && !jumping) {
+			//this.setPosition(new float[] {getCamPos()[0], -(world.getHeight(-getCamPos()[0], -getCamPos()[2])+bounds.getYHeight()),getCamPos()[2]});
+			snapToGround();
+			return true;
+		}
+		if (disToGround < 0 && disToGround > -0.1 && jumping && !falling) {
+			//this.setPosition(new float[] {getCamPos()[0], -(world.getHeight(-getCamPos()[0], -getCamPos()[2])+bounds.getYHeight()),getCamPos()[2]});
+			//snapToGround();
+			return false;
+		}
+		
+		
 		return false;
+	}
+	
+	public void jump() {
+		if (touchingGround() && !jumping) {
+			setVelocity(new float[] {this.getVelocity()[0],this.getVelocity()[1]-0.3f,this.getVelocity()[2]});
+			jumping=true;
+		}
+	}
+	
+	private void snapToGround() {
+		this.setPosition(new float[] {getCamPos()[0], -(world.getHeight(-getCamPos()[0], -getCamPos()[2])+bounds.getYHeight()),getCamPos()[2]});
 	}
 }

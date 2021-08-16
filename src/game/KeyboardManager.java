@@ -1,14 +1,6 @@
 package game;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_CONTROL;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
-import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
 
 public class KeyboardManager {
@@ -54,22 +46,31 @@ public class KeyboardManager {
 		if (key==GLFW_KEY_D && action == GLFW_RELEASE) {
 			dDown=false;
 		}
-		if (key==GLFW_KEY_SPACE && action == GLFW_PRESS) {
-			spaceDown=true;
-		}
-		if (key==GLFW_KEY_SPACE && action == GLFW_RELEASE) {
-			spaceDown=false;
-		}
+		//if (key==GLFW_KEY_SPACE && action == GLFW_PRESS) {
+		//	spaceDown=true;
+		//}
+		//if (key==GLFW_KEY_SPACE && action == GLFW_RELEASE) {
+		//	spaceDown=false;
+		//}
 		if (key==GLFW_KEY_LEFT_CONTROL && action == GLFW_PRESS) {
 			ctrlDown=true;
 		}
 		if (key==GLFW_KEY_LEFT_CONTROL && action == GLFW_RELEASE) {
 			ctrlDown=false;
 		}
+		if (key==GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS) {
+			shiftDown=true;
+		}
+		if (key==GLFW_KEY_LEFT_SHIFT && action == GLFW_RELEASE) {
+			shiftDown=false;
+		}
 	}
 	
 	public float[] getTranslate() {
 		float movespeed = 0.1f;
+		if (shiftDown) {
+			movespeed *= 5;
+		}
 		float xTr,yTr,zTr;
 		xTr=yTr=zTr=0;
 		if (wDown) {

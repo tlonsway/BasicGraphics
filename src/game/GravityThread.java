@@ -5,7 +5,7 @@ import java.util.*;
 public class GravityThread {
 	ArrayList<GameObject> gameObjects;
 	Camera cam;
-	static final float gravAcc = -0.002f;
+	static final float gravAcc = -0.004f;
 	
 	
 	public GravityThread() {
@@ -33,6 +33,9 @@ public class GravityThread {
 				cam.setAcceleration(new float[] {camAcc[0],camAcc[1]-gravAcc,camAcc[2]});
 			}
 		} else {
+			if (cam.jumping) {
+				cam.jumping = false;
+			}
 			if (cam.falling) {
 				cam.falling = false;
 				float[] camAcc = cam.getAcceleration();
