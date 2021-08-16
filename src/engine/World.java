@@ -28,8 +28,8 @@ public class World {
 				for(int i = 0; i < numTrees; i++) {
 					float a = (float)(Math.random()*100);
 					float b = (float)(Math.random()*100);
-					Mesh tree = ObjectGeneration.generateTree(seed+(x*5)+z, 7);
-					tree.translate(a+x*width, getHeight(a+x*width,b+z*length)-15f, b+z*length);
+					Mesh tree = ObjectGeneration.generateTree(seed+(x*5)+z, 6);
+					tree.translate(a+x*width, getHeight(a+x*width,b+z*length), b+z*length);
 					terrain.addMesh(tree);
 				}
 			}
@@ -230,6 +230,9 @@ public class World {
 				pts = shiftPoint(pts, p);
 				poly = new Polygon(pts[0], pts[1], pts[2]);
 				poly.setFColor(new float[] {0, (float)(getGreenColor(p[1])), 0} );
+				if(up) {
+					poly.setFColor(new float[] {0, 0, 1f});
+				}
 				map.addToMesh(poly);
 				if(up) {
 					x++;

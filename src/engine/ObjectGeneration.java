@@ -3,16 +3,14 @@ package engine;
 import org.jblas.*;
 public class ObjectGeneration {
 	public static Mesh generateTree(int seed, int resolution) {
-		Noise noise = new Noise();
 		Mesh tree;
-		float trunkRadius = (float)(Math.abs(noise.noise(seed/10.0)+0.3)*2);
-		float trunkHeight = (float)(Math.abs(noise.noise(seed/10.0+0.3f)*5+13));
-		float branchLength = (float)((Math.abs(noise.noise(seed/10.0+0.6f))+0.3)*4);
-		float branchAngle = (float)(Math.abs(noise.noise(seed/10.0+0.6f))+0.3); 
-		int numBranches = (int)((noise.noise(seed/10.0+0.9f)+1)*4)+2;
-		tree = generateBranch(3, trunkHeight, trunkRadius, resolution, 6, 0.8f, new float[] {0, 0, 0}, new float[] {0,trunkHeight, 0});
+		float trunkRadius = Noise.genfloat(seed, 0.5f, 2.0f);
+		float trunkHeight = Noise.genfloat(seed, 10f, 20f);
+		System.out.println("trunkRadius: "+trunkRadius+" trunkHeight: "+ trunkHeight);
+		tree = generateBranch(3, trunkHeight, trunkRadius, resolution, 6, 1f, new float[] {0, 0, 0}, new float[] {0,trunkHeight, 0});
 		//tree.addMesh(generateCylinder(trunkRadius, trunkHeight, resolution));
 		//System.out.println("Created a tree with "+tree.getPolygons().size()+" polygons a height of: "+trunkHeight+" a radius of: "+trunkRadius+" and "+numBranches+" branches");
+		tree.translate(0, -trunkHeight-0.01f, 0);
 		return tree;
 	}
 	private static Mesh generateBranch(int level, float bl, float bw, int resolution, int numBranches, float branchAngle, float[] rotations, float[] endPoint) {
@@ -26,6 +24,11 @@ public class ObjectGeneration {
 		branch.rotate(endPoint, 'z', rotations[2]);
 		nextEndPoint = game.Operations.rotatePoint(nextEndPoint, 'z', rotations[2]);
 		float[] nep = new float[] {endPoint[0]+nextEndPoint.get(0), endPoint[1]+nextEndPoint.get(1), endPoint[2]+nextEndPoint.get(2)};
+		if(level < 2) {
+			Mesh leaves = generateLeaves();
+			leaves.translate(nep[0], nep[1], nep[2]);
+			branch.addMesh(leaves);
+		}
 		if(level != 0) {
 			if(numBranches != 2) {
 				numBranches--;
@@ -38,7 +41,21 @@ public class ObjectGeneration {
 			}
 			
 		}	
+			
 		return branch;
+	}
+	public static Mesh generateLeaves() {
+		Mesh leaves = new Mesh();
+		FloatMatrix p1 = new FloatMatrix(new float[] {-1.0f, 0, -1.0f});
+		FloatMatrix p2 = new FloatMatrix(new float[] {-1.0f, 0, 1.0f});
+		for(int i = 0; i < 4; i++) {
+			Polygon p = new Polygon(new float[] {p1.get(0), p1.get(1), p1.get(2)}, new float[] {p2.get(0), p2.get(1), p2.get(2)}, new float[] {0, 0, 0});
+			p.setFColor(new float[] {1, 0, 0});
+			leaves.addToMesh(p);
+			p1 = game.Operations.rotatePoint(p1, 'z', (float)(Math.PI/2.0f));
+			p2 = game.Operations.rotatePoint(p2, 'z', (float)(Math.PI/2.0f));
+		}
+		return leaves;
 	}
 	private static Mesh generateCylinder(float radius, float height, int resolution) {
 		Mesh cyl = new Mesh();
@@ -79,10 +96,11 @@ public class ObjectGeneration {
 			
 			Polygon side = new Polygon(pts[0], pts[1], pts[2]);
 			if(down) {
-				side.setFColor(new float[] {0.4375f, 0.25f, 0.015625f});
+				side.setFColor(new float[] {0.34f, 0.21f,0});
 			}
 			else {
 				side.setFColor(new float[] {0.34f, 0.21f,0});
+				//side.setFColor(new float[] {0,0,1});
 			}
 			down = !down;
 			cyl.addToMesh(side);

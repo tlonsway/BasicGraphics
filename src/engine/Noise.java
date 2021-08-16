@@ -34,6 +34,12 @@ static {
    init();
 }
 
+public static float genfloat(float seed, float min, float max) {
+	float num = Math.abs((float)noise(seed/20f+0.3f));
+	num = num * (Math.abs(max)+Math.abs(min));
+	num = num + min;
+	return num;
+}
 private static double lerp(double t, double a, double b) {
    return a + t * (b - a);
 }
