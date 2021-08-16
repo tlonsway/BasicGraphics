@@ -20,7 +20,7 @@ public class GraphicsTest {
 		g.updateData(vert, ind);
 		
 		//for(int i=0;i<100;i++) {
-		for(int r=0;r<40;r++) {
+		for(int r=0;r<10;r++) {
 			for(int c=0;c<10;c++) {
 				//Polygon p1 = new Polygon(new float[] {5+(2*i),7,5+(2*i)},new float[] {5+(2*i),9,5+(2*i)},new float[] {5+(2*i),9,7+(2*i)});
 				//Polygon p1 = new Polygon(new float[] {5+(4*r),7,5+(4*c)},new float[] {5+(4*r),9,5+(4*c)},new float[] {5+(4*r),9,7+(4*c)});
@@ -30,8 +30,8 @@ public class GraphicsTest {
 				//Mesh m = new Mesh(meshPolys);
 				Mesh m = ObjectGeneration.generateTree((int)System.currentTimeMillis(), 6);
 				GameObject go1 = new GameObject("Tree",world,m);
-				go1.disableGravity();
-				go1.translate(0f, 150f, 0f);
+				//go1.disableGravity();
+				go1.translate(20f+(r*50), 150f, 20f+(c*50));
 				g.addGameObject(go1);
 			}
 		}

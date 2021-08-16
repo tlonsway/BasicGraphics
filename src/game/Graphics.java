@@ -125,6 +125,9 @@ public class Graphics {
 			int modelMatLoc = glGetUniformLocation(shaderProgram,"model");
 			glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
 			
+			int transFloatLoc = glGetUniformLocation(shaderProgram,"transP");
+			glUniform1f(transFloatLoc, 1f);
+			
 			//endTimer("LoopInit");
 			
 			glBindVertexArray(VAO);
@@ -133,7 +136,36 @@ public class Graphics {
 			//endTimer("Draw Ground Mesh");
 			
 			int objID = 0;
+			
+			boolean displayBounds = false;
 			for(GameObject go : objects) {
+				
+				if (displayBounds) {
+					modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+					glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
+					
+					
+					glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+					
+					int VBOt,VAOt;
+					VBOt = glGenBuffers();
+					VAOt = glGenVertexArrays();
+					glBindVertexArray(VAOt);
+					glBindBuffer(GL_ARRAY_BUFFER,VBOt);
+					float[] vert = go.getBounds().getVertices();
+					glBufferData(GL_ARRAY_BUFFER, vert, GL_STREAM_DRAW);
+					glVertexAttribPointer(0,3,GL_FLOAT,false,24,0l);
+					glEnableVertexAttribArray(0);
+					glVertexAttribPointer(1,3,GL_FLOAT,false,24,12l);
+					glEnableVertexAttribArray(1);
+					glBindBuffer(GL_ARRAY_BUFFER,0);
+					glDrawArrays(GL_TRIANGLES,0,vert.length);
+					
+					
+					glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+				}
+
+				
 				//startTimer();
 				//System.out.println("Rendering Object ID " + objID);
 				modelMatLoc = glGetUniformLocation(shaderProgram,"model");
@@ -152,6 +184,9 @@ public class Graphics {
 				glDrawArrays(GL_TRIANGLES,0,numE);
 				//endTimer("Draw Call");
 				objID++;
+				if (cam.bounds.intersectsAABB(go.getBounds())) {
+					System.out.println("CAMERA INTERSECTING OBJECT");
+				}
 			}
 			
 			//endTimer("Draw GameObjects");

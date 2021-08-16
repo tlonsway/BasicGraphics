@@ -1,5 +1,7 @@
 package game;
 
+import java.util.ArrayList;
+
 import org.jblas.*;
 
 public class AABB {
@@ -31,6 +33,47 @@ public class AABB {
 		this.cam = cam;
 	}
 	
+	public Mesh getBoxAsMesh() {
+		float[] tpos = new float[3];
+		if (cam != null) {
+			tpos = cam.getCamPos();
+			tpos = new float[] {-tpos[0],-tpos[1],-tpos[2]};
+			
+		} else if (object != null) {
+			tpos = object.getPosition();
+		}
+		float tx = tpos[0]; float ty = tpos[1]; float tz = tpos[2];
+		Mesh m = new Mesh();
+		Polygon p1 = new Polygon(new float[] {minX+tx,minY+ty,minZ+tz},new float[] {minX+tx,maxY+ty,minZ+tz},new float[] {maxX+tx,maxY+ty,maxZ+tz});
+		p1.setFColor(new float[] {0f,0f,1.0f});
+		m.addToMesh(p1);
+		Polygon p2 = new Polygon(new float[] {minX+tx,minY+ty,minZ+tz},new float[] {maxX+tx,minY+ty,maxZ+tz},new float[] {maxX+tx,maxY+ty,maxZ+tz});
+		p2.setFColor(new float[] {0f,0f,1.0f});
+		m.addToMesh(p2);
+		return m;
+	}
+	
+	public float[] getVertices() {
+		Mesh mesh = getBoxAsMesh();
+		ArrayList<Polygon> polys = mesh.getPolygons();
+		float[] vertices = new float[polys.size()*18];
+		int vertIn = 0;
+		for(Polygon p : polys) {
+			FloatMatrix[] polyPoints = p.getPoints();
+			for(int pi2=0;pi2<3;pi2++) {
+				for(int pi=0;pi<3;pi++) {
+					vertices[vertIn] = polyPoints[pi2].get(pi);
+					vertIn++;
+				}
+				float[] colT = p.fColor;
+				vertices[vertIn] = colT[0];
+				vertices[vertIn+1] = colT[1];
+				vertices[vertIn+2] = colT[2];
+				vertIn+=3;
+			}
+		}
+		return vertices;
+	}
 	
 	
 	public boolean containsPoint(float[] point) {

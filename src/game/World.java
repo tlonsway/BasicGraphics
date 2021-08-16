@@ -25,14 +25,14 @@ public class World {
 			for(int z = 0; z < 5; z++) {
 				Mesh chunk = generateChunk(seed, x*width, z*length, width, length);
 				terrain.addMesh(chunk);
-				int numTrees = (int)(Math.random()*10);
+				/*int numTrees = (int)(Math.random()*10);
 				for(int i = 0; i < numTrees; i++) {
 					float a = (float)(Math.random()*100);
 					float b = (float)(Math.random()*100);
 					Mesh tree = ObjectGeneration.generateTree(seed+(x*5)+z, 6);
 					tree.translate(a+x*width, getHeight(a+x*width,b+z*length), b+z*length);
 					terrain.addMesh(tree);
-				}
+				}*/
 			}
 		}
 		

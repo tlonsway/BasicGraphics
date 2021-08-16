@@ -104,6 +104,19 @@ public class GameObject {
 		acceleration = f;
 	}
 	
+	long timerVal;
+	
+	private void startTimer() {
+		timerVal = System.nanoTime();
+	}
+	
+	private void endTimer(String title) {
+		System.out.println("TIME [" + title + "]: " + (System.nanoTime()-timerVal));
+		startTimer();
+	}
+	
+	
+	
 	private AABB genBounds(Mesh m) {
 		ArrayList<Polygon> polys = m.getPolygons();
 		float[] pMinT = new float[] {polys.get(0).getPoints()[0].get(0),polys.get(0).getPoints()[0].get(1),polys.get(0).getPoints()[0].get(2)};
@@ -274,6 +287,10 @@ public class GameObject {
 		return indices;
 	}
 	
+	public AABB getBounds() {
+		return bounds;
+	}
+	
 	public void updatePosition() {
 		velocity[0] += acceleration[0];
 		velocity[1] += acceleration[1];
@@ -303,12 +320,16 @@ public class GameObject {
 		
 		//System.out.println("startPosX: " + startPosX + ", startPosZ: " + startPosZ + ", widthX: " + widthX + ", lengthZ: " + lengthZ);
 		
+		//startTimer();
 		Mesh groundBelow = world.generateChunk(world.seed, (int)(getPosition()[0]), (int)(getPosition()[2]), (int)bounds.getZLength(), (int)bounds.getZLength());
+		//endTimer("Getting ground below");
 		//Mesh groundBelow = world.generateChunk(world.seed, startPosX, startPosZ, widthX, lengthZ);
 		//System.out.println("Number of polygons in mesh: " + groundBelow.getPolygons().size());
 		if (bounds.intersectsMesh(groundBelow)) {
+			//endTimer("Getting intersection");
 			return true;
 		}
+		//endTimer("Getting intersection");
 		return false;
 		/*
 		if ((getPosition()[1]+bounds.minY) <= world.getHeight(getPosition()[0],getPosition()[2])) {
