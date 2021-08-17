@@ -35,4 +35,11 @@ public class Mesh {
 			p.rotate(rotationPoint, axis, angle);
 		}
 	}
+	public Mesh clone() {
+		Mesh newMesh = new Mesh();
+		for(Polygon p: polygons) {
+			newMesh.addToMesh(p.clone());
+		}
+		return newMesh;
+	}
 }

@@ -6,8 +6,8 @@ import org.jblas.*;
 public class ObjectGeneration {
 	public static Mesh generateTree(int seed, int resolution) {
 		Mesh tree;
-		float trunkRadius = Noise.genfloat(seed, 0.5f, 2.0f);
-		float trunkHeight = Noise.genfloat(seed, 10f, 20f);
+		float trunkRadius = Noise.genfloat(seed, 0.5f, 1.3f);
+		float trunkHeight = Noise.genfloat(seed, 4f, 9f);
 		int numBranches = Noise.genInt(seed,  6, 6 );
 		//System.out.println("trunkRadius: "+trunkRadius+" trunkHeight: "+ trunkHeight);
 		tree = generateBranch(4, trunkHeight, trunkRadius, resolution, 9, new float[] {0, 0, 0}, new float[] {0,trunkHeight, 0});
@@ -67,8 +67,7 @@ public class ObjectGeneration {
 				float theta = (float)(i*angle);
 				if(range!=0) {
 					float theta2 = theta;
-					if(theta2 > Math.PI) {
-						theta2 -= Math.PI;
+				if(theta2 > Math.PI) {
 					}
 					yRot = (float)(theta2*(1-height/range));
 				}
@@ -109,6 +108,7 @@ public class ObjectGeneration {
 		leaves.addToMesh(p);
 		return leaves;
 	}
+	
 	private static Mesh generateCylinder(float radius, float height, int resolution) {
 		Mesh cyl = new Mesh();
 		boolean down = false;

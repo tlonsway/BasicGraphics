@@ -238,11 +238,10 @@ public class GPUDisplaying {
 			if(qDown) {
 				cam.rotate('y', -0.02f);
 			}
-/*
+
 			if(cam.getCamPos()[1]-1.5f != world.getHeight(cam.getCamPos()[0], cam.getCamPos()[2])) {
 				cam.translate(0f,-1.0f*(float)((world.getHeight(cam.getCamPos()[0], cam.getCamPos()[2]))-(cam.getCamPos()[1]-1.5)) , 0f);
 			}
-			*/
 			float[] fullMat = combineMats(proj.getProjMatFMat(),cam.getCamMat());
 			glUniformMatrix4fv(fullMatLoc, false, fullMat);
 		}
