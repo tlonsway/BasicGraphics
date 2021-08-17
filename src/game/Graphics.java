@@ -83,7 +83,7 @@ public class Graphics {
 			}
 			if (key == GLFW_KEY_0 && action == GLFW_PRESS) {
 				for(GameObject go : objects) {
-					go.rotate('y', (float)(Math.PI/8), false);
+					go.rotate('z', (float)(Math.PI/8), false);
 				}
 			}
 			keyboardThread.keyEvent(key, action);
