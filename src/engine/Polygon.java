@@ -6,7 +6,6 @@ import java.awt.Color;
 
 public class Polygon implements Comparable {
 	private FloatMatrix[] points;
-	private int[] color;
 	float[] fColor;
 	private float distance;
 	FloatMatrix[] renderedPoints;
@@ -24,8 +23,21 @@ public class Polygon implements Comparable {
 		}
 	}
 	
+	public Polygon(float[] p1, float[] p2, float[] p3, float[] color) {
+		fColor = color;
+		points = new FloatMatrix[3];
+		float[] tAc = p1;
+		for(int i=0;i<3;i++) {
+			switch(i) {
+			case(1): tAc = p2; break;
+			case(2): tAc = p3; break;
+			}
+			FloatMatrix tFMat = new FloatMatrix(tAc);
+			points[i] = tFMat;
+		}
+	}
 	public Polygon(float[] p1, float[] p2, float[] p3, int[] color) {
-		this.color = color;
+		fColor = new float[] {color[0]/256.0f, color[1]/256.0f, color[2]/256.0f};
 		points = new FloatMatrix[3];
 		float[] tAc = p1;
 		for(int i=0;i<3;i++) {
@@ -45,22 +57,22 @@ public class Polygon implements Comparable {
 		points[0] = p1; points[1] = p2; points[2] = p3;
 	}
 	
-	public Polygon(FloatMatrix p1, FloatMatrix p2, FloatMatrix p3, int[] color) {
-		this.color = color;
+	public Polygon(FloatMatrix p1, FloatMatrix p2, FloatMatrix p3, float[] color) {
+		fColor = color;
 		points = new FloatMatrix[3];
 		points[0] = p1; points[1] = p2; points[2] = p3;
 	}
 	
-	public void setColor(int[] col) {
-		this.color = col;
+	public void setColor(float[] col) {
+		this.fColor = col;
 	}
 	
 	public int[] getColorAsInt() {
-		return color;
+		return new int[] {(int)(fColor[0]*255),(int)(fColor[0]*255),(int)(fColor[0]*255)};
 	}
 	
 	public Color getColorAsColor() {
-		return new Color(color[0],color[1],color[2]);
+		return new Color((int)(fColor[0]*255),(int)(fColor[0]*255),(int)(fColor[0]*255));
 	}
 	
 	public FloatMatrix[] getPoints() {

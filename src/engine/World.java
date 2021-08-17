@@ -24,8 +24,8 @@ public class World {
 			for(int z = 0; z < 5; z++) {
 				Mesh chunk = generateChunk(seed, x*width, z*length, width, length);
 				terrain.addMesh(chunk);
-				Mesh tree = ObjectGeneration.generateTree(seed+(x*5)+z, 6);
-				Mesh bush = ObjectGeneration.generateFern(seed+(x*5)+z);
+				Mesh tree = ObjectGeneration.generateTree(seed+(x*5*10)+z*10, 6);
+				Mesh bush = ObjectGeneration.generateFern(seed+(x*5*10)+z*10);
 				int numPlants = (int)(Math.random()*10);
 				for(int i = 0; i < numPlants; i++) {
 					float a = (float)(Math.random()*100);
@@ -113,8 +113,8 @@ public class World {
 		if(pointsVisible) {
 			for(GridPoint p: pts) {
 				//System.out.println("X: "+p[0]+" Y: "+p[1]+" Z: "+p[2]);
-				Polygon poly = new Polygon(new float[] {p.getLocation()[0]+0.1f, p.getLocation()[1]+0.1f, p.getLocation()[2]+0.1f}, new float[] {p.getLocation()[0]-0.1f, p.getLocation()[1]-0.1f, p.getLocation()[2]-0.1f}, new float[] {p.getLocation()[0]-0.1f, p.getLocation()[1]-0.1f, p.getLocation()[2]+0.1f});
-				poly.setColor(new int[] {255, 0, 0});
+				engine.Polygon poly = new Polygon(new float[] {p.getLocation()[0]+0.1f, p.getLocation()[1]+0.1f, p.getLocation()[2]+0.1f}, new float[] {p.getLocation()[0]-0.1f, p.getLocation()[1]-0.1f, p.getLocation()[2]-0.1f}, new float[] {p.getLocation()[0]-0.1f, p.getLocation()[1]-0.1f, p.getLocation()[2]+0.1f});
+				poly.setFColor(new float[] {1f, 0, 0});
 				caves.addToMesh(poly);
 			}
 		}
@@ -183,7 +183,7 @@ public class World {
 			for(GridPoint ngp: neighborClosest.get(closest.indexOf(gp))) {
 				if(closest.contains(ngp) && !polys.contains(new Polygon(p.getLocation(), gp.getLocation(), ngp.getLocation()))) {
 					Polygon poly = new Polygon(p.getLocation(), gp.getLocation(), ngp.getLocation());
-					poly.setColor(new int[] {100, 100, 100});
+					poly.setFColor(new float[] {0.39f, 0.39f, 0.39f});
 					polys.add(poly);
 				}
 			}

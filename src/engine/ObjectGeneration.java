@@ -5,13 +5,40 @@ import org.jblas.*;
 
 public class ObjectGeneration {
 	public static Mesh generateTree(int seed, int resolution) {
-		Mesh tree;
-		float trunkRadius = Noise.genfloat(seed, 0.5f, 1.3f);
-		float trunkHeight = Noise.genfloat(seed+3, 4f, 9f);
-		int numBranches = (int)(Noise.genfloat(seed+6, 6, 11)+0.5);
-		float split = Noise.genfloat(seed+9, 0, 1);
-		tree = generateSplitBranch(4, trunkHeight, trunkRadius, resolution, numBranches, new float[] {0, 0, 0}, new float[] {0,trunkHeight, 0}, split < 0.5, seed);
-		tree.translate(0, -trunkHeight-0.01f, 0);
+		Mesh tree = new Mesh();
+		boolean split = Noise.genfloat(seed, 0, 1) > 0.2;
+		float bA;
+		int numBranchStacks;
+		int levels;
+		//split > 0.0
+		if(!split) {
+			bA = Noise.genfloat(seed, 0.7f, 0.9f);
+			numBranchStacks = Noise.genInt(seed+6, 3, 5);
+			levels = 3;
+		}
+		else {
+			numBranchStacks = 1;
+			bA = Noise.genfloat(seed+12, 0.4f, 0.8f);
+			levels = 4;
+		}
+		float trunkRadius = Noise.genfloat(seed+18, 0.5f, 1.3f);
+		float trunkHeight = Noise.genfloat(seed+24, 4f, 9f);
+		int numBranches = Noise.genInt(seed+30, 6, 10);
+		float height = 0;
+		float yRot = 0;
+		for(int a = 0; a < numBranchStacks; a++) {
+			Mesh branch = generateBranch(levels, trunkHeight, trunkRadius, bA, resolution, numBranches, new float[] {0, 0, 0}, new float[] {0,trunkHeight, 0}, seed);
+			branch.translate(0, -trunkHeight-0.02f+height, 0);
+			branch.rotate(new float[] {0, 0, 0}, 'y', yRot);
+			yRot += Math.PI/4.0;
+			height+=trunkHeight;
+			trunkHeight*=0.85;
+			trunkRadius*=0.75;
+			if(resolution > 3) {
+				resolution--;
+			}
+			tree.addMesh(branch);
+		}
 		//System.out.println("Created a tree with "+tree.getPolygons().size()+" polygons a height of: "+trunkHeight+" and a radius of: "+trunkRadius);
 		return tree;
 	}
@@ -29,7 +56,8 @@ public class ObjectGeneration {
 		}
 		return color;
 	}
-	private static Mesh generateSplitBranch(int level, float bl, float bw, int resolution, int numBranches, float[] rotations, float[] endPoint, boolean split, int seed) {
+	
+	private static Mesh generateBranch(int level, float bl, float bw, float bA, int resolution, int numBranches, float[] rotations, float[] endPoint, int seed) {
 		Mesh branch = generateCylinder(bw, bl, resolution, seed, "brown");
 		branch.translate(endPoint[0], endPoint[1], endPoint[2]);
 		FloatMatrix nextEndPoint = new FloatMatrix(new float[] {0, bl, 0});
@@ -53,7 +81,7 @@ public class ObjectGeneration {
 			if(numBranches != 2) {
 				numBranches--;
 			}
-			float bA = 0.5f;
+			
 			float angle = (float)(Math.PI*2.0/numBranches);
 			float radius = (float)(Math.sin(bA)*bl);
 			float range = (float)(2*radius*Math.cos((Math.PI/2.0)-rotations[0]));
@@ -92,7 +120,7 @@ public class ObjectGeneration {
 					yRot*=-1;
 				}
 				//System.out.println("Level: "+level+" cA: "+rotations[0]+" Range: "+range+" height: "+height+" (p,l)A: ("+p+","+l+")"+a+" C: "+c+" G: "+g+" xRotRem: "+xRotRem+" RotPer: "+yRot+" theta: "+(angle*i)+" numBranches: "+numBranches+" branchNum: "+i+" branchL: "+bl);
-				Mesh b = generateSplitBranch(level-1, bl*0.8f, bw*0.75f, resolution, numBranches, new float[] {rotations[0]+bA-xRotRem, yRot+rotations[1], 0}, nep, split, seed);
+				Mesh b = generateBranch(level-1, bl*0.8f, bw*0.75f, bA, resolution, numBranches, new float[] {rotations[0]+bA-xRotRem, yRot+rotations[1], 0}, nep, seed);
 				branch.addMesh(b);
 			}
 		}	

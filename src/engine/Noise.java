@@ -35,14 +35,14 @@ static {
 }
 
 public static float genfloat(float seed, float min, float max) {
-	float num = Math.abs((float)noise(seed/20f+0.3f));
-	num = num * (Math.abs(max)+Math.abs(min));
+	float num = Math.abs((float)noise(seed/20f+0.1f));
+	num = num * (max-min);
 	num = num + min;
 	return num;
 }
 public static int genInt(float seed,  int min, int max) {
-	float num = Math.abs((float)noise(seed/20f+0.3f));
-	num = num * (Math.abs(max)+Math.abs(min));
+	float num = Math.abs((float)noise(seed/20f+0.1f));
+	num = num * (max-min);
 	num = num + min;
 	return (int)num;
 }

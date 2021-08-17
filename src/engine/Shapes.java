@@ -15,6 +15,7 @@ public class Shapes {
 		FloatMatrix p7 = new FloatMatrix(new float[] {point.get(0)+dims.get(0),point.get(1)+dims.get(1),point.get(2)+dims.get(2)} );
 		Polygon[] ret = new Polygon[12];
 		//color = new int[] {(int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255)};
+		/*
 		ret[0] = new Polygon(p0, p1, p4, color);
 		ret[1] = new Polygon(p1, p3, p5, color);
 		ret[2] = new Polygon(p4, p5, p6, color);
@@ -27,6 +28,7 @@ public class Shapes {
 		ret[9] = new Polygon(p2, p3, p6, color);
 		ret[10] = new Polygon(p3, p6, p7, color);
 		ret[11] = new Polygon(p1, p2, p3, color);
+		*/
 		return ret;
 	}
 }

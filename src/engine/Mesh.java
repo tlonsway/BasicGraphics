@@ -2,7 +2,7 @@ package engine;
 import java.util.*;
 public class Mesh {
 	
-	private ArrayList<Polygon> polygons;
+	private ArrayList<engine.Polygon> polygons;
 	public Mesh(ArrayList<Polygon> polygons) {
 		if(polygons == null) {
 			this.polygons = new ArrayList<Polygon>();
