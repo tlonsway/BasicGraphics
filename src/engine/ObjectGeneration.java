@@ -152,8 +152,8 @@ public class ObjectGeneration {
 	}
 	public static Mesh generateFern(int seed) {
 		Mesh bush = new Mesh();
-		int circles = (int)(Noise.genfloat(seed, 2, 5)+0.5);
-		int leaves = (int)(Noise.genfloat(seed+3, 4, 10)+0.5);
+		int circles = (int)(Noise.genfloat(seed, 3f, 5)+0.5);
+		int leaves = (int)(Noise.genfloat(seed+3, 5, 10)+0.5);
 		float height = Noise.genfloat(seed+6, 1f, 3f);
 		float angle = Noise.genfloat(seed+9, 0.05f,  0.6f);
 		float width = Noise.genfloat(seed+12, 0.05f, 0.2f);

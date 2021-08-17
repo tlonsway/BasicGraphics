@@ -20,8 +20,8 @@ public class World {
 		int zShift = 0;
 		terrain = new Mesh();
 		//terrain = generateChunk(seed, xShift, zShift);
-		for(int x = 0; x < 5; x++) {
-			for(int z = 0; z < 5; z++) {
+		for(int x = 0; x < 7; x++) {
+			for(int z = 0; z < 7; z++) {
 				Mesh chunk = generateChunk(seed, x*width, z*length, width, length);
 				terrain.addMesh(chunk);
 				Mesh tree = ObjectGeneration.generateTree(seed+(x*5*10)+z*10, 6);
@@ -55,9 +55,8 @@ public class World {
 		System.out.println("Seed: "+seed);
 		objects = new ArrayList<Mesh>();
 	}
-	
 	public float getHeight(float x, float z) {
-		float y = (float)(Math.tan((noise.noise(x/250.0+seed, z/250.0+seed)+1)*(1.5/2))*60);
+		float y = (float)(Math.tan(noise.noise(x/300.0+seed, z/300.0+seed))*height*2);
 		//float y = (float)((Math.tan(noise.noise(x/200.0, z/200.0)*(Math.PI/2.0))/2+(Math.pow(noise.noise(x/200.0, z/200.0), 2)))*40);
 		return y+(float)(noise.noise(x/30.0+seed, z/30.0+seed)*5);	
 	}
@@ -130,6 +129,44 @@ public class World {
 		return caves;
 	}
 	
+	private float[] getLandColor(float yHeight) {
+		float heightPer = (yHeight+height)/(2*height);
+		float[][] colors = new float[][] {new float[] {0.949f, 0.729f, 0}, new float[] {0, getGreenColor(yHeight), 0}, new float[] {0.1569f, 0.1569f, 0.1569f}, new float[] {1, 1, 1}};
+		float[][] ranges = new float[][] {new float[] {0, 0.2f}, new float[] {0.1f, 0.8f}, new float[] {0.7f, 0.92f}, new float[] {0.9f, 1}};
+		float[] color = new float[3];
+		ArrayList<Integer> rangesIncluded = new ArrayList<Integer>();
+		for(int i = 0; i < ranges.length; i++) {
+			if(heightPer >= ranges[i][0] && heightPer <= ranges[i][1]) {
+				rangesIncluded.add(i);
+			}
+		}
+		if(rangesIncluded.size()>1) {
+			float rangePer = (heightPer-ranges[rangesIncluded.get(1)][0])/(ranges[rangesIncluded.get(0)][1]-ranges[rangesIncluded.get(1)][0]);
+			
+			float r = blendColorValue(colors[rangesIncluded.get(1)][0], colors[rangesIncluded.get(0)][0], 1-rangePer);
+			float b = blendColorValue(colors[rangesIncluded.get(1)][1], colors[rangesIncluded.get(0)][1], 1-rangePer);
+			float g = blendColorValue(colors[rangesIncluded.get(1)][2], colors[rangesIncluded.get(0)][2], 1-rangePer);
+			//System.out.println("Range 0: "+rangesIncluded.get(0)+" Bot Per: "+botPer+" Ranges 1: "+rangesIncluded.get(1)+" Top Per: "+topPer+" R: "+r+" G: "+g+" B: "+b);
+			color[0] = r;
+			color[1] = b;
+			color[2] = g;
+		}
+		else {
+			if(rangesIncluded.size() < 1 && yHeight < 0) {
+				rangesIncluded.add(0);
+			}
+			else if(rangesIncluded.size() < 1 && yHeight > 0) {
+				rangesIncluded.add(ranges.length-1);
+			}
+			color[0] = colors[rangesIncluded.get(0)][0];
+			color[1] = colors[rangesIncluded.get(0)][1];
+			color[2] = colors[rangesIncluded.get(0)][2];
+		}
+		return color;
+	}
+	private float blendColorValue(float a, float b, float ratio) {
+		return (float)Math.sqrt((1 - ratio) * Math.pow(a, 2) + ratio * Math.pow(b, 2));
+	}
 	private boolean[][][] createOpenCavities(float gridUnit, double perlinScaler, double seed){
 		boolean[][][] openCavities = new boolean[(int)(width/gridUnit)+2][(int)(height/gridUnit)+2][(int)(length/gridUnit)+2];
 		for(int x = 0; x < (int)(width/gridUnit); x++) {
@@ -200,7 +237,8 @@ public class World {
 		return false;
 	}
 	public float getGreenColor(float y){
-		return (float)((y+5)/153.0);
+		
+		return (float)((y+100)/153.0);
 	}
 	public float[] getRedColor(float y){
 		return new float[] {(float)((y+40)/85.0),0,0};
@@ -216,7 +254,8 @@ public class World {
 		for(int row = 0; row < grid[0].length-1; row++) {
 			float[][] pts = {{0+xShift,grid[0][row],row+zShift}, {0+xShift,grid[0][row+1], row+1+zShift}, {1+xShift, grid[1][row], row+zShift}};
 			Polygon poly = new Polygon(pts[0], pts[1], pts[2]);
-			poly.setFColor(new float[] {0, (float)(getGreenColor(grid[0][row])), 0} );
+			//poly.setFColor(new float[] {0, (float)(getGreenColor(grid[0][row])), 0} );
+			poly.setFColor(getLandColor(grid[0][row]));
 			map.addToMesh(poly);
 			boolean up = false;
 			int x = 1;
@@ -235,7 +274,8 @@ public class World {
 				}
 				pts = shiftPoint(pts, p);
 				poly = new Polygon(pts[0], pts[1], pts[2]);
-				poly.setFColor(new float[] {0, (float)(getGreenColor(p[1])), 0});
+				poly.setFColor(getLandColor(p[1]));
+				//poly.setFColor(new float[] {0, (float)(getGreenColor(p[1])), 0});
 				map.addToMesh(poly);
 				if(up) {
 					x++;
