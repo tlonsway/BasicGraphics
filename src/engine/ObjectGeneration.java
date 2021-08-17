@@ -7,16 +7,30 @@ public class ObjectGeneration {
 	public static Mesh generateTree(int seed, int resolution) {
 		Mesh tree;
 		float trunkRadius = Noise.genfloat(seed, 0.5f, 1.3f);
-		float trunkHeight = Noise.genfloat(seed, 4f, 9f);
-		int numBranches = Noise.genInt(seed,  6, 6 );
-		//System.out.println("trunkRadius: "+trunkRadius+" trunkHeight: "+ trunkHeight);
-		tree = generateBranch(4, trunkHeight, trunkRadius, resolution, 9, new float[] {0, 0, 0}, new float[] {0,trunkHeight, 0});
+		float trunkHeight = Noise.genfloat(seed+3, 4f, 9f);
+		int numBranches = (int)(Noise.genfloat(seed+6, 6, 11)+0.5);
+		float split = Noise.genfloat(seed+9, 0, 1);
+		tree = generateSplitBranch(4, trunkHeight, trunkRadius, resolution, numBranches, new float[] {0, 0, 0}, new float[] {0,trunkHeight, 0}, split < 0.5, seed);
 		tree.translate(0, -trunkHeight-0.01f, 0);
 		//System.out.println("Created a tree with "+tree.getPolygons().size()+" polygons a height of: "+trunkHeight+" and a radius of: "+trunkRadius);
 		return tree;
 	}
-	private static Mesh generateBranch(int level, float bl, float bw, int resolution, int numBranches, float[] rotations, float[] endPoint) {
-		Mesh branch = generateCylinder(bw, bl, resolution);
+	public static float[] generateColor(int seed, String c){
+		float[] color = new float[3];
+		if(c.equals("brown")) {
+			color[0] = Noise.genfloat(seed, 0f, 0.35f)+0.39f;
+			color[1] = Noise.genfloat(seed, 0f, 0.195f)+0.234f;
+			color[2] = Noise.genfloat(seed, 0f, 0.078f); 
+		}
+		else if(c.equals("green")) {
+			color[0] = Noise.genfloat(seed, 0f, 0.117f)+0.195f;
+			color[1] = Noise.genfloat(seed, 0f, 0.352f)+0.508f;
+			color[2] = Noise.genfloat(seed, 0f, 0.0976f); 
+		}
+		return color;
+	}
+	private static Mesh generateSplitBranch(int level, float bl, float bw, int resolution, int numBranches, float[] rotations, float[] endPoint, boolean split, int seed) {
+		Mesh branch = generateCylinder(bw, bl, resolution, seed, "brown");
 		branch.translate(endPoint[0], endPoint[1], endPoint[2]);
 		FloatMatrix nextEndPoint = new FloatMatrix(new float[] {0, bl, 0});
 		branch.rotate(endPoint, 'x', rotations[0]);
@@ -31,7 +45,7 @@ public class ObjectGeneration {
 			if(level%2 == 0) {
 				z=true;
 			}
-			Mesh leaves = generateLeaves(z);
+			Mesh leaves = generateLeaves(z, seed);
 			leaves.translate(nep[0], nep[1], nep[2]);
 			branch.addMesh(leaves);
 		}
@@ -78,20 +92,19 @@ public class ObjectGeneration {
 					yRot*=-1;
 				}
 				//System.out.println("Level: "+level+" cA: "+rotations[0]+" Range: "+range+" height: "+height+" (p,l)A: ("+p+","+l+")"+a+" C: "+c+" G: "+g+" xRotRem: "+xRotRem+" RotPer: "+yRot+" theta: "+(angle*i)+" numBranches: "+numBranches+" branchNum: "+i+" branchL: "+bl);
-				Mesh b = generateBranch(level-1, bl*0.8f, bw*0.75f, resolution, numBranches, new float[] {rotations[0]+bA-xRotRem, yRot+rotations[1], 0}, nep);
+				Mesh b = generateSplitBranch(level-1, bl*0.8f, bw*0.75f, resolution, numBranches, new float[] {rotations[0]+bA-xRotRem, yRot+rotations[1], 0}, nep, split, seed);
 				branch.addMesh(b);
 			}
 		}	
-			
 		return branch;
 	}
-	public static Mesh generateLeaves(boolean zAxis) {
+	public static Mesh generateLeaves(boolean zAxis, int seed) {
 		Mesh leaves = new Mesh();
 		FloatMatrix p1 = new FloatMatrix(new float[] {0, -1.0f, -1.0f});
 		FloatMatrix p2 = new FloatMatrix(new float[] {0, -1.0f, 1.0f});
 		for(int i = 0; i < 4; i++) {
 			Polygon p = new Polygon(new float[] {p1.get(0), p1.get(1), p1.get(2)}, new float[] {p2.get(0), p2.get(1), p2.get(2)}, new float[] {0, 0, 0});
-			p.setFColor(new float[] {0.4f, 0.54f, 0.24f});
+			p.setFColor(generateColor(seed, "green"));
 			leaves.addToMesh(p);
 			p1 = game.Operations.rotatePoint(p1, 'z', (float)(Math.PI/2.0f));
 			p2 = game.Operations.rotatePoint(p2, 'z', (float)(Math.PI/2.0f));
@@ -99,17 +112,45 @@ public class ObjectGeneration {
 		p1 = game.Operations.rotatePoint(p1, 'y', (float)(Math.PI/2.0f));
 		p2 = game.Operations.rotatePoint(p2, 'y', (float)(Math.PI/2.0f));
 		Polygon p = new Polygon(new float[] {p1.get(0), p1.get(1), p1.get(2)}, new float[] {p2.get(0), p2.get(1), p2.get(2)}, new float[] {0, 0, 0});
-		p.setFColor(new float[] {0.4f, 0.54f, 0.24f});
+		p.setFColor(generateColor(seed, "green"));
 		leaves.addToMesh(p);
 		p1 = game.Operations.rotatePoint(p1, 'z', (float)(Math.PI));
 		p2 = game.Operations.rotatePoint(p2, 'z', (float)(Math.PI));
 		p = new Polygon(new float[] {p1.get(0), p1.get(1), p1.get(2)}, new float[] {p2.get(0), p2.get(1), p2.get(2)}, new float[] {0, 0, 0});
-		p.setFColor(new float[] {0.4f, 0.54f, 0.24f});
+		//p.setFColor(new float[] {0.4f, 0.54f, 0.24f});
+		p.setFColor(generateColor(seed, "green"));
 		leaves.addToMesh(p);
 		return leaves;
 	}
-	
-	private static Mesh generateCylinder(float radius, float height, int resolution) {
+	public static Mesh generateFern(int seed) {
+		Mesh bush = new Mesh();
+		int circles = (int)(Noise.genfloat(seed, 2, 5)+0.5);
+		int leaves = (int)(Noise.genfloat(seed+3, 4, 10)+0.5);
+		float height = Noise.genfloat(seed+6, 1f, 3f);
+		float angle = Noise.genfloat(seed+9, 0.05f,  0.6f);
+		float width = Noise.genfloat(seed+12, 0.05f, 0.2f);
+		Polygon start = new Polygon(new float[] {0,0,-width}, new float[] {0, 0, width}, new float[] {0,height, 0});
+		start.rotate(new float[] {0,0,0}, 'z', (float)((Math.PI/2.0)-angle));
+		for(int i = 0; i < circles; i++) {
+			if(i == circles-1) {
+				leaves = 3;
+			}
+			start.rotate(new float[] {0, 0, 0}, 'z', (float)(((Math.PI/2.0)-angle)/circles)*-1f);
+			if(i%2 == 0) {
+				start.setFColor(new float[] {.16f, 0.42f, 0.07f});
+			}
+			else {
+				start.setFColor(new float[] {.18f, 0.49f, 0.07f});
+			}
+			for(int a = 0; a < leaves; a++) {
+				Polygon leaf = start.clone();
+				leaf.rotate(new float[] {0,0,0}, 'y', (float)(Math.PI*2.0/leaves)*a);
+				bush.addToMesh(leaf);
+			}
+		}
+		return bush;
+	}
+	private static Mesh generateCylinder(float radius, float height, int resolution, int seed, String color) {
 		Mesh cyl = new Mesh();
 		boolean down = false;
 		int r = 0;
@@ -148,10 +189,10 @@ public class ObjectGeneration {
 			
 			Polygon side = new Polygon(pts[0], pts[1], pts[2]);
 			if(down) {
-				side.setFColor(new float[] {0.52f, 0.3f, 0.05f});
+				side.setFColor(generateColor(seed, color));
 			}
 			else {
-				side.setFColor(new float[] {0.55f, 0.32f,0.05f});
+				side.setFColor(generateColor(seed+4, color));
 				//side.setFColor(new float[] {0,0,1});
 			}
 			down = !down;
