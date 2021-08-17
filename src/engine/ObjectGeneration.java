@@ -8,11 +8,11 @@ public class ObjectGeneration {
 		Mesh tree;
 		float trunkRadius = Noise.genfloat(seed, 0.5f, 2.0f);
 		float trunkHeight = Noise.genfloat(seed, 10f, 20f);
-		int numBranches = Noise.genInt(seed, 3, 6 );
-		System.out.println("trunkRadius: "+trunkRadius+" trunkHeight: "+ trunkHeight);
+		int numBranches = Noise.genInt(seed,  6, 6 );
+		//System.out.println("trunkRadius: "+trunkRadius+" trunkHeight: "+ trunkHeight);
 		tree = generateBranch(3, trunkHeight, trunkRadius, resolution, 6, new float[] {0, 0, 0}, new float[] {0,trunkHeight, 0});
 		tree.translate(0, -trunkHeight-0.01f, 0);
-		System.out.println("Created a tree with "+tree.getPolygons().size()+" polygons a height of: "+trunkHeight+" and a radius of: "+trunkRadius);
+		//System.out.println("Created a tree with "+tree.getPolygons().size()+" polygons a height of: "+trunkHeight+" and a radius of: "+trunkRadius);
 		return tree;
 	}
 	private static Mesh generateBranch(int level, float bl, float bw, int resolution, int numBranches, float[] rotations, float[] endPoint) {
@@ -35,9 +35,32 @@ public class ObjectGeneration {
 			if(numBranches != 2) {
 				numBranches--;
 			}
-			float angle = (float)(Math.PI*2/numBranches);
+			float bA = 0.5f;
+			float angle = (float)(Math.PI*2.0/numBranches);
+			float radius = (float)(Math.sin(bA)*bl);
+			float range = (float)(2*radius*Math.cos((Math.PI/2.0)-rotations[0]));
+			if(range < 0.000000001) {
+				range = 0;
+			}
 			for(int i = 0; i < numBranches; i++) {
-				Mesh b = generateBranch(level-1, bl*0.8f, bw*0.75f, resolution, numBranches, new float[] {rotations[0]+0.3f, angle*i, 0}, nep);
+				float height = (float)((range)*((Math.cos((i*angle)+Math.PI)/2.0f)+0.5f));
+				float c = (float)(height/Math.cos((Math.PI/2.0)-rotations[0]));
+				float w = (float)(Math.sqrt(Math.pow(c, 2)-Math.pow(height, 2)));
+				float z = (float)(Math.cos(Math.PI-rotations[0]-bA));
+				float y = (float)(Math.sqrt(Math.pow(bl, 2)-Math.pow(z, 2)));
+				float l = (float)(z-w);
+				float p = (float)(y + height);
+				float a = (float)(Math.sqrt(Math.pow(l, 2)+Math.pow(p, 2)));
+				float g = (float)((Math.pow(a, 2)+Math.pow(bl, 2)-Math.pow(c, 2))/(2*a*bl));
+				float xRotRem = (float)(Math.acos(g));
+				if(xRotRem < .0001) {
+					xRotRem = 0;
+				}
+				if(resolution > 3) {
+					resolution--;
+				}
+				System.out.println("Level: "+level+" cA: "+rotations[0]+" Range: "+range+" height: "+height+" (p,l)A: ("+p+","+l+")"+a+" C: "+c+" G: "+g+" xRotRem: "+xRotRem+" theta: "+(angle*i)+" numBranches: "+numBranches+" branchNum: "+i+" branchL: "+bl);
+				Mesh b = generateBranch(level-1, bl*0.8f, bw*0.75f, resolution, numBranches, new float[] {rotations[0]+bA-xRotRem, angle*i+rotations[1], 0}, nep);
 				branch.addMesh(b);
 			}
 		}	
@@ -99,8 +122,8 @@ public class ObjectGeneration {
 				side.setFColor(new float[] {0.34f, 0.21f,0});
 			}
 			else {
-				side.setFColor(new float[] {0.34f, 0.21f,0});
-				//side.setFColor(new float[] {0,0,1});
+				//side.setFColor(new float[] {0.34f, 0.21f,0});
+				side.setFColor(new float[] {0,0,1});
 			}
 			down = !down;
 			cyl.addToMesh(side);
