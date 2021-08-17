@@ -149,6 +149,8 @@ public class GameObject {
 				}
 			}
 		}
+		//System.out.println("MinX: " + pMinT[0] + " MaxX: " + pMaxT[0]);
+		
 		return new AABB(pMinT,pMaxT,this);
 	}
 	
@@ -321,7 +323,11 @@ public class GameObject {
 		//System.out.println("startPosX: " + startPosX + ", startPosZ: " + startPosZ + ", widthX: " + widthX + ", lengthZ: " + lengthZ);
 		
 		//startTimer();
-		Mesh groundBelow = world.generateChunk(world.seed, (int)(getPosition()[0]), (int)(getPosition()[2]), (int)bounds.getZLength(), (int)bounds.getZLength());
+		//Mesh groundBelow = world.generateChunk(world.seed, (int)(getPosition()[0]), (int)(getPosition()[2]), (int)bounds.getXWidth(), (int)bounds.getZLength());
+		//Mesh groundBelow = world.terrain;
+		Mesh groundBelow = world.generateChunk(world.seed, (int)(getPosition()[0]), (int)(getPosition()[2]), (int)bounds.getXWidth(), (int)bounds.getZLength());
+		//System.out.println("XPos: " + getPosition()[0] + " yPos: " + getPosition()[2] + " xWidth: " + bounds.getXWidth() + " zLength: " + bounds.getZLength());
+		
 		//endTimer("Getting ground below");
 		//Mesh groundBelow = world.generateChunk(world.seed, startPosX, startPosZ, widthX, lengthZ);
 		//System.out.println("Number of polygons in mesh: " + groundBelow.getPolygons().size());

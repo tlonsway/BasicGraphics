@@ -42,6 +42,11 @@ public class Graphics {
 	long timeTemp;
 	long fpsTime;
 	
+	boolean UIActive;
+	int UIVAO;
+	int UINumElements;
+	int UIShaderProgram;
+	
 	public Graphics() {
 		screenDims = new int[] {1920,1080};
 		String windowTitle = "Game Window";
@@ -51,13 +56,14 @@ public class Graphics {
 		gravity = new GravityThread();
 		objects = new ArrayList<GameObject>();
 		fpsTime = System.currentTimeMillis();
+		UIActive = false;
 		init();
 	}
 	
 	public void init() {
 		cam = new Camera(screenDims);
 		gravity.setCamera(cam);
-		project = new Projection(70f, 1f, 500f, screenDims);
+		project = new Projection(70f, 0.1f, 500f, screenDims);
 		//vertShader = new Shader("Shaders/basicProjection.vtxs",GL_VERTEX_SHADER);
 		vertShader = new Shader("Shaders/basicProjWithModel.vtxs",GL_VERTEX_SHADER);
 		fragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
@@ -65,9 +71,22 @@ public class Graphics {
 		glAttachShader(shaderProgram,vertShader.getShader());
 		glAttachShader(shaderProgram,fragShader.getShader());
 		glLinkProgram(shaderProgram);
+		
+		Shader UIvertShader = new Shader("Shaders/UIVert.vtxs",GL_VERTEX_SHADER);
+		Shader UIfragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
+		UIShaderProgram = glCreateProgram();
+		glAttachShader(UIShaderProgram,UIvertShader.getShader());
+		glAttachShader(UIShaderProgram,UIfragShader.getShader());
+		glLinkProgram(UIShaderProgram);
+		
 		glUseProgram(shaderProgram);
 		glDeleteShader(vertShader.getShader());
 		glDeleteShader(fragShader.getShader());
+		
+		glDeleteShader(UIvertShader.getShader());
+		glDeleteShader(UIfragShader.getShader());
+		
+		
 		vertices = null;
 		indices = null;
 		numElements = 0;
@@ -110,6 +129,12 @@ public class Graphics {
 		while(!glfwWindowShouldClose(window)) {
 			updateFPS();
 			
+			if (UIActive) {
+				glUseProgram(UIShaderProgram);
+				glBindVertexArray(UIVAO);
+				glDrawArrays(GL_LINES,0,2);
+			}
+			
 			//startTimer();
 			if (vertices == null || indices == null || numElements == 0) {
 				try {
@@ -137,7 +162,7 @@ public class Graphics {
 			
 			int objID = 0;
 			
-			boolean displayBounds = false;
+			boolean displayBounds = true;
 			for(GameObject go : objects) {
 				
 				if (displayBounds) {
@@ -184,9 +209,9 @@ public class Graphics {
 				glDrawArrays(GL_TRIANGLES,0,numE);
 				//endTimer("Draw Call");
 				objID++;
-				if (cam.bounds.intersectsAABB(go.getBounds())) {
-					System.out.println("CAMERA INTERSECTING OBJECT");
-				}
+				//if (cam.bounds.intersectsAABB(go.getBounds())) {
+					//System.out.println("CAMERA INTERSECTING OBJECT");
+				//}
 			}
 			
 			//endTimer("Draw GameObjects");
@@ -198,6 +223,8 @@ public class Graphics {
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 			//apply camera/game updates
+			
+			//endTimer("Swap Buffers");
 			
 			float[] camPos = cam.getCamPos();
 			//System.out.println("Camera Position: (" + camPos[0] + "," + camPos[1] + "," + camPos[2]);
@@ -276,6 +303,25 @@ public class Graphics {
 		glBindBuffer(GL_ARRAY_BUFFER,0);
 		glBindVertexArray(0);
 		go.setVAO(VAOt);
+	}
+	
+	public void setUIData(float[] vertices) {
+		UIActive = true;
+		UINumElements = vertices.length;
+		int VBOt,VAOt;
+		VBOt = glGenBuffers();
+		VAOt = glGenVertexArrays();
+		glBindVertexArray(VAOt);
+		glBindBuffer(GL_ARRAY_BUFFER,VBOt);
+		glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+		glVertexAttribPointer(0,2,GL_FLOAT,false,8,0l);
+		glEnableVertexAttribArray(0);
+		//glVertexAttribPointer(1,3,GL_FLOAT,false,24,12l);
+		//glEnableVertexAttribArray(1);
+		UIVAO = VAOt;
+		glBindBuffer(GL_ARRAY_BUFFER,0);
+		glBindVertexArray(0);
+		
 	}
 	
 	public void updateData(float[] vertices, int[] indices) {

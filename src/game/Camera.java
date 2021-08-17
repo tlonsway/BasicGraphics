@@ -24,7 +24,7 @@ public class Camera {
 		transMat = new FloatMatrix(identMat);
 		rotations = new float[3];
 		this.screenDims = screenDims;
-		bounds = new AABB(new float[] {-1.0f,-2.0f,-1.0f},new float[] {1.0f,1.0f,1.0f});
+		bounds = new AABB(new float[] {-1.0f,-1.0f,-1.0f},new float[] {1.0f,0.5f,1.0f});
 		//GameObject cameraObj = new GameObject("Temp");
 		//cameraObj.setPosition(this.getCamPos());
 		//bounds.setObject(cameraObj);
@@ -210,7 +210,7 @@ public class Camera {
 	
 	public void jump() {
 		if (touchingGround() && !jumping) {
-			setVelocity(new float[] {this.getVelocity()[0],this.getVelocity()[1]-0.3f,this.getVelocity()[2]});
+			setVelocity(new float[] {this.getVelocity()[0],this.getVelocity()[1]-0.15f,this.getVelocity()[2]});
 			jumping=true;
 		}
 	}

@@ -35,6 +35,10 @@ public class GraphicsTest {
 				g.addGameObject(go1);
 			}
 		}
+		float[] crosshair = new float[] {-0.1f,-0.1f,0.1f,0.1f};
+		g.setUIData(crosshair);
+		
+		
 		//AABB polyBound = new AABB(new float[] {5,7,5}, new float[] {5,9,7});
 		//GameObject go1 = new GameObject(world,m,polyBound);
 		//polyBound.setObject(go1);
