@@ -137,10 +137,12 @@ public class ObjectGeneration {
 			}
 			start.rotate(new float[] {0, 0, 0}, 'z', (float)(((Math.PI/2.0)-angle)/circles)*-1f);
 			if(i%2 == 0) {
-				start.setFColor(new float[] {.16f, 0.42f, 0.07f});
+				//start.setFColor(new float[] {.16f, 0.42f, 0.07f});
+				start.setFColor(generateColor(seed, "green"));
 			}
 			else {
-				start.setFColor(new float[] {.18f, 0.49f, 0.07f});
+				//start.setFColor(new float[] {.18f, 0.49f, 0.07f});
+				start.setFColor(generateColor(seed+10, "green"));
 			}
 			for(int a = 0; a < leaves; a++) {
 				Polygon leaf = start.clone();
