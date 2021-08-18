@@ -61,7 +61,8 @@ public class GravityThread {
 						go.falling = false;
 						float[] objAcc = go.getAcceleration();
 						float[] objVec = go.getVelocity();
-						go.setVelocity(new float[] {objVec[0],0f,objVec[2]});
+						//go.setVelocity(new float[] {objVec[0],0f,objVec[2]});
+						go.setVelocity(new float[] {0f,0f,0f});
 						go.setAcceleration(new float[] {objAcc[0],0f,objAcc[2]});
 					}
 				}

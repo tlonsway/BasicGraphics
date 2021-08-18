@@ -3,7 +3,6 @@ package game;
 import java.util.*;
 import org.jblas.*;
 
-
 import java.awt.Color;
 
 public class Polygon implements Comparable {
@@ -128,5 +127,12 @@ public class Polygon implements Comparable {
 	public FloatMatrix[] getRenderedPoints() {
 		return renderedPoints;
 	}
+	
+	public Polygon clone() {
+		Polygon p = new Polygon(new float[] {points[0].get(0), points[0].get(1), points[0].get(2)}, new float[] {points[1].get(0), points[1].get(1), points[1].get(2)}, new float[] {points[2].get(0), points[2].get(1), points[2].get(2)});
+		p.setFColor(new float[] {fColor[0], fColor[1], fColor[2]});
+		return p;
+	}
+	
 	
 }

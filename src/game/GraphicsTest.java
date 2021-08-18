@@ -4,7 +4,10 @@ import java.util.*;
 
 public class GraphicsTest {
 	public static void main(String[] args) {
-		Graphics g = new Graphics();
+		
+		int[] screenDims = new int[] {1920,1080};
+		
+		Graphics g = new Graphics(screenDims);
 		//float[] vertices = new float[] {-0.1f,0.1f,-1.2f,
 		//		0f,-0.1f,-1.2f,
 		//		0.1f,0.1f,-1.2f};
@@ -28,15 +31,18 @@ public class GraphicsTest {
 				//ArrayList<Polygon> meshPolys = new ArrayList<Polygon>();
 				//meshPolys.add(p1);
 				//Mesh m = new Mesh(meshPolys);
-				Mesh m = ObjectGeneration.generateTree((int)System.currentTimeMillis(), 6);
+				Mesh m = ObjectGeneration.generateTree((int)(Math.random()*100000000), 8);
 				GameObject go1 = new GameObject("Tree",world,m);
 				//go1.disableGravity();
 				go1.translate(20f+(r*50), 150f, 20f+(c*50));
 				g.addGameObject(go1);
 			}
 		}
-		float[] crosshair = new float[] {-0.1f,-0.1f,0.1f,0.1f};
-		g.setUIData(crosshair);
+		
+		//float[] crosshair = new float[] {-0.1f,0f, 0.1f,0f,
+		//								 0f,-0.1f, 0f,0.1f};
+										
+		//g.setUIData(crosshair);
 		
 		
 		//AABB polyBound = new AABB(new float[] {5,7,5}, new float[] {5,9,7});

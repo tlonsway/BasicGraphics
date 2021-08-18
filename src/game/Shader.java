@@ -55,6 +55,14 @@ public class Shader {
 		shaderPointer = glCreateShader(shaderType);
 		glShaderSource(shaderPointer, shaderCode);
 		glCompileShader(shaderPointer);
+		int[] success = new int[1];
+		glGetShaderiv(shaderPointer,GL_COMPILE_STATUS, success);
+		//System.out.println("Shader Compile Status: " + success[0]);
+		if (success[0] != 1) { 
+			System.out.println("Shader failed to compile: " + fileName);
+		} else {
+			System.out.println("Shader successfully compiled: " + fileName);
+		}
 		int err = glGetError();
 		if (err != 0) {
 			System.err.println("Error occured while compiling shader with filename: " + fileName);

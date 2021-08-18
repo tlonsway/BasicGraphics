@@ -36,19 +36,22 @@ public class Graphics {
 	GravityThread gravity;
 	World world;
 	ArrayList<GameObject> objects;
+	UIManager UIManager;
 	
 	static final float[] iMatFlat = new float[] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
 	
 	long timeTemp;
 	long fpsTime;
+	boolean drawBounds;
 	
 	boolean UIActive;
 	int UIVAO;
 	int UINumElements;
 	int UIShaderProgram;
 	
-	public Graphics() {
-		screenDims = new int[] {1920,1080};
+	public Graphics(int[] screenDims) {
+		this.screenDims = screenDims;
+		//screenDims = new int[] {1920,1080};
 		String windowTitle = "Game Window";
 		window = Setup.start(screenDims, windowTitle);
 		keyboardThread = new KeyboardManager(this);
@@ -56,7 +59,9 @@ public class Graphics {
 		gravity = new GravityThread();
 		objects = new ArrayList<GameObject>();
 		fpsTime = System.currentTimeMillis();
+		drawBounds = false;
 		UIActive = false;
+		UIManager = new UIManager(screenDims);
 		init();
 	}
 	
@@ -94,6 +99,7 @@ public class Graphics {
 		glClearColor(0.275f,0.94f,0.97f,1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE); 
+		glLineWidth(3.f);
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
 				glfwSetWindowShouldClose(window, true);
@@ -105,6 +111,39 @@ public class Graphics {
 					go.rotate('z', (float)(Math.PI/8), false);
 				}
 			}
+			if (key == GLFW_KEY_B && action == GLFW_PRESS) {
+				drawBounds = !drawBounds;
+			}
+			if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
+				Mesh arrowMesh = new Mesh();
+				Polygon arrowP = new Polygon(new float[] {0f,0.2f,0f},new float[] {0f,-0.2f,0f},new float[] {0f,0f,1f});
+				arrowP.fColor = new float[] {1.0f,0.0f,0.0f,1.0f};
+				arrowMesh.addToMesh(arrowP);
+				GameObject arrow = new GameObject("Arrow", world, arrowMesh);
+				float[] camPos = cam.getCamPos();
+				arrow.setPosition(new float[] {-camPos[0],-camPos[1],-camPos[2]});
+				float[] camRot = cam.getRotations();
+				//arrow.rotate('x', -camRot[0], false);
+				//arrow.rotate('y', -camRot[1], false);
+				//arrow.rotate('z', -camRot[2], false);
+				arrow.setRotation(new float[] {-camRot[0],camRot[1],-camRot[2]});
+				//arrow.rotate('y', (float)Math.PI, false);
+				float[] arrowVelocityVector = new float[] {0.0f,0.0f,-1.0f};
+				//FloatMatrix rotArrVec = Operations.rotatePoint(, 'x', camRot[2]);
+				//rotArrVec = Operations.rotatePoint(rotArrVec, 'y', camRot[1]);
+				//FloatMatrix rotArrVec = Operations.rotatePoint(new FloatMatrix(arrowVelocityVector), 'z', -camRot[2]);
+				//rotArrVec = Operations.rotatePoint(rotArrVec, 'x', -camRot[0]);
+				
+				FloatMatrix rotArrVec = Operations.rotatePoint(new FloatMatrix(arrowVelocityVector), 'x', -camRot[0]);
+				rotArrVec = Operations.rotatePoint(rotArrVec, 'y', -camRot[1]);
+				rotArrVec = Operations.rotatePoint(rotArrVec, 'z', -camRot[2]);
+				
+				
+				float[] arrVelVec = new float[] {rotArrVec.get(0),rotArrVec.get(1),rotArrVec.get(2)};
+				arrow.setVelocity(arrVelVec);
+				addGameObject(arrow);
+			}
+			
 			keyboardThread.keyEvent(key, action);
 		});
 		glfwSetCursorPosCallback(window, (window, xpos, ypos) -> {
@@ -128,11 +167,14 @@ public class Graphics {
 		GL.createCapabilities();
 		while(!glfwWindowShouldClose(window)) {
 			updateFPS();
+			this.setUIData(UIManager.getUIVertices());
+			
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			
 			if (UIActive) {
 				glUseProgram(UIShaderProgram);
 				glBindVertexArray(UIVAO);
-				glDrawArrays(GL_LINES,0,2);
+				glDrawArrays(GL_LINES,0,UINumElements);
 			}
 			
 			//startTimer();
@@ -144,14 +186,15 @@ public class Graphics {
 					e.printStackTrace();
 				}
 			}
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			
+			
 			glUseProgram(shaderProgram);
 			
 			int modelMatLoc = glGetUniformLocation(shaderProgram,"model");
 			glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
 			
-			int transFloatLoc = glGetUniformLocation(shaderProgram,"transP");
-			glUniform1f(transFloatLoc, 1f);
+			//int transFloatLoc = glGetUniformLocation(shaderProgram,"transP");
+			//glUniform1f(transFloatLoc, 1f);
 			
 			//endTimer("LoopInit");
 			
@@ -161,11 +204,11 @@ public class Graphics {
 			//endTimer("Draw Ground Mesh");
 			
 			int objID = 0;
+		
 			
-			boolean displayBounds = true;
 			for(GameObject go : objects) {
 				
-				if (displayBounds) {
+				if (drawBounds) {
 					modelMatLoc = glGetUniformLocation(shaderProgram,"model");
 					glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
 					
@@ -305,23 +348,22 @@ public class Graphics {
 		go.setVAO(VAOt);
 	}
 	
-	public void setUIData(float[] vertices) {
+	public void setUIData(float[] UIvertices) {
 		UIActive = true;
-		UINumElements = vertices.length;
+		UINumElements = UIvertices.length;
 		int VBOt,VAOt;
 		VBOt = glGenBuffers();
 		VAOt = glGenVertexArrays();
 		glBindVertexArray(VAOt);
 		glBindBuffer(GL_ARRAY_BUFFER,VBOt);
-		glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, UIvertices, GL_STATIC_DRAW);
 		glVertexAttribPointer(0,2,GL_FLOAT,false,8,0l);
 		glEnableVertexAttribArray(0);
-		//glVertexAttribPointer(1,3,GL_FLOAT,false,24,12l);
-		//glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1,3,GL_FLOAT,false,12,12l);
+		glEnableVertexAttribArray(1);
 		UIVAO = VAOt;
 		glBindBuffer(GL_ARRAY_BUFFER,0);
 		glBindVertexArray(0);
-		
 	}
 	
 	public void updateData(float[] vertices, int[] indices) {
