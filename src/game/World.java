@@ -14,8 +14,8 @@ public class World {
 		noise = new Noise();
 		//int seed = 10000;
 		height = 100;
-		width = 100;
-		length = 100;
+		width = 200;
+		length = 200;
 		seed = (int)(Math.random()*100000000);
 		int xShift = 0; 
 		int zShift = 0;

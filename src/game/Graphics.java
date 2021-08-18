@@ -68,7 +68,7 @@ public class Graphics {
 	public void init() {
 		cam = new Camera(screenDims);
 		gravity.setCamera(cam);
-		project = new Projection(70f, 0.1f, 500f, screenDims);
+		project = new Projection(70f, 0.1f, 10000f, screenDims);
 		//vertShader = new Shader("Shaders/basicProjection.vtxs",GL_VERTEX_SHADER);
 		vertShader = new Shader("Shaders/basicProjWithModel.vtxs",GL_VERTEX_SHADER);
 		fragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
