@@ -21,7 +21,14 @@ public class Setup {
 		glfwInit();
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_SAMPLES, 4);
-		long window = glfwCreateWindow(screenDims[0],screenDims[1],windowTitle,NULL,NULL);
+		
+		GLFWVidMode mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		glfwWindowHint(GLFW_RED_BITS, mode.redBits());
+		glfwWindowHint(GLFW_GREEN_BITS, mode.greenBits());
+		glfwWindowHint(GLFW_BLUE_BITS, mode.blueBits());
+		glfwWindowHint(GLFW_REFRESH_RATE, mode.refreshRate());
+		
+		long window = glfwCreateWindow(screenDims[0],screenDims[1],windowTitle,glfwGetPrimaryMonitor(),NULL);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		if (glfwRawMouseMotionSupported())
 		    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);

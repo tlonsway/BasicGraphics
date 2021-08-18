@@ -5,7 +5,7 @@ import java.util.*;
 public class GravityThread {
 	ArrayList<GameObject> gameObjects;
 	Camera cam;
-	static final float gravAcc = -0.004f;
+	static final float gravAcc = -0.006f;
 	
 	
 	public GravityThread() {
