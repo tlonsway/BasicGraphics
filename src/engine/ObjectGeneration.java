@@ -150,6 +150,11 @@ public class ObjectGeneration {
 		leaves.addToMesh(p);
 		return leaves;
 	}
+	public static Mesh generateSphere(int resolution, float[] xDist, float[] z, float[] y) {
+		Mesh sphere = new Mesh();
+		
+		return sphere;
+	}
 	public static Mesh generateFern(int seed) {
 		Mesh bush = new Mesh();
 		int circles = (int)(Noise.genfloat(seed, 3f, 5)+0.5);

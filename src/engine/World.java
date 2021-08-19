@@ -3,21 +3,17 @@ import java.util.*;
 import org.jblas.*;
 public class World {
 	Mesh terrain;
-	Noise noise;
 	ArrayList<Mesh> objects;
 	int width, length, height;
 	float[] vertices;
 	int[] indices;
 	int seed;
 	public World() {
-		noise = new Noise();
 		//int seed = 10000;
 		height = 100;
 		width = 100;
 		length = 100;
 		seed = (int)(Math.random()*100000000);
-		int xShift = 0; 
-		int zShift = 0;
 		terrain = new Mesh();
 		//terrain = generateChunk(seed, xShift, zShift);
 		for(int x = 0; x < 7; x++) {
@@ -56,9 +52,9 @@ public class World {
 		objects = new ArrayList<Mesh>();
 	}
 	public float getHeight(float x, float z) {
-		float y = (float)(Math.tan(noise.noise(x/300.0+seed, z/300.0+seed))*height*2);
+		float y = (float)(Math.tan(Noise.noise(x/300.0+seed, z/300.0+seed))*height*2);
 		//float y = (float)((Math.tan(noise.noise(x/200.0, z/200.0)*(Math.PI/2.0))/2+(Math.pow(noise.noise(x/200.0, z/200.0), 2)))*40);
-		return y+(float)(noise.noise(x/30.0+seed, z/30.0+seed)*5);	
+		return y+(float)(Noise.noise(x/30.0+seed, z/30.0+seed)*5);	
 	}
 	
 	public void generateVerticeList() {
@@ -172,7 +168,7 @@ public class World {
 		for(int x = 0; x < (int)(width/gridUnit); x++) {
 			for(int y = 0; y < (int)(height/gridUnit); y++) {
 				for(int z = 0; z < (int)(length/gridUnit); z++) {
-					double value = noise.noise(x/perlinScaler+seed, y/perlinScaler+seed, z/perlinScaler+seed);
+					double value = Noise.noise(x/perlinScaler+seed, y/perlinScaler+seed, z/perlinScaler+seed);
 					//if(value > 0.5) {
 					//if(value<0.5 && value > 0.3) {
 					if(value < 0.15 && value > 0.02) {
