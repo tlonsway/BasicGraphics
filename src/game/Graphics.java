@@ -49,7 +49,7 @@ public class Graphics {
 	int UINumElements;
 	int UIShaderProgram;
 	
-	static final float[] skyVert = new float[] {-1.0f,-1.0f,-1.0f,1.0f,1.0f,1.0f,
+	static final float[] skyVert = new float[] {-1.0f,1.0f,-1.0f,-1.0f,1.0f,1.0f,
 												-1.0f,-1.0f,1.0f,-1.0f,1.0f,1.0f};
 	int skyVAO;
 	int skyShaderProgram;
@@ -125,6 +125,7 @@ public class Graphics {
 		glClearColor(0.275f,0.94f,0.97f,1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE); 
+		glEnable(GL_CULL_FACE); 
 		glLineWidth(3.f);
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
