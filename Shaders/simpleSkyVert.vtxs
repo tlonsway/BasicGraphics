@@ -1,0 +1,23 @@
+#version 410 core
+
+layout (location = 0) in vec3 aPos;
+
+out vec4 ourColor;
+
+uniform float camRotY;
+
+void main() {
+	gl_Position = vec4(aPos,1.0f);
+	//float redC = (camRotY*0.5f)-aPos.y/2.0f;
+	//float greC = camRotY*0.8f;
+	//float bluC = (camRotY*0.5f)+aPos.y/2.0f;
+	float camRotAdj = (camRotY+1.0f)/2.0f;
+	float redV = 0.7f;
+	float greV = 1.2f;
+	float bluV = 0.3f;
+	float cAdj = 0.80f;
+	float redC = ((aPos.y*0.5f)+(camRotAdj*cAdj))/redV;
+	float greC = ((aPos.y*0.5f)+(camRotAdj*cAdj))/greV;
+	float bluC = ((aPos.y*0.5f)+(camRotAdj*cAdj))/bluV;
+	ourColor = vec4(redC,greC,bluC,1.0f);
+}

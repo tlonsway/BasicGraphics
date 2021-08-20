@@ -49,6 +49,11 @@ public class Graphics {
 	int UINumElements;
 	int UIShaderProgram;
 	
+	static final float[] skyVert = new float[] {-1.0f,-1.0f,-1.0f,1.0f,1.0f,1.0f,
+												-1.0f,-1.0f,1.0f,-1.0f,1.0f,1.0f};
+	int skyVAO;
+	int skyShaderProgram;
+	
 	public Graphics(int[] screenDims) {
 		this.screenDims = screenDims;
 		//screenDims = new int[] {1920,1080};
@@ -84,6 +89,14 @@ public class Graphics {
 		glAttachShader(UIShaderProgram,UIfragShader.getShader());
 		glLinkProgram(UIShaderProgram);
 		
+		Shader skyVertShader = new Shader("Shaders/simpleSkyVert.vtxs",GL_VERTEX_SHADER);
+		Shader skyFragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
+		skyShaderProgram = glCreateProgram();
+		glAttachShader(skyShaderProgram,skyVertShader.getShader());
+		glAttachShader(skyShaderProgram,skyFragShader.getShader());
+		glLinkProgram(skyShaderProgram);
+		
+		
 		glUseProgram(shaderProgram);
 		glDeleteShader(vertShader.getShader());
 		glDeleteShader(fragShader.getShader());
@@ -91,6 +104,10 @@ public class Graphics {
 		glDeleteShader(UIvertShader.getShader());
 		glDeleteShader(UIfragShader.getShader());
 		
+		glDeleteShader(skyVertShader.getShader());
+		glDeleteShader(skyFragShader.getShader());
+		
+		bindSkyVertices();
 		
 		vertices = null;
 		indices = null;
@@ -123,22 +140,11 @@ public class Graphics {
 				float[] camPos = cam.getCamPos();
 				arrow.setPosition(new float[] {-camPos[0],-camPos[1],-camPos[2]});
 				float[] camRot = cam.getRotations();
-				//arrow.rotate('x', -camRot[0], false);
-				//arrow.rotate('y', -camRot[1], false);
-				//arrow.rotate('z', -camRot[2], false);
 				arrow.setRotation(new float[] {-camRot[0],camRot[1],-camRot[2]});
-				//arrow.rotate('y', (float)Math.PI, false);
 				float[] arrowVelocityVector = new float[] {0.0f,0.0f,-1.0f};
-				//FloatMatrix rotArrVec = Operations.rotatePoint(, 'x', camRot[2]);
-				//rotArrVec = Operations.rotatePoint(rotArrVec, 'y', camRot[1]);
-				//FloatMatrix rotArrVec = Operations.rotatePoint(new FloatMatrix(arrowVelocityVector), 'z', -camRot[2]);
-				//rotArrVec = Operations.rotatePoint(rotArrVec, 'x', -camRot[0]);
-				
 				FloatMatrix rotArrVec = Operations.rotatePoint(new FloatMatrix(arrowVelocityVector), 'x', -camRot[0]);
 				rotArrVec = Operations.rotatePoint(rotArrVec, 'y', -camRot[1]);
 				rotArrVec = Operations.rotatePoint(rotArrVec, 'z', -camRot[2]);
-				
-				
 				float[] arrVelVec = new float[] {rotArrVec.get(0),rotArrVec.get(1),rotArrVec.get(2)};
 				arrow.setVelocity(arrVelVec);
 				addGameObject(arrow);
@@ -170,6 +176,21 @@ public class Graphics {
 			this.setUIData(UIManager.getUIVertices());
 			
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			
+			
+			glUseProgram(skyShaderProgram);
+			
+			int camRotYUniformLoc = glGetUniformLocation(skyShaderProgram, "camRotY");
+			//System.out.println("Uniform Loc: " + camRotYUniformLoc);
+			glUniform1f(camRotYUniformLoc, -(float)Math.sin(cam.getRotations()[0]));
+			System.out.println("IN VALUE: " + -(float)Math.sin(cam.getRotations()[0]));
+			//System.out.println("CamRotY: " + cam.getRotations()[0] + " sin(camRotY): " + Math.sin(cam.getRotations()[0]));
+			
+			glDisable(GL_DEPTH_TEST);
+			
+			glBindVertexArray(skyVAO);
+			glDrawArrays(GL_TRIANGLES,0,6);
+			glEnable(GL_DEPTH_TEST);
 			
 			if (UIActive) {
 				glUseProgram(UIShaderProgram);
@@ -263,6 +284,8 @@ public class Graphics {
 			//glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,0);
 			
 			
+			
+			
 			glfwSwapBuffers(window);
 			glfwPollEvents();
 			//apply camera/game updates
@@ -285,6 +308,20 @@ public class Graphics {
 			
 			//endTimer("Gravity Thread");
 		}
+	}
+	
+	private void bindSkyVertices() {
+		int VBOt,VAOt;
+		VBOt = glGenBuffers();
+		VAOt = glGenVertexArrays();
+		glBindVertexArray(VAOt);
+		glBindBuffer(GL_ARRAY_BUFFER,VBOt);
+		glBufferData(GL_ARRAY_BUFFER, skyVert, GL_STATIC_DRAW);
+		glVertexAttribPointer(0,2,GL_FLOAT,false,8,0l);
+		glEnableVertexAttribArray(0);
+		skyVAO = VAOt;
+		glBindBuffer(GL_ARRAY_BUFFER,0);
+		glBindVertexArray(0);
 	}
 	
 	private void updateFPS() {
