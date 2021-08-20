@@ -65,9 +65,9 @@ public class World {
 				list.add(p.getPoints()[i].get(0));
 				list.add(p.getPoints()[i].get(1));
 				list.add(p.getPoints()[i].get(2));
-				list.add(p.fColor[0]);
-				list.add(p.fColor[1]);
-				list.add(p.fColor[2]);
+				list.add(p.fColor[i][0]);
+				list.add(p.fColor[i][1]);
+				list.add(p.fColor[i][2]);
 			}
 		}
 		vertices = new float[list.size()];

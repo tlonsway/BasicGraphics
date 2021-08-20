@@ -78,11 +78,6 @@ public class World {
 				list.add(pCol[2]);
 				
 				float[] pNorm = p.getNorm().toArray();
-				if (polyInc%2==1) {
-					pNorm[0] = -pNorm[0];
-					pNorm[1] = -pNorm[1];
-					pNorm[2] = -pNorm[2];
-				}
 				list.add(pNorm[0]);
 				list.add(pNorm[1]);
 				list.add(pNorm[2]);
@@ -143,10 +138,10 @@ public class World {
 		}
 		return caves;
 	}
-	
+	//0.2, 0.6, 0.2 
 	private float[] getLandColor(float yHeight) {
 		float heightPer = (yHeight+height)/(2*height);
-		float[][] colors = new float[][] {new float[] {0.949f, 0.729f, 0}, new float[] {0, getGreenColor(yHeight), 0}, new float[] {0.1569f, 0.1569f, 0.1569f}, new float[] {1, 1, 1}};
+		float[][] colors = new float[][] {new float[] {0.949f, 0.729f, 0}, new float[] {0.2f, 0.6f, 0.2f}, new float[] {0.1569f, 0.1569f, 0.1569f}, new float[] {1, 1, 1}};
 		float[][] ranges = new float[][] {new float[] {0, 0.2f}, new float[] {0.1f, 0.8f}, new float[] {0.7f, 0.92f}, new float[] {0.9f, 1}};
 		float[] color = new float[3];
 		ArrayList<Integer> rangesIncluded = new ArrayList<Integer>();
@@ -288,7 +283,12 @@ public class World {
 					p[2] = row+zShift;
 				}
 				pts = shiftPoint(pts, p);
-				poly = new Polygon(pts[0], pts[1], pts[2]);
+				if(up) {
+					poly = new Polygon(pts[1], pts[2], pts[0]);
+					//poly = new Polygon(pts[2], pts[0], pts[2]);
+				}else {
+					poly = new Polygon(pts[0], pts[1], pts[2]);
+				}
 				poly.setFColor(getLandColor(p[1]));
 				//poly.setFColor(new float[] {0, (float)(getGreenColor(p[1])), 0});
 				map.addToMesh(poly);

@@ -6,7 +6,7 @@ import java.awt.Color;
 
 public class Polygon implements Comparable {
 	private FloatMatrix[] points;
-	float[] fColor;
+	float[][] fColor;
 	private float distance;
 	FloatMatrix[] renderedPoints;
 	
@@ -24,7 +24,7 @@ public class Polygon implements Comparable {
 	}
 	
 	public Polygon(float[] p1, float[] p2, float[] p3, float[] color) {
-		fColor = color;
+		fColor = new float[][] {color, color, color};
 		points = new FloatMatrix[3];
 		float[] tAc = p1;
 		for(int i=0;i<3;i++) {
@@ -37,7 +37,8 @@ public class Polygon implements Comparable {
 		}
 	}
 	public Polygon(float[] p1, float[] p2, float[] p3, int[] color) {
-		fColor = new float[] {color[0]/256.0f, color[1]/256.0f, color[2]/256.0f};
+		float[] colors = new float[] {color[0]/256.0f, color[1]/256.0f, color[2]/256.0f};
+		fColor = new float[][] {colors, colors, colors};
 		points = new FloatMatrix[3];
 		float[] tAc = p1;
 		for(int i=0;i<3;i++) {
@@ -49,35 +50,38 @@ public class Polygon implements Comparable {
 			points[i] = tFMat;
 		}
 	}
+	
 	public void setFColor(float[] c) {
+		fColor = new float[][] {c, c, c};
+	}
+	
+	public void setFColors(float[][] c) {
 		fColor = c;
 	}
+	
 	public Polygon(FloatMatrix p1, FloatMatrix p2, FloatMatrix p3) {
 		points = new FloatMatrix[3];
 		points[0] = p1; points[1] = p2; points[2] = p3;
 	}
 	
 	public Polygon(FloatMatrix p1, FloatMatrix p2, FloatMatrix p3, float[] color) {
-		fColor = color;
+		fColor = new float[][] {color, color, color};
 		points = new FloatMatrix[3];
 		points[0] = p1; points[1] = p2; points[2] = p3;
 	}
 	
-	public void setColor(float[] col) {
-		this.fColor = col;
+	public int[] getColorAsInt(int vertex) {
+		return new int[] {(int)(fColor[vertex][0]*255),(int)(fColor[vertex][0]*255),(int)(fColor[vertex][0]*255)};
 	}
 	
-	public int[] getColorAsInt() {
-		return new int[] {(int)(fColor[0]*255),(int)(fColor[0]*255),(int)(fColor[0]*255)};
-	}
-	
-	public Color getColorAsColor() {
-		return new Color((int)(fColor[0]*255),(int)(fColor[0]*255),(int)(fColor[0]*255));
+	public Color getColorAsColor(int vertex) {
+		return new Color((int)(fColor[vertex][0]*255),(int)(fColor[vertex][0]*255),(int)(fColor[vertex][0]*255));
 	}
 	
 	public FloatMatrix[] getPoints() {
 		return points;
 	}
+	
 	public void translate(float x, float y, float z) {
 		for(int i = 0; i < points.length; i++) {
 			float p1, p2, p3;
@@ -87,6 +91,7 @@ public class Polygon implements Comparable {
 			points[i] = new FloatMatrix(new float[] {p1, p2, p3});
 		}
 	}
+	
 	public void rotate(float[] rotationPoint, char axis, float angle) {
 		for(int i = 0; i < points.length; i++) {
 			FloatMatrix t = new FloatMatrix(new float[] {points[i].get(0)-rotationPoint[0], points[i].get(1)-rotationPoint[1], points[i].get(2)-rotationPoint[2]} );
@@ -105,9 +110,13 @@ public class Polygon implements Comparable {
         return new FloatMatrix(new float[] {s1,s2,s3});
 	}
 	
+	public float[][] getFColors(){
+		return fColor;
+	}
+	
 	public Polygon clone() {
 		Polygon p = new Polygon(new float[] {points[0].get(0), points[0].get(1), points[0].get(2)}, new float[] {points[1].get(0), points[1].get(1), points[1].get(2)}, new float[] {points[2].get(0), points[2].get(1), points[2].get(2)});
-		p.setFColor(new float[] {fColor[0], fColor[1], fColor[2]});
+		p.setFColors(getFColors());
 		return p;
 	}
 	
