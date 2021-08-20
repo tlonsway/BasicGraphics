@@ -264,6 +264,31 @@ public class GameObject {
 	
 	public float[] getVertices() {
 		ArrayList<Polygon> polys = mesh.getPolygons();
+		float[] vertices = new float[polys.size()*27];
+		int vertIn = 0;
+		for(Polygon p : polys) {
+			FloatMatrix[] polyPoints = p.getPoints();
+			for(int pi2=0;pi2<3;pi2++) {
+				for(int pi=0;pi<3;pi++) {
+					vertices[vertIn] = polyPoints[pi2].get(pi);
+					vertIn++;
+				}
+				float[] colT = p.fColor;
+				vertices[vertIn] = colT[0];
+				vertices[vertIn+1] = colT[1];
+				vertices[vertIn+2] = colT[2];
+				float[] normVec = p.getNorm().toArray();
+				vertices[vertIn+3] = normVec[0];
+				vertices[vertIn+4] = normVec[1];
+				vertices[vertIn+5] = normVec[2];
+				vertIn+=6;
+			}
+		}
+		return vertices;
+	}
+	
+	public float[] getVerticesOriginal() {
+		ArrayList<Polygon> polys = mesh.getPolygons();
 		float[] vertices = new float[polys.size()*18];
 		int vertIn = 0;
 		for(Polygon p : polys) {

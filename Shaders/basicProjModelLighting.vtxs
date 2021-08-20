@@ -1,14 +1,24 @@
+
 #version 410 core
 
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aColor;
+layout (location = 2) in vec3 aNormal;
+
 
 out vec4 ourColor;
+out vec3 normVec;
+out vec3 fragPos;
+out vec3 objectColor;
 
 uniform mat4 fullMat;
 uniform mat4 model;
+uniform mat4 invTranMod;
 
 void main() {
 	gl_Position = fullMat * model * vec4(aPos,1.0);
 	ourColor = vec4(aColor,1.0f);
+	objectColor = aColor;
+	normVec = aNormal;
+	fragPos = vec3(invTranMod * vec4(aPos, 1.0f));
 }

@@ -65,15 +65,29 @@ public class World {
 	public void generateVerticeList() {
 		ArrayList<Polygon> polys = terrain.getPolygons();
 		ArrayList<Float> list = new ArrayList<Float>();
+		int polyInc = 0;
+		float[] lastPCol = new float[3];
 		for(Polygon p: polys) {
 			for(int i = 0; i < p.getPoints().length; i++) {
 				list.add(p.getPoints()[i].get(0));
 				list.add(p.getPoints()[i].get(1));
 				list.add(p.getPoints()[i].get(2));
-				list.add(p.fColor[0]);
-				list.add(p.fColor[1]);
-				list.add(p.fColor[2]);
+				float[] pCol = p.fColor;
+				list.add(pCol[0]);
+				list.add(pCol[1]);
+				list.add(pCol[2]);
+				
+				float[] pNorm = p.getNorm().toArray();
+				if (polyInc%2==1) {
+					pNorm[0] = -pNorm[0];
+					pNorm[1] = -pNorm[1];
+					pNorm[2] = -pNorm[2];
+				}
+				list.add(pNorm[0]);
+				list.add(pNorm[1]);
+				list.add(pNorm[2]);
 			}
+			polyInc++;
 		}
 		vertices = new float[list.size()];
 		for(int i = 0; i < list.size(); i++) {

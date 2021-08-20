@@ -54,6 +54,7 @@ public class Graphics {
 	int skyVAO;
 	int skyShaderProgram;
 	
+	
 	public Graphics(int[] screenDims) {
 		this.screenDims = screenDims;
 		//screenDims = new int[] {1920,1080};
@@ -75,12 +76,22 @@ public class Graphics {
 		gravity.setCamera(cam);
 		project = new Projection(70f, 0.1f, 10000f, screenDims);
 		//vertShader = new Shader("Shaders/basicProjection.vtxs",GL_VERTEX_SHADER);
-		vertShader = new Shader("Shaders/basicProjWithModel.vtxs",GL_VERTEX_SHADER);
-		fragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
+		//vertShader = new Shader("Shaders/basicProjWithModel.vtxs",GL_VERTEX_SHADER);
+		//fragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
+		vertShader = new Shader("Shaders/basicProjModelLighting.vtxs",GL_VERTEX_SHADER);
+		fragShader = new Shader("Shaders/basicLighting.frgs",GL_FRAGMENT_SHADER);
+		
 		shaderProgram = glCreateProgram();
 		glAttachShader(shaderProgram,vertShader.getShader());
 		glAttachShader(shaderProgram,fragShader.getShader());
 		glLinkProgram(shaderProgram);
+		glUseProgram(shaderProgram);
+		
+		int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
+		int lightColLoc = glGetUniformLocation(shaderProgram, "lightColor");
+		
+		glUniform3fv(lightPosLoc, new float[] {-100,150,-100}); //light position
+		glUniform3fv(lightColLoc, new float[] {1.0f,1.0f,1.0f}); //light color
 		
 		Shader UIvertShader = new Shader("Shaders/UIVert.vtxs",GL_VERTEX_SHADER);
 		Shader UIfragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
@@ -173,6 +184,10 @@ public class Graphics {
 		GL.createCapabilities();
 		while(!glfwWindowShouldClose(window)) {
 			updateFPS();
+			
+			
+			
+			
 			this.setUIData(UIManager.getUIVertices());
 			
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -183,7 +198,7 @@ public class Graphics {
 			int camRotYUniformLoc = glGetUniformLocation(skyShaderProgram, "camRotY");
 			//System.out.println("Uniform Loc: " + camRotYUniformLoc);
 			glUniform1f(camRotYUniformLoc, -(float)Math.sin(cam.getRotations()[0]));
-			System.out.println("IN VALUE: " + -(float)Math.sin(cam.getRotations()[0]));
+			//System.out.println("IN VALUE: " + -(float)Math.sin(cam.getRotations()[0]));
 			//System.out.println("CamRotY: " + cam.getRotations()[0] + " sin(camRotY): " + Math.sin(cam.getRotations()[0]));
 			
 			glDisable(GL_DEPTH_TEST);
@@ -211,8 +226,17 @@ public class Graphics {
 			
 			glUseProgram(shaderProgram);
 			
+			float[] cpt = cam.getCamPos();
+			//int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
+			//glUniform3fv(lightPosLoc,new float[] {-cpt[0],-cpt[1],-cpt[2]});
+			
+			int viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
+			glUniform3fv(viewPosLoc,new float[] {-cpt[0],-cpt[1],-cpt[2]});
+			
 			int modelMatLoc = glGetUniformLocation(shaderProgram,"model");
 			glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
+			
+			
 			
 			//int transFloatLoc = glGetUniformLocation(shaderProgram,"transP");
 			//glUniform1f(transFloatLoc, 1f);
@@ -232,6 +256,7 @@ public class Graphics {
 				if (drawBounds) {
 					modelMatLoc = glGetUniformLocation(shaderProgram,"model");
 					glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
+					
 					
 					
 					glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
@@ -259,6 +284,12 @@ public class Graphics {
 				//System.out.println("Rendering Object ID " + objID);
 				modelMatLoc = glGetUniformLocation(shaderProgram,"model");
 				glUniformMatrix4fv(modelMatLoc, false, go.getModelMatFlat());
+				
+				int modelInvTranMatLoc = glGetUniformLocation(shaderProgram, "invTranMod");
+				FloatMatrix invTranModFM = Solve.pinv(go.getModelMat().transpose());
+				float[] flatMat = invTranModFM.data;
+				glUniformMatrix4fv(modelInvTranMatLoc,false,flatMat);
+				
 				//endTimer("Uniform Updating");
 				//System.out.println("Object Model Matrix: " );
 				//for(float f : go.getModelMatFlat()) {
@@ -376,10 +407,13 @@ public class Graphics {
 		glBufferData(GL_ARRAY_BUFFER, tempVert, GL_STREAM_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOt);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, tempInd, GL_STREAM_DRAW);
-		glVertexAttribPointer(0,3,GL_FLOAT,false,24,0l);
+		glVertexAttribPointer(0,3,GL_FLOAT,false,36,0l);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1,3,GL_FLOAT,false,24,12l);
+		glVertexAttribPointer(1,3,GL_FLOAT,false,36,12l);
 		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(2,3,GL_FLOAT,false,36,24l);
+		glEnableVertexAttribArray(2);
+		
 		glBindBuffer(GL_ARRAY_BUFFER,0);
 		glBindVertexArray(0);
 		go.setVAO(VAOt);
@@ -416,10 +450,13 @@ public class Graphics {
 		glBufferData(GL_ARRAY_BUFFER, vertices, GL_STREAM_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STREAM_DRAW);
-		glVertexAttribPointer(0,3,GL_FLOAT,false,24,0l);
+		glVertexAttribPointer(0,3,GL_FLOAT,false,36,0l);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1,3,GL_FLOAT,false,24,12l);
+		glVertexAttribPointer(1,3,GL_FLOAT,false,36,12l);
 		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(2,3,GL_FLOAT,false,36,24l);
+		glEnableVertexAttribArray(2);
+		
 		//glVertexAttribPointer(0,3,GL_FLOAT,false,12,0l);
 		//glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER,0);
