@@ -90,7 +90,7 @@ public class Graphics {
 		int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
 		int lightColLoc = glGetUniformLocation(shaderProgram, "lightColor");
 		
-		glUniform3fv(lightPosLoc, new float[] {-100,250,-100}); //light position
+		glUniform3fv(lightPosLoc, new float[] {-1000,6000,-10000}); //light position
 		glUniform3fv(lightColLoc, new float[] {1.0f,1.0f,1.0f}); //light color
 		
 		Shader UIvertShader = new Shader("Shaders/UIVert.vtxs",GL_VERTEX_SHADER);
@@ -125,7 +125,7 @@ public class Graphics {
 		glClearColor(0.275f,0.94f,0.97f,1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE); 
-		glEnable(GL_CULL_FACE); 
+		//xglEnable(GL_CULL_FACE); 
 		glLineWidth(3.f);
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )

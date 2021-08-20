@@ -16,7 +16,7 @@ void main() {
 	vec3 lightDir = normalize(lightPos - fragPos);
 	float diff = max(-1.0f*dot(norm, lightDir),0.0f);
 	vec3 diffuse = diff * lightColor;
-	vec3 ambient = vec3(0.2f,0.2f,0.2f);
+	vec3 ambient = vec3(0.4f,0.4f,0.4f);
 	vec3 viewDir = normalize(viewPos - fragPos);
 	vec3 reflectDir = reflect(-lightDir,norm);
 	float spec = pow(max(dot(viewDir,reflectDir),0.0f),64);
