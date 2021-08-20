@@ -6,21 +6,29 @@ public class OtherPlayer {
 	float[] vel;
 	float[] acc;
 	int ID;
-	
-	public OtherPlayer() {
+	String userName;
+	public OtherPlayer(String userName, int ID) {
 		pos = new float[3];
 		rot = new float[3];
+		this.userName = userName;
+		this.ID = ID;
 	}
 	
-	public OtherPlayer(float[] playerPos, float[] playerRot) {
+	public OtherPlayer(String userName, int ID, float[] playerPos, float[] playerRot) {
 		this.pos = playerPos;
 		this.rot = playerRot;
+		this.userName = userName;
+		this.ID = ID;
 	}
-	
+	public void setPosition(float[] p) {
+		pos = p;
+	}
 	public void updateData() {
 		
 	}	
-	
+	public void setID(int id) {
+		ID = id;
+	}
 	public void updatePosition() {
 		for(int i=0;i<3;i++) {
 			vel[i] += acc[i];

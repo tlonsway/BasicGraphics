@@ -2,7 +2,7 @@ package game;
 import java.util.*;
 public class TestServerClient {
 	public static void main(String args[]) {
-		int portNumber = 50000;
+		int portNumber = 30000;
 		String hostName = "127.0.0.1";
 		int numClients = 20;
 		Server server = new Server(portNumber, numClients);

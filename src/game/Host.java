@@ -1,25 +1,30 @@
 package game;
 import java.net.*;
+import java.io.*;
 public class Host {
-	private InetAddress ip;
-	private int port;
-	public Host(InetAddress ip, int port) {
-		this.ip = ip;
-		this.port = port;
+	private ClientConnection client;
+	private int currentPlayers;
+	private int maxPlayers;
+	private String name;
+	public Host(ClientConnection client, int currentPlayers, int maxPlayers, String name) {
+		this.client = client;
+		this.currentPlayers = currentPlayers;
+		this.maxPlayers = maxPlayers;
+		this.name = name;
 	}
-	public String getIP() {
-		return ip.toString();
-	}
-	public int getPort() {
-		return port;
-	}
-	public boolean equals(Host h) {
-		if(getIP().equals(h.getIP()) && port == h.getPort()) {
+	public boolean equals(ClientConnection cc) {
+		if(this.client.getID() == cc.getID()) {
 			return true;
 		}
 		return true;
 	}
+	public String getSessionName() {
+		return name;
+	}
+	public void joinRequest(int clientID, String password, String playerName) {
+		client.requestToJoin(clientID, password, playerName);
+	}
 	public String toString() {
-		return getIP()+":"+getPort();
+		return name+" ("+currentPlayers+"/"+maxPlayers+")";
 	}
 }

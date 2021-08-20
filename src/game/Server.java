@@ -31,8 +31,24 @@ public class Server implements Runnable{
 			e.printStackTrace();
 		}
 	}
-	public void addHostedServer(InetAddress ip, int port) {
-		hostedServers.add(new Host(ip, port));
+	public void joinRequest(int clientID, String sessionName, String password, String playerName) {
+		for(Host h: hostedServers) {
+			if(h.getSessionName().equals(sessionName)) {
+				h.joinRequest(clientID, password, playerName);
+				break;
+			}
+		}
+	}
+	public void joinResponse(int clientID, String status) {
+		for(ClientConnection cc: activeClients) {
+			if(cc.getID() == clientID) {
+				cc.respondToJoinRequest(status);
+				break;
+			}
+		}
+	}
+	public void addHostedServer(ClientConnection cc, int max, String name) {
+		hostedServers.add(new Host(cc, 1, max, name));
 	}
 	public String getServerList() {
 		String servers = "sl:";
@@ -40,5 +56,15 @@ public class Server implements Runnable{
 			servers+=hosts.toString()+",";
 		}
 		return servers;
+	}
+	public String getConnectionsList() {
+		String connections = "There are "+activeClients.size()+" active connections\n";
+		for(ClientConnection cc: activeClients) {
+			connections += cc.toString()+"\n";
+		}
+		return connections;
+	}
+	public void shutDown() {
+		running.bool = false;
 	}
 }
