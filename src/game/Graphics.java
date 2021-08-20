@@ -90,7 +90,7 @@ public class Graphics {
 		int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
 		int lightColLoc = glGetUniformLocation(shaderProgram, "lightColor");
 		
-		glUniform3fv(lightPosLoc, new float[] {-100,150,-100}); //light position
+		glUniform3fv(lightPosLoc, new float[] {-100,250,-100}); //light position
 		glUniform3fv(lightColLoc, new float[] {1.0f,1.0f,1.0f}); //light color
 		
 		Shader UIvertShader = new Shader("Shaders/UIVert.vtxs",GL_VERTEX_SHADER);
@@ -107,8 +107,6 @@ public class Graphics {
 		glAttachShader(skyShaderProgram,skyFragShader.getShader());
 		glLinkProgram(skyShaderProgram);
 		
-		
-		glUseProgram(shaderProgram);
 		glDeleteShader(vertShader.getShader());
 		glDeleteShader(fragShader.getShader());
 		
@@ -243,6 +241,11 @@ public class Graphics {
 			
 			//endTimer("LoopInit");
 			
+			int modelInvTranMatLoc = glGetUniformLocation(shaderProgram, "invTranMod");
+			//FloatMatrix invTranModFM = Solve.pinv(go.getModelMat().transpose());
+			//float[] flatMat = invTranModFM.data;
+			glUniformMatrix4fv(modelInvTranMatLoc,false,iMatFlat);
+			
 			glBindVertexArray(VAO);
 			glDrawArrays(GL_TRIANGLES,0,numElements);
 			
@@ -285,7 +288,7 @@ public class Graphics {
 				modelMatLoc = glGetUniformLocation(shaderProgram,"model");
 				glUniformMatrix4fv(modelMatLoc, false, go.getModelMatFlat());
 				
-				int modelInvTranMatLoc = glGetUniformLocation(shaderProgram, "invTranMod");
+				modelInvTranMatLoc = glGetUniformLocation(shaderProgram, "invTranMod");
 				FloatMatrix invTranModFM = Solve.pinv(go.getModelMat().transpose());
 				float[] flatMat = invTranModFM.data;
 				glUniformMatrix4fv(modelInvTranMatLoc,false,flatMat);
