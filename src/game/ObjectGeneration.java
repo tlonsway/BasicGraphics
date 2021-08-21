@@ -143,6 +143,8 @@ public class ObjectGeneration {
 		leaves.addToMesh(p);
 		p1 = game.Operations.rotatePoint(p1, 'z', (float)(Math.PI));
 		p2 = game.Operations.rotatePoint(p2, 'z', (float)(Math.PI));
+		p1 = game.Operations.rotatePoint(p1, 'y', (float)(Math.PI));
+		p2 = game.Operations.rotatePoint(p2, 'y', (float)(Math.PI));
 		p = new Polygon(new float[] {p1.get(0), p1.get(1), p1.get(2)}, new float[] {p2.get(0), p2.get(1), p2.get(2)}, new float[] {0, 0, 0});
 		//p.setFColor(new float[] {0.4f, 0.54f, 0.24f});
 		p.setFColor(generateColor(seed, "green"));

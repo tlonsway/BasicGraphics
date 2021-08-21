@@ -72,7 +72,7 @@ public class World {
 				list.add(p.getPoints()[i].get(0));
 				list.add(p.getPoints()[i].get(1));
 				list.add(p.getPoints()[i].get(2));
-				float[] pCol = p.fColor;
+				float[] pCol = p.fColor[i];
 				list.add(pCol[0]);
 				list.add(pCol[1]);
 				list.add(pCol[2]);
@@ -286,10 +286,13 @@ public class World {
 				if(up) {
 					poly = new Polygon(pts[1], pts[2], pts[0]);
 					//poly = new Polygon(pts[2], pts[0], pts[2]);
+					poly.setFColors(new float[][] {getLandColor(pts[1][1]), getLandColor(pts[2][1]), getLandColor(pts[0][1])});
 				}else {
 					poly = new Polygon(pts[0], pts[1], pts[2]);
+					poly.setFColors(new float[][] {getLandColor(pts[0][1]), getLandColor(pts[1][1]), getLandColor(pts[2][1])});
 				}
-				poly.setFColor(getLandColor(p[1]));
+				
+				//poly.setFColor(getLandColor(p[1]));
 				//poly.setFColor(new float[] {0, (float)(getGreenColor(p[1])), 0});
 				map.addToMesh(poly);
 				if(up) {

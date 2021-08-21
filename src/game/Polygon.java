@@ -8,7 +8,7 @@ import java.awt.Color;
 public class Polygon implements Comparable {
 	private FloatMatrix[] points;
 	private int[] color;
-	float[] fColor;
+	float[][] fColor;
 	private float distance;
 	FloatMatrix[] renderedPoints;
 	
@@ -39,6 +39,9 @@ public class Polygon implements Comparable {
 		}
 	}
 	public void setFColor(float[] c) {
+		fColor = new float[][] {c, c, c};
+	}
+	public void setFColors(float[][] c) {
 		fColor = c;
 	}
 	public Polygon(FloatMatrix p1, FloatMatrix p2, FloatMatrix p3) {
@@ -128,9 +131,10 @@ public class Polygon implements Comparable {
 		return renderedPoints;
 	}
 	
+	//color of the new polygon will be the same as the color of the first vertex
 	public Polygon clone() {
 		Polygon p = new Polygon(new float[] {points[0].get(0), points[0].get(1), points[0].get(2)}, new float[] {points[1].get(0), points[1].get(1), points[1].get(2)}, new float[] {points[2].get(0), points[2].get(1), points[2].get(2)});
-		p.setFColor(new float[] {fColor[0], fColor[1], fColor[2]});
+		p.setFColor(new float[] {fColor[0][0], fColor[0][1], fColor[0][2]});
 		return p;
 	}
 	

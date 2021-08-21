@@ -144,7 +144,7 @@ public class Graphics {
 			if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
 				Mesh arrowMesh = new Mesh();
 				Polygon arrowP = new Polygon(new float[] {0f,0.2f,0f},new float[] {0f,-0.2f,0f},new float[] {0f,0f,1f});
-				arrowP.fColor = new float[] {1.0f,0.0f,0.0f,1.0f};
+				arrowP.setFColor(new float[] {1.0f,0.0f,0.0f,1.0f});
 				arrowMesh.addToMesh(arrowP);
 				GameObject arrow = new GameObject("Arrow", world, arrowMesh);
 				float[] camPos = cam.getCamPos();

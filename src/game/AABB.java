@@ -65,7 +65,7 @@ public class AABB {
 					vertices[vertIn] = polyPoints[pi2].get(pi);
 					vertIn++;
 				}
-				float[] colT = p.fColor;
+				float[] colT = p.fColor[pi2];
 				vertices[vertIn] = colT[0];
 				vertices[vertIn+1] = colT[1];
 				vertices[vertIn+2] = colT[2];
