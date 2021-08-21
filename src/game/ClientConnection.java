@@ -42,15 +42,16 @@ public class ClientConnection implements Runnable{
 						System.out.println("Server: client "+clientID+" wants to join "+data[1]);
 						server.joinRequest(clientID, data[1], data[2], data[3]);
 					}else if(command.equals("js")) {
-						System.out.println("I am replying client's join request: "+data[1]+":"+data[2]); 
-						server.joinResponse(Integer.parseInt(data[2]), data[1]);
+						System.out.println("Server: "+messages.get(0));
+						server.joinResponse(Integer.parseInt(data[2]), clientID, data[1]+":"+data[3]);
+					}else if(command.equals("g")) {
+						server.sendGameMessge(clientID, messages.get(0));
 					}
 					messages.remove(0);
 					
 				}
 				if(requests.size() > 0) {
 					sendMessage(out, requests.get(0));
-					System.out.println("Server: says "+requests.get(0)+" to client "+clientID);
 					requests.remove(0);
 				}
 			}
@@ -70,7 +71,12 @@ public class ClientConnection implements Runnable{
 			requests.add("js:"+data);
 		}else if(request.equals("request to join")) {
 			requests.add("jr:"+data);
+		}else if(request.equals("send game message")) {
+			requests.add(data);
 		}
+	}
+	public void sendGameMessage(String message) {
+		request("send game message", message);
 	}
 	public void requestToJoin(int id, String password, String playerName) {
 		request("request to join", id+":"+password+":"+playerName);

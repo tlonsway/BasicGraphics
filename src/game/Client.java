@@ -55,10 +55,17 @@ public class Client implements Runnable{
 					}
 					else if(command.equals("jr") && hostedGame != null) {
 						boolean joinStatus = hostedGame.tryJoin(data[2], data[3]);
-						joinReply(joinStatus, data[1]);
+						System.out.println("Client: "+id+" responding to join request "+messages.get(0));
+						if(joinStatus) {
+							joinReply(joinStatus, data[1]+":"+hostedGame.getSeed());
+						}else {
+							joinReply(joinStatus, data[1]);
+						}
 					}else if(command.equals("js")) {
+						System.out.println("Client "+id+" recieved a join status update: "+messages.get(0));
 						if(data[1].equals("true")) {
-							System.out.println("Client "+id+": I joined a game");
+							System.out.println("Client "+id+": I joined a game with the seed: "+data[2]);
+							hostedGame = new HostedSession(null, null, 0, false, Integer.parseInt(data[2]));
 						}
 						else {
 							System.out.println("Client "+id+": I failed to joined a game");
@@ -77,7 +84,7 @@ public class Client implements Runnable{
 						sendMessage(out, "j:"+request[1]+":"+request[2]+":"+request[3]);
 					}else if(request[0].equals("js")) {
 						System.out.println("I am replying client's join request: "+requests.get(0)); 
-						sendMessage(out, "js:"+request[1]+":"+request[2]);
+						sendMessage(out, "js:"+request[1]+":"+request[2]+":"+request[3]);
 					}
 					//System.out.println("Client: "+id+" Requesting: "+requests.get(0));
 					requests.remove(0);
@@ -91,7 +98,9 @@ public class Client implements Runnable{
 		}
 	}
 	public void hostGame(String sessionName, String pw, int maxUsers) {
-		hostedGame = new HostedSession(sessionName, pw, maxUsers);
+		int seed = (int)(Math.random()*10000000);
+		hostedGame = new HostedSession(sessionName, pw, maxUsers, true, seed);
+		System.out.println("Hosting a game with the seed "+seed);
 		request("host server", null);
 	}
 	private void request(String request, String data) {

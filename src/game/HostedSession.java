@@ -4,12 +4,16 @@ public class HostedSession {
 	private String sessionName;
 	private String password;
 	private ArrayList<OtherPlayer> connectedUsers;
+	private int seed;
+	private boolean host;
 	private int maxUsers;
-	public HostedSession(String sessionName, String password, int maxUsers) {
+	public HostedSession(String sessionName, String password, int maxUsers, boolean host, int seed) {
 		this.sessionName = sessionName;
 		this.password = password;
 		this.maxUsers = maxUsers;
 		connectedUsers = new ArrayList<OtherPlayer>();
+		this.host = host;
+		this.seed = seed;
 	}
 	public boolean tryJoin(String pw, String name) {
 		if(connectedUsers.size() < maxUsers && password.equals(pw)) {
@@ -18,6 +22,9 @@ public class HostedSession {
 			return true;
 		}
 		return false;
+	}
+	public int getSeed() {
+		return seed;
 	}
 	public void leave(int ID) {
 		connectedUsers.remove(ID);

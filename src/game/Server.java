@@ -7,12 +7,14 @@ public class Server implements Runnable{
 	private int maxClients;
 	private ArrayList<Host> hostedServers;
 	private MBoolean running;
+	private ArrayList<int[]> connections; 
 	public Server(int connectionPort, int maxClients){
 		this.connectionPort = connectionPort;
 		activeClients = new ArrayList<ClientConnection>();
 		this.maxClients = maxClients;
 		hostedServers = new ArrayList<Host>();
 		running = new MBoolean(true);
+		connections = new ArrayList<int[]>();
 	}
 	public void run() {
 		try(
@@ -39,10 +41,22 @@ public class Server implements Runnable{
 			}
 		}
 	}
-	public void joinResponse(int clientID, String status) {
+	public void joinResponse(int clientID, int host, String status) {
 		for(ClientConnection cc: activeClients) {
 			if(cc.getID() == clientID) {
+				if(status.equals("true")) {
+					connections.add(new int[] {host, clientID});
+					connections.add(new int[] {clientID, host});
+				}
 				cc.respondToJoinRequest(status);
+				break;
+			}
+		}
+	}
+	public void sendGameMessge(int ID, String message) {
+		for(int[] connect: connections) {
+			if(connect[0] == ID) {
+				activeClients.get(connect[1]).sendGameMessage(message);
 				break;
 			}
 		}

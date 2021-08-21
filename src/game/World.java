@@ -41,7 +41,6 @@ public class World {
 					terrain.addMesh(f);				}*/
 			}
 		}
-		
 		//distance between each point in the grid
 		float gridUnit = 2f;
 		//determines how zoomed in on the perlin noise the cave will be
