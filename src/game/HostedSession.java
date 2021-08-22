@@ -5,6 +5,7 @@ public class HostedSession {
 	private String password;
 	private ArrayList<OtherPlayer> connectedUsers;
 	private int seed;
+	private World world;
 	private boolean host;
 	private int maxUsers;
 	public HostedSession(String sessionName, String password, int maxUsers, boolean host, int seed) {
@@ -14,6 +15,13 @@ public class HostedSession {
 		connectedUsers = new ArrayList<OtherPlayer>();
 		this.host = host;
 		this.seed = seed;
+		if(!host) {
+			world = new World(seed);
+			int[] screenDims = new int[] {1920,1080};
+			Graphics g = new Graphics(screenDims);
+			g.setWorld(world);
+			new Thread(new GraphicsThread(g)).start();
+		}
 	}
 	public boolean tryJoin(String pw, String name) {
 		if(connectedUsers.size() < maxUsers && password.equals(pw)) {

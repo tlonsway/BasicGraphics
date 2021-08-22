@@ -55,6 +55,26 @@ public class World {
 		System.out.println("Seed: "+seed);
 		objects = new ArrayList<Mesh>();
 	}
+	public World(int seed) {
+		noise = new Noise();
+		//int seed = 10000;
+		height = 100;
+		width = 100;
+		length = 100;
+		this.seed = seed;
+		terrain = new Mesh();
+		for(int x = 0; x < 7; x++) {
+			for(int z = 0; z < 7; z++) {
+				Mesh chunk = generateChunk(seed, x*width, z*length, width, length);
+				terrain.addMesh(chunk);
+			}
+		}
+		generateVerticeList();
+		indices = new int[10];
+		System.out.println("Generated "+terrain.getPolygons().size()+" Polygons");
+		System.out.println("Seed: "+seed);
+		objects = new ArrayList<Mesh>();
+	}
 	public float getHeight(float x, float z) {
 		float y = (float)(Math.tan(noise.noise(x/300.0+seed, z/300.0+seed))*height*2);
 		//float y = (float)((Math.tan(noise.noise(x/200.0, z/200.0)*(Math.PI/2.0))/2+(Math.pow(noise.noise(x/200.0, z/200.0), 2)))*40);
