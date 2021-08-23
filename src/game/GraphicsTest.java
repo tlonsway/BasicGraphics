@@ -28,7 +28,7 @@ public class GraphicsTest {
 		
 		//for(int i=0;i<100;i++) {
 		System.out.println("Creating trees");
-		for(int r=0;r<10;r++) {
+		/*for(int r=0;r<10;r++) {
 			for(int c=0;c<10;c++) {
 				//Polygon p1 = new Polygon(new float[] {5+(2*i),7,5+(2*i)},new float[] {5+(2*i),9,5+(2*i)},new float[] {5+(2*i),9,7+(2*i)});
 				//Polygon p1 = new Polygon(new float[] {5+(4*r),7,5+(4*c)},new float[] {5+(4*r),9,5+(4*c)},new float[] {5+(4*r),9,7+(4*c)});
@@ -42,6 +42,16 @@ public class GraphicsTest {
 				go1.translate(20f+(r*50), 150f, 20f+(c*50));
 				g.addGameObject(go1);
 			}
+		}*/
+		float worldWid = 750;
+		float worldHgt = 750;
+		for(int i=0;i<100;i++) {
+			Mesh m = ObjectGeneration.generateTree((int)(Math.random()*100000000), 8);
+			GameObject go1 = new GameObject("Tree",world,m);
+			float tXLoc = (float)Math.random()*worldWid;
+			float tYLoc = (float)Math.random()*worldHgt;
+			go1.translate(tXLoc, 150f, tYLoc);
+			g.addGameObject(go1);
 		}
 		System.out.println("Tree generation complete");
 		
