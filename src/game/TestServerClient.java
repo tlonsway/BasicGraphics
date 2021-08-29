@@ -15,7 +15,6 @@ public class TestServerClient {
 			for(int i = 0; i < clients.size(); i++) {
 				new Thread(clients.get(i)).start();
 			}
-			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

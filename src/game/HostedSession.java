@@ -15,15 +15,14 @@ public class HostedSession {
 		connectedUsers = new ArrayList<OtherPlayer>();
 		this.host = host;
 		this.seed = seed;
+		/*
 		if(!host) {
 			System.out.println("Generating world");
 			world = new World(seed);
-			System.out.println("Created world and starting appliction");
-			
-			System.out.println("Launching game window");
+			System.out.println("Created world and launching window");
 			new Thread(new GraphicsThread(world)).start();
 			System.out.println("Started game Thread");
-		}	
+		}*/	
 	}
 	public boolean tryJoin(String pw, String name) {
 		if(connectedUsers.size() < maxUsers && password.equals(pw)) {

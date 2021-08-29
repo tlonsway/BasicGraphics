@@ -22,7 +22,7 @@ public class RunServer {
 				}
 				else if(input.equals("help")) {
 					for(int i = 0; i < commandList.length; i++) {
-						System.out.println(commandList[i][0]+"\n\t- "+commandList[i]);					}
+						System.out.println(commandList[i][0]+"\n\t- "+commandList[i]);}
 				}
 				input = in.readLine();
 			}

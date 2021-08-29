@@ -6,6 +6,7 @@ public class Client implements Runnable{
 	private String hostName;
 	private int port;
 	private int id;
+	private String requestState;
 	private ArrayList<String> messages;
 	private MBoolean running;
 	//sl = server list, h = host
@@ -20,6 +21,7 @@ public class Client implements Runnable{
 		messages = new ArrayList<String>();
 		running = new MBoolean(true);
 		hostedGame = null;
+		requestState = "undefined";
 	}
 	public void run() {
 		try (
@@ -45,13 +47,14 @@ public class Client implements Runnable{
 					else if(command.equals("id")) {
 						id = Integer.parseInt(data[1]);
 						System.out.println("I am client: "+id);
+						/*
 						if(id == 0) {
 							hostGame("BRUH", "password", 4);
 						}
 						else if(id == 19){
 							Thread.sleep(1000);
 							joinGame("BRUH", "password", "leo");
-						}
+						}*/
 					}
 					else if(command.equals("jr") && hostedGame != null) {
 						boolean joinStatus = hostedGame.tryJoin(data[2], data[3]);
@@ -66,8 +69,10 @@ public class Client implements Runnable{
 						if(data[1].equals("true")) {
 							System.out.println("Client "+id+": I joined a game with the seed: "+data[2]);
 							hostedGame = new HostedSession(null, null, 0, false, Integer.parseInt(data[2]));
+							requestState = "accepted";
 						}
 						else {
+							requestState = "rejected"; 
 							System.out.println("Client "+id+": I failed to joined a game");
 						}
 					}
@@ -97,11 +102,22 @@ public class Client implements Runnable{
 			e.printStackTrace();
 		}
 	}
+	public HostedSession getHostedSession() {
+		return hostedGame; 
+	}
+	public String getRequestState() {
+		String temp = requestState;
+		requestState = "unknown";
+		return temp; 
+	}
 	public void hostGame(String sessionName, String pw, int maxUsers) {
 		int seed = (int)(Math.random()*10000000);
 		hostedGame = new HostedSession(sessionName, pw, maxUsers, true, seed);
 		System.out.println("Hosting a game with the seed "+seed);
 		request("host server", null);
+	}
+	public void getServerList() {
+		request("server list", null);
 	}
 	private void request(String request, String data) {
 		if(request.equals("server list")) {
