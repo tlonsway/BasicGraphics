@@ -3,26 +3,28 @@ import java.io.*;
 public class RunClient {
 	public static void main(String[] args) {
 		String username = "BRUH";
-		String[][] commandList = new String[][] {{"host list", "Returns a list of possible hosts to join"}, 
-												 {"host game", "Tells the server you wish to host a game"}, 
-												 {"join game", "Tells the server you want to join a game"}};
+		String[][] commandList = new String[][] {{"host list", "Returns a list of possible hosts to join."}, 
+												 {"host game", "Tells the server you wish to host a game."}, 
+												 {"join game", "Tells the server you want to join a game."}, 
+												 {"close", "Exits the program."}};
 		try(BufferedReader in = new BufferedReader(new InputStreamReader(System.in));) {
-			System.out.print("Enter server IP address: ");
+			System.out.println("Enter server IP address: ");
 			String inputLine = in.readLine();
 			String ip = inputLine;
-			System.out.print("Enter port number: ");
+			System.out.println("Enter port number: ");
 			inputLine = in.readLine();
 			int port = Integer.parseInt(inputLine);
 			Client client = new Client(ip, port, null);
 			new Thread(client).start();
+			System.out.println("What would you like to do:\n\t-say \"help\" to get the list of commands");
 			while(!inputLine.equals("close")) {
 				inputLine = in.readLine();
 				if(inputLine.equals("host list")) {
 					client.getServerList();
 				}else if(inputLine.equals("join game")) {
-					System.out.print("Session name: ");
+					System.out.println("Session name: ");
 					String sessionName = in.readLine();
-					System.out.print("Password: ");
+					System.out.println("Password: ");
 					String password = in.readLine();
 					client.joinGame(sessionName, password, username);
 					String joinState = client.getRequestState();
@@ -58,7 +60,7 @@ public class RunClient {
 					startGame(client);
 				}else if(inputLine.equals("help")) {
 					for(int i = 0; i < commandList.length; i++) {
-						System.out.println(commandList[i][0]+"\n\t- "+commandList[i]);}
+						System.out.println(commandList[i][0]+"\n\t- "+commandList[i][1]);}
 				}
 			}
 		}catch(Exception e) {
