@@ -16,12 +16,14 @@ public class HostedSession {
 		this.host = host;
 		this.seed = seed;
 		if(!host) {
+			System.out.println("Generating world");
 			world = new World(seed);
-			int[] screenDims = new int[] {1920,1080};
-			Graphics g = new Graphics(screenDims);
-			g.setWorld(world);
-			new Thread(new GraphicsThread(g)).start();
-		}
+			System.out.println("Created world and starting appliction");
+			
+			System.out.println("Launching game window");
+			new Thread(new GraphicsThread(world)).start();
+			System.out.println("Started game Thread");
+		}	
 	}
 	public boolean tryJoin(String pw, String name) {
 		if(connectedUsers.size() < maxUsers && password.equals(pw)) {

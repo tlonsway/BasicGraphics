@@ -11,6 +11,7 @@ public class World {
 	int[] indices;
 	int seed;
 	public World() {
+		System.out.println("THIS BETTER PRINT SOMETHING");
 		noise = new Noise();
 		//int seed = 10000;
 		height = 100;
@@ -63,8 +64,8 @@ public class World {
 		length = 100;
 		this.seed = seed;
 		terrain = new Mesh();
-		for(int x = 0; x < 7; x++) {
-			for(int z = 0; z < 7; z++) {
+		for(int x = 0; x < 1; x++) {
+			for(int z = 0; z < 1; z++) {
 				Mesh chunk = generateChunk(seed, x*width, z*length, width, length);
 				terrain.addMesh(chunk);
 			}
