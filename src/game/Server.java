@@ -20,9 +20,10 @@ public class Server implements Runnable{
 		try(
 			ServerSocket ss = new ServerSocket(connectionPort);
 			){
-			while(activeClients.size() < maxClients) {
+			while(activeClients.size() < maxClients && running.bool) {
 				ClientConnection c = new ClientConnection(this, ss.accept(), activeClients.size(), running);
 				activeClients.add(c);
+				System.out.println("Player connected");
 				new Thread(c).start();
 			}
 			System.out.println("Server has hit max pop");

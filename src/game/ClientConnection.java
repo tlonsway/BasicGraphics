@@ -33,6 +33,7 @@ public class ClientConnection implements Runnable{
 					String command = data[0];
 					System.out.println("Server: client "+clientID+" said "+messages.get(0));
 					if(command.equals("sl")) {
+						System.out.println("Sending server list to client");
 						sendMessage(out, "sl:"+server.getServerList());
 					}
 					else if(command.equals("h")){

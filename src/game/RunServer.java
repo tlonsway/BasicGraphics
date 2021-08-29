@@ -1,7 +1,7 @@
 package game;
 import java.io.*;
 public class RunServer {
-	public static void main(String[] args ) {
+	public static void main(String[] args) {
 		int connectionPort = 30000;
 		int maxClients = 20;
 		String[][] commandList = new String[][] {{"connections", "returns a list of all active connections"}, 
@@ -12,8 +12,9 @@ public class RunServer {
 				BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 				) {
 			new Thread(server).start();
+			System.out.println("Starting the server on port "+connectionPort); 
 			String input = in.readLine();
-			while(input.equals("close")) {
+			while(!input.equals("close")) {
 				if(input.equals("hosts")) {
 					System.out.println("Servers currently hosting:\n"+server.getServerList());
 				}
@@ -26,6 +27,7 @@ public class RunServer {
 				}
 				input = in.readLine();
 			}
+			System.out.println("Shutting down server");
 			server.shutDown();
 		}catch(Exception e) {
 			e.printStackTrace();

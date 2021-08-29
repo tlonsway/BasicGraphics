@@ -12,6 +12,7 @@ public class Client implements Runnable{
 	//sl = server list, h = host
 	private ArrayList<String> requests;
 	private HostedSession hostedGame;
+	private boolean offline;
 	Graphics game;
 	public Client(String hostName, int port, Graphics game) {
 		this.hostName = hostName;
@@ -21,7 +22,8 @@ public class Client implements Runnable{
 		messages = new ArrayList<String>();
 		running = new MBoolean(true);
 		hostedGame = null;
-		requestState = "undefined";
+		requestState = "unknown";
+		offline = false; 
 	}
 	public void run() {
 		try (
@@ -42,19 +44,14 @@ public class Client implements Runnable{
 						break;
 					}
 					else if(command.equals("sl")) {
-						System.out.println("Client "+id+": get server list");
+						System.out.println("Servers hosting: ");
+						for(int i = 1; i < data.length; i++) {
+							System.out.println(data[i]);
+						}
 					}
 					else if(command.equals("id")) {
 						id = Integer.parseInt(data[1]);
 						System.out.println("I am client: "+id);
-						/*
-						if(id == 0) {
-							hostGame("BRUH", "password", 4);
-						}
-						else if(id == 19){
-							Thread.sleep(1000);
-							joinGame("BRUH", "password", "leo");
-						}*/
 					}
 					else if(command.equals("jr") && hostedGame != null) {
 						boolean joinStatus = hostedGame.tryJoin(data[2], data[3]);
@@ -96,11 +93,18 @@ public class Client implements Runnable{
 				}
 			}
 			System.out.println("Client session over: "+id);
-		}catch (UnknownHostException e) {
+		}catch (ConnectException e) {
+			offline = true;
 			System.out.println("Could not connect to "+hostName+":"+port);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public String getConnectionStatus() {
+		if(offline) 	
+			return "Offline";
+		else
+			return "Connected";
 	}
 	public HostedSession getHostedSession() {
 		return hostedGame; 
@@ -109,6 +113,9 @@ public class Client implements Runnable{
 		String temp = requestState;
 		requestState = "unknown";
 		return temp; 
+	}
+	public void endSession() {
+		running.bool = false;
 	}
 	public void hostGame(String sessionName, String pw, int maxUsers) {
 		int seed = (int)(Math.random()*10000000);
