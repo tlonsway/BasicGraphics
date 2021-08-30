@@ -43,7 +43,7 @@ public class AABB {
 			tpos = object.getPosition();
 		}
 		float tx = tpos[0]; float ty = tpos[1]; float tz = tpos[2];
-		Mesh m = new Mesh();
+		Mesh m = new Mesh(true);
 		Polygon p1 = new Polygon(new float[] {minX+tx,minY+ty,minZ+tz},new float[] {minX+tx,maxY+ty,minZ+tz},new float[] {maxX+tx,maxY+ty,maxZ+tz});
 		p1.setFColor(new float[] {0f,0f,1.0f});
 		m.addToMesh(p1);

@@ -30,7 +30,7 @@ public class GameObject {
 		modelRotMat = new FloatMatrix(identMat);
 		modelTransMat = new FloatMatrix(identMat);
 		rotations = new float[3];
-		mesh = new Mesh();
+		mesh = new Mesh(true);
 		velocity = new float[3];
 		acceleration = new float[3];
 		gravDisabled = false;
@@ -43,7 +43,8 @@ public class GameObject {
 		modelTransMat = new FloatMatrix(identMat);
 		rotations = new float[3];
 		this.world = world;
-		mesh = new Mesh();
+		mesh = new Mesh(false);
+		bounds = genBounds(mesh);
 		velocity = new float[3];
 		acceleration = new float[3];
 		gravDisabled = false;

@@ -58,7 +58,7 @@ public class Server implements Runnable{
 		for(int[] connect: connections) {
 			if(connect[0] == ID) {
 				activeClients.get(connect[1]).sendGameMessage(message);
-				break;
+				System.out.println("Sending "+message+" to client "+ID);
 			}
 		}
 	}

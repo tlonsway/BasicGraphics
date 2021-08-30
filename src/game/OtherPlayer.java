@@ -6,7 +6,7 @@ public class OtherPlayer {
 	float[] vel;
 	float[] acc;
 	int ID;
-	String userName;
+	private String userName;
 	public OtherPlayer(String userName, int ID) {
 		pos = new float[3];
 		rot = new float[3];
@@ -26,6 +26,9 @@ public class OtherPlayer {
 	public void updateData() {
 		
 	}	
+	public float[] getLocation() {
+		return pos;
+	}
 	public void setID(int id) {
 		ID = id;
 	}
@@ -34,6 +37,9 @@ public class OtherPlayer {
 			vel[i] += acc[i];
 			pos[i] += vel[i];
 		}
+	}
+	public String getName() {
+		return userName;
 	}
 	
 }

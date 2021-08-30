@@ -142,7 +142,7 @@ public class Graphics {
 				drawBounds = !drawBounds;
 			}
 			if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
-				Mesh arrowMesh = new Mesh();
+				Mesh arrowMesh = new Mesh(true);
 				Polygon arrowP = new Polygon(new float[] {0f,0.2f,0f},new float[] {0f,-0.2f,0f},new float[] {0f,0f,1f});
 				arrowP.setFColor(new float[] {1.0f,0.0f,0.0f,1.0f});
 				arrowMesh.addToMesh(arrowP);
@@ -303,9 +303,11 @@ public class Graphics {
 				glBindVertexArray(go.getVAO());
 				//endTimer("Bind VAO");
 				//int numE = go.getVertices().length;
-				int numE = go.vertT.length;
-				//endTimer("Get Arr Len");
-				glDrawArrays(GL_TRIANGLES,0,numE);
+				if(go.vertT!=null) {
+					int numE = go.vertT.length;
+					//endTimer("Get Arr Len");
+					glDrawArrays(GL_TRIANGLES,0,numE);
+				}
 				//endTimer("Draw Call");
 				objID++;
 				//if (cam.bounds.intersectsAABB(go.getBounds())) {
@@ -344,7 +346,12 @@ public class Graphics {
 			//endTimer("Gravity Thread");
 		}
 	}
-	
+	public World getWorld() {
+		return world;
+	}
+	public ArrayList<GameObject> getGameObjects(){
+		return objects;
+	}
 	private void bindSkyVertices() {
 		int VBOt,VAOt;
 		VBOt = glGenBuffers();

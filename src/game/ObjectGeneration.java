@@ -4,7 +4,7 @@ import org.jblas.FloatMatrix;
 
 public class ObjectGeneration {
 	public static Mesh generateTree(int seed, int resolution) {
-		Mesh tree = new Mesh();
+		Mesh tree = new Mesh(true);
 		boolean split = Noise.genfloat(seed, 0, 1) > 0.2;
 		float bA;
 		int numBranchStacks;
@@ -126,7 +126,7 @@ public class ObjectGeneration {
 		return branch;
 	}
 	public static Mesh generateLeaves(boolean zAxis, int seed) {
-		Mesh leaves = new Mesh();
+		Mesh leaves = new Mesh(true);
 		FloatMatrix p1 = new FloatMatrix(new float[] {0, -1.0f, -1.0f});
 		FloatMatrix p2 = new FloatMatrix(new float[] {0, -1.0f, 1.0f});
 		for(int i = 0; i < 4; i++) {
@@ -152,7 +152,7 @@ public class ObjectGeneration {
 		return leaves;
 	}
 	public static Mesh generateFern(int seed) {
-		Mesh bush = new Mesh();
+		Mesh bush = new Mesh(true);
 		int circles = (int)(Noise.genfloat(seed, 3f, 5)+0.5);
 		int leaves = (int)(Noise.genfloat(seed+3, 5, 10)+0.5);
 		float height = Noise.genfloat(seed+6, 1f, 3f);
@@ -182,7 +182,7 @@ public class ObjectGeneration {
 		return bush;
 	}
 	private static Mesh generateCylinder(float radius, float height, int resolution, int seed, String color) {
-		Mesh cyl = new Mesh();
+		Mesh cyl = new Mesh(true);
 		boolean down = false;
 		int r = 0;
 		float angle = (float)((Math.PI*2)/resolution);

@@ -20,7 +20,7 @@ public class World {
 		seed = (int)(Math.random()*100000000);
 		int xShift = 0; 
 		int zShift = 0;
-		terrain = new Mesh();
+		terrain = new Mesh(true);
 		//terrain = generateChunk(seed, xShift, zShift);
 		for(int x = 0; x < 7; x++) {
 			for(int z = 0; z < 7; z++) {
@@ -63,7 +63,7 @@ public class World {
 		width = 100;
 		length = 100;
 		this.seed = seed;
-		terrain = new Mesh();
+		terrain = new Mesh(true);
 		for(int x = 0; x < 1; x++) {
 			for(int z = 0; z < 1; z++) {
 				Mesh chunk = generateChunk(seed, x*width, z*length, width, length);
@@ -133,7 +133,7 @@ public class World {
 		return false;
 	}
 	public Mesh generateCaves(double seed, float gridUnit, double perlinScaler, boolean pointsVisible) {
-		Mesh caves = new Mesh(); 	
+		Mesh caves = new Mesh(true); 	
 		//creates a grid of open and closed points
 		boolean[][][] openCavities = createOpenCavities(gridUnit, perlinScaler, seed);
 		//creates list of 3d points

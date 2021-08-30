@@ -2,19 +2,21 @@ package game;
 import java.io.*;
 public class RunClient {
 	public static void main(String[] args) {
-		String username = "BRUH";
 		String[][] commandList = new String[][] {{"host list", "Returns a list of possible hosts to join."}, 
 												 {"host game", "Tells the server you wish to host a game."}, 
 												 {"join game", "Tells the server you want to join a game."}, 
 												 {"close", "Exits the program."}};
 		try(BufferedReader in = new BufferedReader(new InputStreamReader(System.in));) {
-			System.out.println("Enter server IP address: ");
+			System.out.println("Enter username: ");
 			String inputLine = in.readLine();
+			String username = inputLine;
+			System.out.println("Enter server IP address: ");
+			inputLine = in.readLine();
 			String ip = inputLine;
 			System.out.println("Enter port number: ");
 			inputLine = in.readLine();
 			int port = Integer.parseInt(inputLine);
-			Client client = new Client(ip, port, null);
+			Client client = new Client(ip, port, null, username);
 			if(client.getConnectionStatus().equals("Connected")) {
 				new Thread(client).start();
 			}
@@ -83,6 +85,8 @@ public class RunClient {
 		float[] vert = world.vertices;
 		int[] ind = world.indices;
 		graphic.updateData(vert, ind);
+		new Thread(new GameToServerPlayerLocationThread(client, graphic)).start();
+		new Thread(new PlayerLocationThread(client)).start();
 		graphic.loop();
 	}
 }

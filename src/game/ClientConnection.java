@@ -31,7 +31,7 @@ public class ClientConnection implements Runnable{
 				if(messages.size() > 0) {
 					String[] data = messages.get(0).split(":");
 					String command = data[0];
-					System.out.println("Server: client "+clientID+" said "+messages.get(0));
+					//System.out.println("Server: client "+clientID+" said "+messages.get(0));
 					if(command.equals("sl")) {
 						System.out.println("Sending server list to client");
 						sendMessage(out, "sl:"+server.getServerList());
@@ -47,6 +47,7 @@ public class ClientConnection implements Runnable{
 						server.joinResponse(Integer.parseInt(data[2]), clientID, data[1]+":"+data[3]);
 					}else if(command.equals("g")) {
 						server.sendGameMessge(clientID, messages.get(0));
+						System.out.println("Client connection: "+messages.get(0)+" ID: "+clientID);
 					}
 					messages.remove(0);
 					

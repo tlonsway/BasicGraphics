@@ -9,15 +9,17 @@ public class Client implements Runnable{
 	private String requestState;
 	private ArrayList<String> messages;
 	private MBoolean running;
+	private String username;
 	//sl = server list, h = host
 	private ArrayList<String> requests;
 	private HostedSession hostedGame;
 	private boolean offline;
 	Graphics game;
-	public Client(String hostName, int port, Graphics game) {
+	public Client(String hostName, int port, Graphics game, String username) {
 		this.hostName = hostName;
 		this.port = port;
 		this.game = game;
+		this.username = username; 
 		requests = new ArrayList<String>();
 		messages = new ArrayList<String>();
 		running = new MBoolean(true);
@@ -42,8 +44,20 @@ public class Client implements Runnable{
 					if(command.equals("close")) {
 						running.bool = false;
 						break;
-					}
-					else if(command.equals("sl")) {
+					}else if(command.equals("g")) {
+						if(data[1].equals("pl")) {
+							String player = data[2]; 
+							float x = Float.parseFloat(data[3]);
+							float y = Float.parseFloat(data[4]);
+							float z = Float.parseFloat(data[4]);
+							for(OtherPlayer p: hostedGame.getConnectedUsers()) {
+								if(p.getName().equals(player)) {
+									p.setPosition(new float[] {x, y, z});
+								}
+								System.out.println("Setting player position of "+player);
+							}
+						}
+					}else if(command.equals("sl")) {
 						System.out.println("Servers hosting: ");
 						for(int i = 1; i < data.length; i++) {
 							System.out.println(data[i]);
@@ -65,7 +79,7 @@ public class Client implements Runnable{
 						System.out.println("Client "+id+" recieved a join status update: "+messages.get(0));
 						if(data[1].equals("true")) {
 							System.out.println("Client "+id+": I joined a game with the seed: "+data[2]);
-							hostedGame = new HostedSession(null, null, 0, false, Integer.parseInt(data[2]));
+							hostedGame = new HostedSession(null, null, 0, false, Integer.parseInt(data[2]) );
 							requestState = "accepted";
 						}
 						else {
@@ -87,6 +101,8 @@ public class Client implements Runnable{
 					}else if(request[0].equals("js")) {
 						System.out.println("I am replying client's join request: "+requests.get(0)); 
 						sendMessage(out, "js:"+request[1]+":"+request[2]+":"+request[3]);
+					}else {
+						sendMessage(out, requests.get(0));
 					}
 					//System.out.println("Client: "+id+" Requesting: "+requests.get(0));
 					requests.remove(0);
@@ -99,6 +115,12 @@ public class Client implements Runnable{
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public void broadCastPlayerLocation(String player) {
+		request("broadcast location", hostedGame.getPlayerLocation(player));
+	}
+	public void updateLoction() {
+		request("update location", hostedGame.getPlayerLocation("local"));
 	}
 	public String getConnectionStatus() {
 		if(offline) 	
@@ -136,7 +158,17 @@ public class Client implements Runnable{
 			requests.add("j:"+data);
 		}else if(request.equals("join reply")) {
 			requests.add("js:"+data);
+		}else if(request.equals("update location")) {
+			requests.add("g:pl:"+username+":"+data);
+		}else if(request.equals("broadcast location")) {
+			requests.add("g:pl:"+data);
 		}
+	}
+	public boolean isHost() {
+		return hostedGame.isHost();
+	}
+	public boolean isRunning() {
+		return running.bool;
 	}
 	public void joinReply(boolean status, String ID) {
 		request("join reply", status+":"+ID);

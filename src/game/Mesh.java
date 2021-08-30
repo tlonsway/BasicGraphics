@@ -13,8 +13,12 @@ public class Mesh {
 			this.polygons = polygons;
 		}
 	}
-	public Mesh() {
+	public Mesh(boolean blank) {
 		this.polygons = new ArrayList<Polygon>();
+		if(!blank) {
+			this.polygons.add(new Polygon(new float[] {-1, 1, 0}, new float[] {1, 1, 0},new float[] {-1, -1, 0}));
+			this.polygons.add(new Polygon(new float[] {-1, -1, 0}, new float[] {1, 1, 0},new float[] {1, -1, 0}));
+		}
 	}
 	public void addToMesh(Polygon p) {
 		polygons.add(p);

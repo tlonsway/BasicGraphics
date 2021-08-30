@@ -8,7 +8,7 @@ public class TestServerClient {
 		Server server = new Server(portNumber, numClients);
 		ArrayList<Client> clients = new ArrayList<Client>();
 		for(int i = 0; i < numClients; i++) {
-			clients.add(new Client(hostName, portNumber, null));
+			clients.add(new Client(hostName, portNumber, null, ""));
 		}
 		try {
 			new Thread(server).start();
