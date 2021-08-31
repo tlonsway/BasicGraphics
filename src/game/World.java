@@ -11,7 +11,6 @@ public class World {
 	int[] indices;
 	int seed;
 	public World() {
-		System.out.println("THIS BETTER PRINT SOMETHING");
 		noise = new Noise();
 		//int seed = 10000;
 		height = 100;
@@ -26,6 +25,7 @@ public class World {
 			for(int z = 0; z < 7; z++) {
 				Mesh chunk = generateChunk(seed, x*width, z*length, width, length);
 				terrain.addMesh(chunk);
+				
 				//Mesh tree = ObjectGeneration.generateTree(seed+(x*5*10)+z*10, 6);
 				//Mesh bush = ObjectGeneration.generateFern(seed+(x*5*10)+z*10);
 				//int numPlants = (int)(Math.random()*10);
@@ -64,10 +64,13 @@ public class World {
 		length = 100;
 		this.seed = seed;
 		terrain = new Mesh(true);
-		for(int x = 0; x < 1; x++) {
-			for(int z = 0; z < 1; z++) {
+		for(int x = 0; x < 7; x++) {
+			for(int z = 0; z < 7; z++) {
 				Mesh chunk = generateChunk(seed, x*width, z*length, width, length);
 				terrain.addMesh(chunk);
+				Mesh tree = ObjectGeneration.generateTree(seed, 5);
+				tree.translate(x*100-50, getHeight(x, z), z*100-50);
+				terrain.addMesh(tree);
 			}
 		}
 		generateVerticeList();
