@@ -11,7 +11,7 @@ public class RunClient {
 			String inputLine = in.readLine();
 			String username = inputLine;
 			System.out.println("Enter server IP address: ");
-			//inputLine = in.readLine();
+			inputLine = in.readLine();
 			String ip = inputLine;
 			//String ip = "127.0.0.1";
 			System.out.println("Enter port number: ");
