@@ -1,5 +1,6 @@
 package game;
 import java.io.*;
+import java.util.*;
 public class RunClient {
 	public static void main(String[] args) {
 		String[][] commandList = new String[][] {{"host list", "Returns a list of possible hosts to join."}, 
@@ -87,6 +88,21 @@ public class RunClient {
 		float[] vert = world.vertices;
 		int[] ind = world.indices;
 		graphic.updateData(vert, ind);
+		float worldWid = 800;
+		float worldHgt = 800;
+		for(int i=0;i<100;i++) {
+			Mesh m = ObjectGeneration.generateTree((int)(hostedGame.getSeed()%100000+10000.0*i), 7);
+			GameObject go1 = new GameObject("Tree",world,m);
+			//float tXLoc = (float)Math.random()*worldWid;
+			//float tYLoc = (float)Math.random()*worldHgt;
+			Random generator = new Random(hostedGame.getSeed());
+			//float tXLoc = (float)((float)hostedGame.getSeed()%1000+(100.0*i))*worldWid;
+			float tXLoc = (float)generator.nextFloat()*worldWid;
+			float tYLoc = (float)generator.nextFloat()*worldHgt;
+			go1.translate(tXLoc, 150f, tYLoc);
+			graphic.addGameObject(go1);
+		}
+		System.out.println("Tree generation complete");
 		new Thread(new GameToServerPlayerLocationThread(client, graphic)).start();
 		new Thread(new PlayerLocationThread(client)).start();
 		graphic.loop();
