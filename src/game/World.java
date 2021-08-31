@@ -64,7 +64,7 @@ public class World {
 		length = 100;
 		this.seed = seed;
 		terrain = new Mesh(true);
-		for(int x = 0; x < 7; x++) {s
+		for(int x = 0; x < 7; x++) {
 			for(int z = 0; z < 7; z++) {
 				Mesh chunk = generateChunk(seed, x*width, z*length, width, length);
 				terrain.addMesh(chunk);
