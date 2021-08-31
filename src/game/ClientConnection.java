@@ -33,7 +33,7 @@ public class ClientConnection implements Runnable{
 					String command = data[0];
 					//System.out.println("Server: client "+clientID+" said "+messages.get(0));
 					if(command.equals("sl")) {
-						System.out.println("Sending server list to client");
+						System.out.println("Sending server list to client: "+clientID);
 						sendMessage(out, "sl:"+server.getServerList());
 					}
 					else if(command.equals("h")){
@@ -47,7 +47,7 @@ public class ClientConnection implements Runnable{
 						server.joinResponse(Integer.parseInt(data[2]), clientID, data[1]+":"+data[3]);
 					}else if(command.equals("g")) {
 						server.sendGameMessge(clientID, messages.get(0));
-						System.out.println("Client connection: "+messages.get(0)+" ID: "+clientID);
+						//System.out.println("Client connection: "+messages.get(0)+" ID: "+clientID);
 					}
 					messages.remove(0);
 					

@@ -45,17 +45,13 @@ public class Client implements Runnable{
 						running.bool = false;
 						break;
 					}else if(command.equals("g")) {
-						if(data[1].equals("pl")) {
+						if(data[1].equals("pl") && !username.equals(data[2])) {
+							System.out.println("Recieved message: "+messages.get(0));
 							String player = data[2]; 
 							float x = Float.parseFloat(data[3]);
 							float y = Float.parseFloat(data[4]);
-							float z = Float.parseFloat(data[4]);
-							for(OtherPlayer p: hostedGame.getConnectedUsers()) {
-								if(p.getName().equals(player)) {
-									p.setPosition(new float[] {x, y, z});
-								}
-								System.out.println("Setting player position of "+player);
-							}
+							float z = Float.parseFloat(data[5]);
+							hostedGame.setPlayerLocation(player, x, y, z);
 						}
 					}else if(command.equals("sl")) {
 						System.out.println("Servers hosting: ");
@@ -79,7 +75,7 @@ public class Client implements Runnable{
 						System.out.println("Client "+id+" recieved a join status update: "+messages.get(0));
 						if(data[1].equals("true")) {
 							System.out.println("Client "+id+": I joined a game with the seed: "+data[2]);
-							hostedGame = new HostedSession(null, null, 0, false, Integer.parseInt(data[2]) );
+							hostedGame = new HostedSession(null, null, 0, false, Integer.parseInt(data[2]), username);
 							requestState = "accepted";
 						}
 						else {
@@ -117,6 +113,7 @@ public class Client implements Runnable{
 		}
 	}
 	public void broadCastPlayerLocation(String player) {
+		//System.out.println("Broadcasting "+player+"'s location to all other clients.");
 		request("broadcast location", hostedGame.getPlayerLocation(player));
 	}
 	public void updateLoction() {
@@ -141,7 +138,7 @@ public class Client implements Runnable{
 	}
 	public void hostGame(String sessionName, String pw, int maxUsers) {
 		int seed = (int)(Math.random()*10000000);
-		hostedGame = new HostedSession(sessionName, pw, maxUsers, true, seed);
+		hostedGame = new HostedSession(sessionName, pw, maxUsers, true, seed, username);
 		System.out.println("Hosting a game with the seed "+seed);
 		request("host server", null);
 	}
@@ -159,7 +156,7 @@ public class Client implements Runnable{
 		}else if(request.equals("join reply")) {
 			requests.add("js:"+data);
 		}else if(request.equals("update location")) {
-			requests.add("g:pl:"+username+":"+data);
+			requests.add("g:pl:"+data);
 		}else if(request.equals("broadcast location")) {
 			requests.add("g:pl:"+data);
 		}

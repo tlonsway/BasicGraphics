@@ -11,11 +11,13 @@ public class RunClient {
 			String inputLine = in.readLine();
 			String username = inputLine;
 			System.out.println("Enter server IP address: ");
-			inputLine = in.readLine();
-			String ip = inputLine;
+			//inputLine = in.readLine();
+			//String ip = inputLine;
+			String ip = "127.0.0.1";
 			System.out.println("Enter port number: ");
-			inputLine = in.readLine();
-			int port = Integer.parseInt(inputLine);
+			//inputLine = in.readLine();
+			//int port = Integer.parseInt(inputLine);
+			int port = 30000;
 			Client client = new Client(ip, port, null, username);
 			if(client.getConnectionStatus().equals("Connected")) {
 				new Thread(client).start();

@@ -36,6 +36,7 @@ public class Graphics {
 	GravityThread gravity;
 	World world;
 	ArrayList<GameObject> objects;
+	ArrayList<GameObject> objectQueue;
 	UIManager UIManager;
 	
 	static final float[] iMatFlat = new float[] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
@@ -64,6 +65,7 @@ public class Graphics {
 		mouseThread = new MouseManager();
 		gravity = new GravityThread();
 		objects = new ArrayList<GameObject>();
+		objectQueue = new ArrayList<GameObject>();
 		fpsTime = System.currentTimeMillis();
 		drawBounds = false;
 		UIActive = false;
@@ -183,7 +185,11 @@ public class Graphics {
 		GL.createCapabilities();
 		while(!glfwWindowShouldClose(window)) {
 			updateFPS();
-			
+			//Will add in spawnable object like people
+			if(objectQueue.size() > 0) {
+				addGameObject(objectQueue.get(0));
+				objectQueue.remove(0);
+			}
 			
 			
 			
@@ -221,7 +227,6 @@ public class Graphics {
 					e.printStackTrace();
 				}
 			}
-			
 			
 			glUseProgram(shaderProgram);
 			

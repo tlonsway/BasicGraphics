@@ -10,6 +10,7 @@ public class PlayerLocationThread implements Runnable{
 		if(client.isHost()) {
 			while(client.isRunning()) {
 				try {
+					client.broadCastPlayerLocation("local");
 					for(OtherPlayer p: client.getHostedSession().getConnectedUsers()) {
 						client.broadCastPlayerLocation(p.getName());
 					}

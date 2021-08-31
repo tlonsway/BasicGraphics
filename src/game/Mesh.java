@@ -18,6 +18,8 @@ public class Mesh {
 		if(!blank) {
 			this.polygons.add(new Polygon(new float[] {-1, 1, 0}, new float[] {1, 1, 0},new float[] {-1, -1, 0}));
 			this.polygons.add(new Polygon(new float[] {-1, -1, 0}, new float[] {1, 1, 0},new float[] {1, -1, 0}));
+			this.polygons.get(0).setFColor(new float[] {1, 0, 0});
+			this.polygons.get(1).setFColor(new float[] {1, 0, 0});
 		}
 	}
 	public void addToMesh(Polygon p) {

@@ -9,13 +9,15 @@ public class HostedSession {
 	private boolean host;
 	private int maxUsers;
 	private float[] playerLocation;
-	public HostedSession(String sessionName, String password, int maxUsers, boolean host, int seed) {
+	private String username;
+	public HostedSession(String sessionName, String password, int maxUsers, boolean host, int seed, String username) {
 		this.sessionName = sessionName;
 		this.password = password;
 		this.maxUsers = maxUsers;
 		connectedUsers = new ArrayList<OtherPlayer>();
 		this.host = host;
 		this.seed = seed; 
+		this.username = username;
 		playerLocation = new float[] {0, 0, 0};
 		/*
 		if(!host) {
@@ -53,7 +55,7 @@ public class HostedSession {
 			boolean foundPlayer = false;
 			for(OtherPlayer p: connectedUsers) {
 				if(p.getName().equals(playerName)) {
-					p.setPosition(new float[] {x, y, z});
+					p.setPosition(new float[] {-x, -y, -z});
 					foundPlayer = true;
 				}
 			}
@@ -65,7 +67,8 @@ public class HostedSession {
 	}
 	public String getPlayerLocation(String playerName) {
 		if(playerName.equals("local")) {
-			return playerLocation[0]+":"+playerLocation[1]+":"+playerLocation[2];
+			
+			return username+":"+playerLocation[0]+":"+playerLocation[1]+":"+playerLocation[2];
 		}else {
 			for(OtherPlayer p: connectedUsers) {
 				if(p.getName().equals(playerName)) {

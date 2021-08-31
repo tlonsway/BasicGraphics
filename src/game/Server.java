@@ -45,7 +45,12 @@ public class Server implements Runnable{
 	public void joinResponse(int clientID, int host, String status) {
 		for(ClientConnection cc: activeClients) {
 			if(cc.getID() == clientID) {
-				if(status.equals("true")) {
+				System.out.println("Server: Join response to client: "+clientID+" host: "+host+" status: "+status);
+				boolean state = false;
+				if(status.contains(":")) {
+					state = true;
+				}
+				if(state) {
 					connections.add(new int[] {host, clientID});
 					connections.add(new int[] {clientID, host});
 				}
@@ -55,10 +60,11 @@ public class Server implements Runnable{
 		}
 	}
 	public void sendGameMessge(int ID, String message) {
+		//System.out.println("Server: "+message+" Client: "+ID+" Game connections: "+connections.size()); 
 		for(int[] connect: connections) {
 			if(connect[0] == ID) {
 				activeClients.get(connect[1]).sendGameMessage(message);
-				System.out.println("Sending "+message+" to client "+ID);
+				//System.out.println("Sending "+message+" from client "+ID);
 			}
 		}
 	}
