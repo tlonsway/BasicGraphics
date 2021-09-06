@@ -11,12 +11,14 @@ public class GameToServerPlayerLocationThread implements Runnable{
 		while(client.isRunning()) {
 			client.getHostedSession().setPlayerLocation("local", graphics.getCamera().getCamPos()[0], graphics.getCamera().getCamPos()[1], graphics.getCamera().getCamPos()[2]);
 			if(graphics.getGameObjects().size() < client.getHostedSession().getConnectedUsers().size()) {
-				GameObject go = new GameObject(client.getHostedSession().getConnectedUsers().get(graphics.getGameObjects().size()).getName(), graphics.getWorld());
+				GameObject go = new ServerObject(client.getHostedSession().getConnectedUsers().get(graphics.getGameObjects().size()).getName(), graphics.getWorld());
 				go.gravDisabled = true;
 				graphics.objectQueue.add(go);
 			}
 			for(int i = 0; i < graphics.getGameObjects().size(); i++) {
-				graphics.getGameObjects().get(i).setPosition(client.getHostedSession().getConnectedUsers().get(i).getLocation());
+				if(graphics.getGameObjects().get(i) instanceof ServerObject) {
+					graphics.getGameObjects().get(i).setPosition(client.getHostedSession().getConnectedUsers().get(i).getLocation());
+				}
 			}
 			try {
 				Thread.sleep(200);
