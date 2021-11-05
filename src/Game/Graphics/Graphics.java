@@ -140,11 +140,6 @@ public class Graphics {
 			if ( key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
 				cam.jump();
 			}
-			if (key == GLFW_KEY_0 && action == GLFW_PRESS) {
-				for(GameObject go : objects) {
-					go.rotate('z', (float)(Math.PI/8), false);
-				}
-			}
 			if (key == GLFW_KEY_B && action == GLFW_PRESS) {
 				drawBounds = !drawBounds;
 			}
@@ -168,6 +163,10 @@ public class Graphics {
 			}
 			
 			keyboardThread.keyEvent(key, action);
+			int hotBarSelected = keyboardThread.getHotbarKey(key, action);
+			if (hotBarSelected != -1) {
+				UIManager.setHotbarSlot(hotBarSelected);
+			}
 		});
 		glfwSetCursorPosCallback(window, (window, xpos, ypos) -> {
 			mouseThread.mouseMovement(xpos, ypos);

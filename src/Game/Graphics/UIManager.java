@@ -10,7 +10,8 @@ public class UIManager {
 	static final float hotBarPos = -0.75f;
 	static final float hotBarHeight = 0.12f;
 	static final float hotBarWidth = 0.5f;
-	static final float[] hotbarColor = new float[] {0.0f,0.0f,0.0f,1.0f};
+	static final float[] hotbarColor = new float[] {0.0f,0.0f,0.0f};
+	static final float[] hotbarHighlightColor = new float[]{0.8f,0.8f,1.0f};
 	static final int numHotbarSlots = 10;
 	boolean generated;
 	float[] vertices;
@@ -34,6 +35,22 @@ public class UIManager {
 		float[] crosshair = new float[] {-crosshairHoriz,0f, 0.0f,0.0f,0.0f,crosshairHoriz,0f, 0.0f,0.0f,0.0f,
 										 0f,-crossHairDim, 0f, 0.0f,0.0f,0.0f, crossHairDim, 0.0f,0.0f,0.0f};
 		vertTemp = combineVertArr(vertTemp,crosshair);
+		float distBetweenLines = (float)hotBarWidth/((float)numHotbarSlots/2.0f);
+		//create the highlight for the currently selected hotbar element
+		float highlightLeft = -hotBarWidth+(distBetweenLines*currentHotbarSlot);
+		float highlightRight = highlightLeft+distBetweenLines;
+		float highlightTop = hotBarPos;
+		float highlightBottom = hotBarPos-hotBarHeight;
+		float hlt = highlightLeft;
+		float hrt = highlightRight;
+		float htt = highlightTop;
+		float hbt = highlightBottom;
+		float[] hbhc = hotbarHighlightColor;
+		float[] highlightVert = new float[] {hlt,htt,hbhc[0],hbhc[1],hbhc[2],hrt,htt,hbhc[0],hbhc[1],hbhc[2],
+											 hlt,hbt,hbhc[0],hbhc[1],hbhc[2],hrt,hbt,hbhc[0],hbhc[1],hbhc[2],
+											 hlt,htt,hbhc[0],hbhc[1],hbhc[2],hlt,hbt,hbhc[0],hbhc[1],hbhc[2],
+											 hrt,htt,hbhc[0],hbhc[1],hbhc[2],hrt,hbt,hbhc[0],hbhc[1],hbhc[2]};
+		vertTemp = combineVertArr(vertTemp,highlightVert);
 		//create the vertices for the hotbar
 		float[] hbc = hotbarColor;
 		float[] hotbar = new float[] {-hotBarWidth, hotBarPos-hotBarHeight, hbc[0],hbc[1],hbc[2],hotBarWidth, hotBarPos-hotBarHeight,hbc[0],hbc[1],hbc[2],
@@ -41,7 +58,7 @@ public class UIManager {
 		
 		float[] hotBarVertLines = new float[(numHotbarSlots+1)*10];
 		int incT = 0;
-		float distBetweenLines = (float)hotBarWidth/((float)numHotbarSlots/2.0f);
+		
 		for(int i=0;i<=numHotbarSlots;i++) {
 			float tHorzPos = -hotBarWidth+(distBetweenLines*i);
 			hotBarVertLines[incT] = tHorzPos;
@@ -58,6 +75,10 @@ public class UIManager {
 		}
 		hotbar = combineVertArr(hotbar,hotBarVertLines);
 		vertTemp = combineVertArr(vertTemp,hotbar);
+		
+		
+		
+		
 		
 		this.vertices = vertTemp;
 		generated = true;

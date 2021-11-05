@@ -23,6 +23,22 @@ public class KeyboardManager {
 		this.g = g;
 	}
 	
+	public static int getHotbarKey(int key, int action) { 
+		switch(key) {
+			case(GLFW_KEY_1): return 0;
+			case(GLFW_KEY_2): return 1;
+			case(GLFW_KEY_3): return 2;
+			case(GLFW_KEY_4): return 3;
+			case(GLFW_KEY_5): return 4;
+			case(GLFW_KEY_6): return 5;
+			case(GLFW_KEY_7): return 6;
+			case(GLFW_KEY_8): return 7;
+			case(GLFW_KEY_9): return 8;
+			case(GLFW_KEY_0): return 9;
+		}
+		return -1;
+	}
+	
 	public void keyEvent(int key, int action) {
 		if (key==GLFW_KEY_W && action == GLFW_PRESS) {
 			wDown=true;
