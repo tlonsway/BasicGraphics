@@ -167,7 +167,7 @@ public class Camera {
 	}
 	
 	public boolean touchingGround() {
-		Mesh groundBelow = world.generateChunk(world.seed, (int)(getCamPos()[0]), (int)(getCamPos()[2]), (int)bounds.getXWidth()*2, (int)bounds.getZLength()*2);
+		Mesh groundBelow = world.generateChunk(world.seed, (int)(getCamPos()[0]), (int)(getCamPos()[2]), (int)bounds.getXWidth()*2, (int)bounds.getZLength()*2, 1);
 		//System.out.println("Number of POLYS: " + groundBelow.getPolygons().size());
 		//System.exit(-1);
 		//GameObject cameraObj = new GameObject("Temp");

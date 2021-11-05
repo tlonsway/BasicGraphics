@@ -25,7 +25,7 @@ public class World {
 		//terrain = generateChunk(seed, xShift, zShift);
 		for(int x = 0; x < 7; x++) {
 			for(int z = 0; z < 7; z++) {
-				Mesh chunk = generateChunk(seed, x*width, z*length, width, length);
+				Mesh chunk = generateChunk(seed, x*width, z*length, width, length, 0.05f);
 				terrain.addMesh(chunk);
 				
 				//Mesh tree = ObjectGeneration.generateTree(seed+(x*5*10)+z*10, 6);
@@ -44,8 +44,6 @@ public class World {
 					terrain.addMesh(f);				}*/
 			}
 		}
-		//distance between each point in the grid
-		float gridUnit = 2f;
 		//determines how zoomed in on the perlin noise the cave will be
 		double perlinScaler = 25;
 		//display the points or not
@@ -68,7 +66,7 @@ public class World {
 		terrain = new Mesh(true);
 		for(int x = 0; x < 7; x++) {
 			for(int z = 0; z < 7; z++) {
-				Mesh chunk = generateChunk(seed, x*width, z*length, width, length);
+				Mesh chunk = generateChunk(seed, x*width, z*length, width, length, 1);
 				terrain.addMesh(chunk);
 				Mesh tree = ObjectGeneration.generateTree(seed, 5);
 				tree.translate(x*100-50, getHeight(x*100-50, z*100-59), z*100-50);
@@ -278,18 +276,21 @@ public class World {
 	public float[] getRedColor(float y){
 		return new float[] {(float)((y+40)/85.0),0,0};
 	}
-	public Mesh generateChunk(int seed, int xShift, int zShift, int chunkW, int chunkL) {
+	//Resolution is the number of polygons per one unit distance in game
+	public Mesh generateChunk(int seed, int xShift, int zShift, int chunkW, int chunkL, float resolution) {
 		Mesh map = new Mesh(null);
-		float[][] grid = new float[chunkW+1][chunkL+1];
+		int width = (int)(chunkW*(resolution));
+		int length = (int)(chunkL*(resolution));
+		float[][] grid = new float[width+1][length+1];
 		for(int x = 0; x < grid.length; x++) {
 			for(int y = 0; y < grid[0].length; y++) {
-				grid[x][y] = getHeight(x+xShift, y+zShift);
+				grid[x][y] = getHeight(((float)(x)/width)*chunkW+xShift, ((float)(y)/length)*chunkL+zShift);
 			}
 		}
+		float pR = 1.0f/resolution;
 		for(int row = 0; row < grid[0].length-1; row++) {
-			float[][] pts = {{0+xShift,grid[0][row],row+zShift}, {0+xShift,grid[0][row+1], row+1+zShift}, {1+xShift, grid[1][row], row+zShift}};
+			float[][] pts = {{xShift,grid[0][row],(row*pR)+zShift}, {xShift,grid[0][row+1], ((row+1)*pR)+zShift}, {pR+xShift, grid[1][row], (row*pR)+zShift}};
 			Polygon poly = new Polygon(pts[0], pts[1], pts[2]);
-			//poly.setFColor(new float[] {0, (float)(getGreenColor(grid[0][row])), 0} );
 			poly.setFColor(getLandColor(grid[0][row]));
 			map.addToMesh(poly);
 			boolean up = false;
@@ -298,27 +299,23 @@ public class World {
 				up = !up;
 				float[] p = new float[3];
 				if(up) {
-					p[0] = x+xShift;
+					p[0] = x*pR+xShift;
 					p[1] = grid[x][row+1];
-					p[2] = row+1+zShift;
+					p[2] = (row+1)*pR+zShift;
 				}
 				else {
-					p[0] = x+xShift;
+					p[0] = x*pR+xShift;
 					p[1] = grid[x][row];
-					p[2] = row+zShift;
+					p[2] = row*pR+zShift;
 				}
 				pts = shiftPoint(pts, p);
 				if(up) {
 					poly = new Polygon(pts[1], pts[2], pts[0]);
-					//poly = new Polygon(pts[2], pts[0], pts[2]);
 					poly.setFColors(new float[][] {getLandColor(pts[1][1]), getLandColor(pts[2][1]), getLandColor(pts[0][1])});
 				}else {
 					poly = new Polygon(pts[0], pts[1], pts[2]);
 					poly.setFColors(new float[][] {getLandColor(pts[0][1]), getLandColor(pts[1][1]), getLandColor(pts[2][1])});
 				}
-				
-				//poly.setFColor(getLandColor(p[1]));
-				//poly.setFColor(new float[] {0, (float)(getGreenColor(p[1])), 0});
 				map.addToMesh(poly);
 				if(up) {
 					x++;

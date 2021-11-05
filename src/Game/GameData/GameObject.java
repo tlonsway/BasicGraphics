@@ -365,7 +365,7 @@ public class GameObject {
 			zLen = 1;
 		}
 		
-		Mesh groundBelow = world.generateChunk(world.seed, (int)(getPosition()[0]), (int)(getPosition()[2]), xWid, zLen);
+		Mesh groundBelow = world.generateChunk(world.seed, (int)(getPosition()[0]), (int)(getPosition()[2]), xWid, zLen, 1);
 				
 		//endTimer("Getting ground below");
 		//Mesh groundBelow = world.generateChunk(world.seed, startPosX, startPosZ, widthX, lengthZ);
