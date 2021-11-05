@@ -1,12 +1,14 @@
-package engine;
+package Game.Graphics;
 
 import java.util.*;
 import org.jblas.*;
+
 import java.awt.Color;
 
 public class Polygon implements Comparable {
 	private FloatMatrix[] points;
-	float[][] fColor;
+	private int[] color;
+	public float[][] fColor;
 	private float distance;
 	FloatMatrix[] renderedPoints;
 	
@@ -23,22 +25,8 @@ public class Polygon implements Comparable {
 		}
 	}
 	
-	public Polygon(float[] p1, float[] p2, float[] p3, float[] color) {
-		fColor = new float[][] {color, color, color};
-		points = new FloatMatrix[3];
-		float[] tAc = p1;
-		for(int i=0;i<3;i++) {
-			switch(i) {
-			case(1): tAc = p2; break;
-			case(2): tAc = p3; break;
-			}
-			FloatMatrix tFMat = new FloatMatrix(tAc);
-			points[i] = tFMat;
-		}
-	}
 	public Polygon(float[] p1, float[] p2, float[] p3, int[] color) {
-		float[] colors = new float[] {color[0]/256.0f, color[1]/256.0f, color[2]/256.0f};
-		fColor = new float[][] {colors, colors, colors};
+		this.color = color;
 		points = new FloatMatrix[3];
 		float[] tAc = p1;
 		for(int i=0;i<3;i++) {
@@ -50,38 +38,38 @@ public class Polygon implements Comparable {
 			points[i] = tFMat;
 		}
 	}
-	
 	public void setFColor(float[] c) {
 		fColor = new float[][] {c, c, c};
 	}
-	
 	public void setFColors(float[][] c) {
 		fColor = c;
 	}
-	
 	public Polygon(FloatMatrix p1, FloatMatrix p2, FloatMatrix p3) {
 		points = new FloatMatrix[3];
 		points[0] = p1; points[1] = p2; points[2] = p3;
 	}
 	
-	public Polygon(FloatMatrix p1, FloatMatrix p2, FloatMatrix p3, float[] color) {
-		fColor = new float[][] {color, color, color};
+	public Polygon(FloatMatrix p1, FloatMatrix p2, FloatMatrix p3, int[] color) {
+		this.color = color;
 		points = new FloatMatrix[3];
 		points[0] = p1; points[1] = p2; points[2] = p3;
 	}
 	
-	public int[] getColorAsInt(int vertex) {
-		return new int[] {(int)(fColor[vertex][0]*255),(int)(fColor[vertex][0]*255),(int)(fColor[vertex][0]*255)};
+	public void setColor(int[] col) {
+		this.color = col;
 	}
 	
-	public Color getColorAsColor(int vertex) {
-		return new Color((int)(fColor[vertex][0]*255),(int)(fColor[vertex][0]*255),(int)(fColor[vertex][0]*255));
+	public int[] getColorAsInt() {
+		return color;
+	}
+	
+	public Color getColorAsColor() {
+		return new Color(color[0],color[1],color[2]);
 	}
 	
 	public FloatMatrix[] getPoints() {
 		return points;
 	}
-	
 	public void translate(float x, float y, float z) {
 		for(int i = 0; i < points.length; i++) {
 			float p1, p2, p3;
@@ -91,11 +79,10 @@ public class Polygon implements Comparable {
 			points[i] = new FloatMatrix(new float[] {p1, p2, p3});
 		}
 	}
-	
 	public void rotate(float[] rotationPoint, char axis, float angle) {
 		for(int i = 0; i < points.length; i++) {
 			FloatMatrix t = new FloatMatrix(new float[] {points[i].get(0)-rotationPoint[0], points[i].get(1)-rotationPoint[1], points[i].get(2)-rotationPoint[2]} );
-			FloatMatrix t2 = Game.Graphics.Operations.rotatePoint(t, axis, angle);
+			FloatMatrix t2 = Operations.rotatePoint(t, axis, angle);
 			points[i].put(0, t2.get(0)+rotationPoint[0]);
 			points[i].put(1, t2.get(1)+rotationPoint[1]);
 			points[i].put(2, t2.get(2)+rotationPoint[2]);
@@ -108,42 +95,6 @@ public class Polygon implements Comparable {
         float s2 = (v1.get(2)*v2.get(0))-(v1.get(0)*v2.get(2));
         float s3 = (v1.get(0)*v2.get(1))-(v1.get(1)*v2.get(0));
         return new FloatMatrix(new float[] {s1,s2,s3});
-	}
-	
-	public float[][] getFColors(){
-		return fColor;
-	}
-	
-	public Polygon clone() {
-		Polygon p = new Polygon(new float[] {points[0].get(0), points[0].get(1), points[0].get(2)}, new float[] {points[1].get(0), points[1].get(1), points[1].get(2)}, new float[] {points[2].get(0), points[2].get(1), points[2].get(2)});
-		p.setFColors(getFColors());
-		return p;
-	}
-	
-	public FloatMatrix[] getRendered(Camera cam, FloatMatrix camMat) {
-		try {
-			
-			float[] ren1 = cam.renderPoint(points[0],camMat);
-			float[] ren2 = cam.renderPoint(points[1],camMat);
-			float[] ren3 = cam.renderPoint(points[2],camMat);
-			float closest = ren1[2];
-			if (ren2[2] < closest) {
-				closest = ren2[2];
-			}
-			if (ren3[2] < closest) {
-				closest = ren3[2];
-			}
-			distance = closest;
-			FloatMatrix[] ret = new FloatMatrix[3];
-			ret[0] = new FloatMatrix(ren1);
-			ret[1] = new FloatMatrix(ren2);
-			ret[2] = new FloatMatrix(ren3);
-			renderedPoints = ret;
-			return ret;
-		} catch (NullPointerException e) {
-			renderedPoints = null;
-			return null;
-		}
 	}
 	
 	public int compareTo(Object other) {
@@ -179,5 +130,13 @@ public class Polygon implements Comparable {
 	public FloatMatrix[] getRenderedPoints() {
 		return renderedPoints;
 	}
+	
+	//color of the new polygon will be the same as the color of the first vertex
+	public Polygon clone() {
+		Polygon p = new Polygon(new float[] {points[0].get(0), points[0].get(1), points[0].get(2)}, new float[] {points[1].get(0), points[1].get(1), points[1].get(2)}, new float[] {points[2].get(0), points[2].get(1), points[2].get(2)});
+		p.setFColor(new float[] {fColor[0][0], fColor[0][1], fColor[0][2]});
+		return p;
+	}
+	
 	
 }

@@ -1,11 +1,13 @@
-package engine;
+package Game.GameData;
 
-import org.jblas.*;
+import org.jblas.FloatMatrix;
 
+import Game.Graphics.Mesh;
+import Game.Graphics.Polygon;
 
 public class ObjectGeneration {
 	public static Mesh generateTree(int seed, int resolution) {
-		Mesh tree = new Mesh();
+		Mesh tree = new Mesh(true);
 		boolean split = Noise.genfloat(seed, 0, 1) > 0.2;
 		float bA;
 		int numBranchStacks;
@@ -127,7 +129,7 @@ public class ObjectGeneration {
 		return branch;
 	}
 	public static Mesh generateLeaves(boolean zAxis, int seed) {
-		Mesh leaves = new Mesh();
+		Mesh leaves = new Mesh(true);
 		FloatMatrix p1 = new FloatMatrix(new float[] {0, -1.0f, -1.0f});
 		FloatMatrix p2 = new FloatMatrix(new float[] {0, -1.0f, 1.0f});
 		for(int i = 0; i < 4; i++) {
@@ -144,19 +146,16 @@ public class ObjectGeneration {
 		leaves.addToMesh(p);
 		p1 = Game.Graphics.Operations.rotatePoint(p1, 'z', (float)(Math.PI));
 		p2 = Game.Graphics.Operations.rotatePoint(p2, 'z', (float)(Math.PI));
+		p1 = Game.Graphics.Operations.rotatePoint(p1, 'y', (float)(Math.PI));
+		p2 = Game.Graphics.Operations.rotatePoint(p2, 'y', (float)(Math.PI));
 		p = new Polygon(new float[] {p1.get(0), p1.get(1), p1.get(2)}, new float[] {p2.get(0), p2.get(1), p2.get(2)}, new float[] {0, 0, 0});
 		//p.setFColor(new float[] {0.4f, 0.54f, 0.24f});
 		p.setFColor(generateColor(seed, "green"));
 		leaves.addToMesh(p);
 		return leaves;
 	}
-	public static Mesh generateSphere(int resolution, float[] xDist, float[] z, float[] y) {
-		Mesh sphere = new Mesh();
-		
-		return sphere;
-	}
 	public static Mesh generateFern(int seed) {
-		Mesh bush = new Mesh();
+		Mesh bush = new Mesh(true);
 		int circles = (int)(Noise.genfloat(seed, 3f, 5)+0.5);
 		int leaves = (int)(Noise.genfloat(seed+3, 5, 10)+0.5);
 		float height = Noise.genfloat(seed+6, 1f, 3f);
@@ -186,7 +185,7 @@ public class ObjectGeneration {
 		return bush;
 	}
 	private static Mesh generateCylinder(float radius, float height, int resolution, int seed, String color) {
-		Mesh cyl = new Mesh();
+		Mesh cyl = new Mesh(true);
 		boolean down = false;
 		int r = 0;
 		float angle = (float)((Math.PI*2)/resolution);
