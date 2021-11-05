@@ -449,9 +449,9 @@ public class Graphics {
 		glBindVertexArray(VAOt);
 		glBindBuffer(GL_ARRAY_BUFFER,VBOt);
 		glBufferData(GL_ARRAY_BUFFER, UIvertices, GL_STATIC_DRAW);
-		glVertexAttribPointer(0,2,GL_FLOAT,false,8,0l);
+		glVertexAttribPointer(0,2,GL_FLOAT,false,20,0l);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1,3,GL_FLOAT,false,12,12l);
+		glVertexAttribPointer(1,3,GL_FLOAT,false,20,8l);
 		glEnableVertexAttribArray(1);
 		UIVAO = VAOt;
 		glBindBuffer(GL_ARRAY_BUFFER,0);
