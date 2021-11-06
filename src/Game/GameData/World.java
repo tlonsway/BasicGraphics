@@ -57,7 +57,7 @@ public class World {
 	}
 	
 	public void updateWorld(int xLoc, int yLoc) {
-		generateWorld(xLoc, yLoc, 20, 20);
+		terrain = generateWorld(xLoc, yLoc, 20, 20);
 		generateVerticeList();
 	}
 	
