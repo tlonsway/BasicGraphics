@@ -112,10 +112,24 @@ public class Polygon implements Comparable {
 	public FloatMatrix getNorm() {
 		FloatMatrix v1 = points[0];
 		FloatMatrix v2 = points[1];
-		float s1 = (v1.get(1)*v2.get(2))-(v1.get(2)*v2.get(1));
-        float s2 = (v1.get(2)*v2.get(0))-(v1.get(0)*v2.get(2));
-        float s3 = (v1.get(0)*v2.get(1))-(v1.get(1)*v2.get(0));
-        return new FloatMatrix(new float[] {s1,s2,s3});
+		FloatMatrix v3 = points[2];
+		FloatMatrix vec1 = v3.subColumnVector(v1);
+		FloatMatrix vec2 = v3.subColumnVector(v2);
+		v1 = vec1;
+		v2 = vec2;
+		
+		float s1 = ((v1.get(1))*(v2.get(2)))-((v1.get(2))*(v2.get(1)));
+        float s2 = ((v1.get(2))*(v2.get(0)))-((v1.get(0))*(v2.get(2)));
+        float s3 = ((v1.get(0))*(v2.get(1)))-((v1.get(1))*(v2.get(0)));
+        if (Math.abs(v1.get(0)) < 0.5 || Math.abs(v1.get(2)) < 0.5) {
+        	System.out.println("Cross Product: " + s1 + " , " + s2 + " , " + s3);
+        }
+        if (s2 < 0) {
+        	s1 *= -1;
+        	s2 *= -1;
+        	s3 *= -1;
+        }
+        return new FloatMatrix(new float[] {-s1,-s2,-s3});
 	}
 	
 	public int compareTo(Object other) {
