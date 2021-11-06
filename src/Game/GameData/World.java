@@ -19,31 +19,7 @@ public class World {
 		width = 100;
 		length = 100;
 		seed = (int)(Math.random()*100000000);
-		int xShift = 0; 
-		int zShift = 0;
-		terrain = new Mesh(true);
-		//terrain = generateChunk(seed, xShift, zShift);
-		for(int x = 0; x < 7; x++) {
-			for(int z = 0; z < 7; z++) {
-				Mesh chunk = generateChunk(seed, x*width, z*length, width, length, 0.05f);
-				terrain.addMesh(chunk);
-				
-				//Mesh tree = ObjectGeneration.generateTree(seed+(x*5*10)+z*10, 6);
-				//Mesh bush = ObjectGeneration.generateFern(seed+(x*5*10)+z*10);
-				//int numPlants = (int)(Math.random()*10);
-				/*for(int i = 0; i < numPlants; i++) {
-					float a = (float)(Math.random()*100);
-					float b = (float)(Math.random()*100);
-					Mesh t = tree.clone();
-					t.translate(a+x*width, getHeight(a+x*width,b+z*length), b+z*length);
-					terrain.addMesh(t);
-					a = (float)(Math.random()*100);
-					b = (float)(Math.random()*100);
-					Mesh f = bush.clone();
-					f.translate(a+x*width, getHeight(a+x*width,b+z*length), b+z*length);
-					terrain.addMesh(f);				}*/
-			}
-		}
+		terrain = generateWorld(0, 0, 25, 25);
 		//determines how zoomed in on the perlin noise the cave will be
 		double perlinScaler = 25;
 		//display the points or not
@@ -78,6 +54,31 @@ public class World {
 		System.out.println("Generated "+terrain.getPolygons().size()+" Polygons");
 		System.out.println("Seed: "+seed);
 		objects = new ArrayList<Mesh>();
+	}
+	
+	public void updateWorld(int xLoc, int yLoc) {
+		generateWorld(xLoc, yLoc, 20, 20);
+		generateVerticeList();
+	}
+	
+	private Mesh generateWorld(int startX, int startY, int wWidth, int wLength) {
+		Mesh map = new Mesh(true);
+		for(int w = -1*(wWidth/2); w < wWidth/2; w++) {
+			for(int l = -1*(wLength/2); l < (wLength/2); l++) {
+				float res = 1;
+				if(Math.abs(w) > 6 || Math.abs(l) > 6) {
+					res = 0.05f;
+				}
+				else if(Math.abs(w) > 4 || Math.abs(l) > 4) {
+					res = 0.1f;
+				}
+				else if(Math.abs(w) > 2 || Math.abs(l) > 2) {
+					res = 0.2f;
+				}
+				map.addMesh(generateChunk(seed, startX-(w*width), startY-(l*length), width, length, res));
+			}
+		}
+		return map;
 	}
 	public float getHeight(float x, float z) {
 		float y = (float)(Math.tan(noise.noise(x/300.0+seed, z/300.0+seed))*height*2);
