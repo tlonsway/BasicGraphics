@@ -332,6 +332,12 @@ public class World {
 					poly = new Polygon(pts[0], pts[1], pts[2]);
 					poly.setFColors(new float[][] {getLandColor(pts[0][1]), getLandColor(pts[1][1]), getLandColor(pts[2][1])});
 				}
+				if(row == grid[0].length-2) {
+                    poly.setFColors(new float[][] {{0f, 0f, 0f},{0f, 0f, 0f},{0f, 0f, 0f}});
+                }
+				if(x == grid.length-1) {
+					poly.setFColors(new float[][] {{0f, 0f, 0f},{0f, 0f, 0f},{0f, 0f, 0f}});
+				}
 				map.addToMesh(poly);
 				if(up) {
 					x++;
