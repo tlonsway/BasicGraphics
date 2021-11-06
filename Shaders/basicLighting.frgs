@@ -24,9 +24,9 @@ void main() {
 	
 	vec3 result = (ambient + diffuse + specular) * objectColor;
 	//vec3 result = (diffuse) * objectColor;
-	if (diff <= 0.01f) {
-		//result = norm;
-	}
+	//if (-dot(norm,vec3(0.0f,1.0f,0.0f)) >= 0.9f) {
+	//	result = vec3(1.0f,0.0f,0.0f);
+	//}
 	//result = norm;
 	FragColor = vec4(result, 1.0f);
 	//FragColor = ourColor;
