@@ -101,7 +101,7 @@ public class Graphics {
 		int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
 		int lightColLoc = glGetUniformLocation(shaderProgram, "lightColor");
 		
-		glUniform3fv(lightPosLoc, new float[] {-1000,6000,-10000}); //light position
+		glUniform3fv(lightPosLoc, new float[] {-100,600,-100}); //light position
 		glUniform3fv(lightColLoc, new float[] {1.0f,1.0f,1.0f}); //light color
 		
 		Shader UIvertShader = new Shader("Shaders/UIVert.vtxs",GL_VERTEX_SHADER);

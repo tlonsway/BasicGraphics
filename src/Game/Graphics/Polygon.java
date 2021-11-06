@@ -8,6 +8,9 @@ import java.awt.Color;
 public class Polygon implements Comparable {
 	private FloatMatrix[] points;
 	private int[] color;
+	private float[] col1;
+	private float[] col2;
+	private float[] col3;
 	public float[][] fColor;
 	private float distance;
 	FloatMatrix[] renderedPoints;
@@ -38,6 +41,24 @@ public class Polygon implements Comparable {
 			points[i] = tFMat;
 		}
 	}
+	public void setColN(int n, float[] val) {
+		switch(n) {
+		case(0): col1=val; break;
+		case(1): col2=val; break;
+		case(2): col3=val;
+		}
+	}
+	
+	public float[] getColN(int n) {
+		switch(n) {
+			case(0): return col1;
+			case(1): return col2;
+			case(2): return col3;
+		}
+		return null;
+	}
+	
+	
 	public void setFColor(float[] c) {
 		fColor = new float[][] {c, c, c};
 	}

@@ -107,6 +107,7 @@ public class World {
 				list.add(p.getPoints()[i].get(1));
 				list.add(p.getPoints()[i].get(2));
 				float[] pCol = p.fColor[i];
+				//float[] pCol = p.getColN(i);
 				list.add(pCol[0]);
 				list.add(pCol[1]);
 				list.add(pCol[2]);
@@ -303,6 +304,9 @@ public class World {
 			float[][] pts = {{xShift,grid[0][row],(row*pR)+zShift}, {xShift,grid[0][row+1], ((row+1)*pR)+zShift}, {pR+xShift, grid[1][row], (row*pR)+zShift}};
 			Polygon poly = new Polygon(pts[0], pts[1], pts[2]);
 			poly.setFColor(getLandColor(grid[0][row]));
+			//poly.setColN(0, getLandColor(pts[0][1]));
+			//poly.setColN(1, getLandColor(pts[1][1]));
+			//poly.setColN(2, getLandColor(pts[2][1]));
 			map.addToMesh(poly);
 			boolean up = false;
 			int x = 1;
@@ -322,6 +326,7 @@ public class World {
 				pts = shiftPoint(pts, p);
 				if(up) {
 					poly = new Polygon(pts[1], pts[2], pts[0]);
+					
 					poly.setFColors(new float[][] {getLandColor(pts[1][1]), getLandColor(pts[2][1]), getLandColor(pts[0][1])});
 				}else {
 					poly = new Polygon(pts[0], pts[1], pts[2]);
