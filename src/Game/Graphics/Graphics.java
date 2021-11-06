@@ -358,7 +358,7 @@ public class Graphics {
 			}
 			float[] currentXZ = new float[] {cam.getCamPos()[0],cam.getCamPos()[2]};
 			long sTime = System.nanoTime();
-			if (Math.sqrt((currentXZ[0]-playerXZ[0])*(currentXZ[0]-playerXZ[0])+(currentXZ[1]-playerXZ[1])*(currentXZ[1]-playerXZ[1])) > 100) {
+			if (Math.sqrt((currentXZ[0]-playerXZ[0])*(currentXZ[0]-playerXZ[0])+(currentXZ[1]-playerXZ[1])*(currentXZ[1]-playerXZ[1])) > 200) {
 				loops = 0;
 				System.out.println("Generating new chunk");
 				playerXZ = currentXZ;

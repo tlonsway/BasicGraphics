@@ -72,15 +72,19 @@ public class World {
 		for(int w = -1*(wWidth/2); w < wWidth/2; w++) {
 			for(int l = -1*(wLength/2); l < (wLength/2); l++) {
 				float res = 1;
-				if(Math.abs(w) > 6 || Math.abs(l) > 6) {
+				if(Math.abs(w) > 8 || Math.abs(l) > 8) {
 					res = 0.05f;
 				}
-				else if(Math.abs(w) > 4 || Math.abs(l) > 4) {
+				else if(Math.abs(w) > 6 || Math.abs(l) > 6) {
 					res = 0.1f;
 				}
-				else if(Math.abs(w) > 2 || Math.abs(l) > 2) {
+				else if(Math.abs(w) > 4 || Math.abs(l) > 4) {
 					res = 0.2f;
 				}
+				else if(Math.abs(w) > 3 || Math.abs(l) > 3) {
+					res = 0.4f;
+				}
+				//res = (float)(1/(1+Math.min(w,l)));
 				map.addMesh(generateChunk(seed, startX-(w*width), startY-(l*length), width, length, res));
 			}
 		}
