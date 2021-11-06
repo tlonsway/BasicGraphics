@@ -352,7 +352,7 @@ public class Graphics {
 			loops++;
 			if (worldUpdateReady) {
 				System.out.println("loops complete: " + loops);
-				//this.updateData(newWorldVert, new int[0]);
+				this.updateData(newWorldVert, new int[0]);
 				System.out.println("Generated chunk");
 				worldUpdateReady = false;
 			}
