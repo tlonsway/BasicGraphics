@@ -60,6 +60,10 @@ public class Graphics {
 	int skyVAO;
 	int skyShaderProgram;
 	
+	float[] playerXZ = new float[2];
+	boolean worldUpdateReady = false;
+	float[] newWorldVert;
+	
 	
 	public Graphics(int[] screenDims) {
 		this.screenDims = screenDims;
@@ -175,6 +179,12 @@ public class Graphics {
 		//loop();
 	}
 	
+	public void setWorldUpdateReady(float[] newVert) {
+		worldUpdateReady = true;
+		newWorldVert = newVert;
+	}
+	
+	
 	private void startTimer() {
 		timeTemp = System.nanoTime();
 	}
@@ -187,7 +197,12 @@ public class Graphics {
 	public void loop() {
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
+		int loops = 0;
 		while(!glfwWindowShouldClose(window)) {
+			
+			
+			
+			
 			updateFPS();
 			//Will add in spawnable object like people
 			if(objectQueue.size() > 0) {
@@ -334,6 +349,29 @@ public class Graphics {
 			
 			glfwSwapBuffers(window);
 			glfwPollEvents();
+			loops++;
+			if (worldUpdateReady) {
+				System.out.println("loops complete: " + loops);
+				//this.updateData(newWorldVert, new int[0]);
+				System.out.println("Generated chunk");
+				worldUpdateReady = false;
+			}
+			float[] currentXZ = new float[] {cam.getCamPos()[0],cam.getCamPos()[2]};
+			long sTime = System.nanoTime();
+			if (Math.sqrt((currentXZ[0]-playerXZ[0])*(currentXZ[0]-playerXZ[0])+(currentXZ[1]-playerXZ[1])*(currentXZ[1]-playerXZ[1])) > 100) {
+				loops = 0;
+				System.out.println("Generating new chunk");
+				playerXZ = currentXZ;
+				new Thread(new WorldUpdateThread(this,world,new int[] {(int)currentXZ[0],(int)currentXZ[1]})).start();
+				//world.updateWorld(-(int)currentXZ[0],-(int)currentXZ[1]);
+				//this.updateData(world.vertices, world.indices);
+				long eTime = System.nanoTime();
+				System.out.println("Time for thread starting: " + (eTime-sTime));
+			}
+			
+			
+			
+			
 			//apply camera/game updates
 			
 			//endTimer("Swap Buffers");
@@ -350,7 +388,7 @@ public class Graphics {
 			//endTimer("Camera Transforms");
 			
 			gravity.setGameObjects(objects);
-			gravity.run();
+		 	gravity.run();
 			
 			//endTimer("Gravity Thread");
 		}
@@ -464,11 +502,11 @@ public class Graphics {
 		VBOt = glGenBuffers();
 		VAOt = glGenVertexArrays();
 		EBOt = glGenBuffers();
-		VBO=VBOt;VAO=VAOt;EBO=EBOt;
-		glBindVertexArray(VAO);
-		glBindBuffer(GL_ARRAY_BUFFER,VBO);
+		
+		glBindVertexArray(VAOt);
+		glBindBuffer(GL_ARRAY_BUFFER,VBOt);
 		glBufferData(GL_ARRAY_BUFFER, vertices, GL_STREAM_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOt);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STREAM_DRAW);
 		glVertexAttribPointer(0,3,GL_FLOAT,false,36,0l);
 		glEnableVertexAttribArray(0);
@@ -480,7 +518,8 @@ public class Graphics {
 		//glVertexAttribPointer(0,3,GL_FLOAT,false,12,0l);
 		//glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER,0);
-		glBindVertexArray(VAO);
+		glBindVertexArray(VAOt);
+		VBO=VBOt;VAO=VAOt;EBO=EBOt;
 		numElements = vertices.length;
 		//glBindVertexArray(0);
 	}

@@ -57,8 +57,14 @@ public class World {
 	}
 	
 	public void updateWorld(int xLoc, int yLoc) {
+		long sTime = System.nanoTime();
 		terrain = generateWorld(xLoc, yLoc, 20, 20);
+		long eTime1 = System.nanoTime();
 		generateVerticeList();
+		long eTime2 = System.nanoTime();
+		System.out.println("GenerateWorld took: " + (eTime1-sTime));
+		System.out.println("GenerateVertex took: " + (eTime2-eTime1));
+		
 	}
 	
 	private Mesh generateWorld(int startX, int startY, int wWidth, int wLength) {

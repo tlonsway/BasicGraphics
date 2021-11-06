@@ -45,7 +45,7 @@ public class GraphicsTest {
 				g.addGameObject(go1);
 			}
 		}*/
-		float worldWid = 750;
+		/*float worldWid = 750;
 		float worldHgt = 750;
 		for(int i=0;i<100;i++) {
 			Mesh m = ObjectGeneration.generateTree((int)(Math.random()*100000000), 8);
@@ -54,7 +54,7 @@ public class GraphicsTest {
 			float tYLoc = (float)Math.random()*worldHgt;
 			go1.translate(tXLoc, 150f, tYLoc);
 			g.addGameObject(go1);
-		}
+		}*/
 		System.out.println("Tree generation complete");
 		
 		//float[] crosshair = new float[] {-0.1f,0f, 0.1f,0f,

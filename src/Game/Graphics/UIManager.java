@@ -53,8 +53,14 @@ public class UIManager {
 		vertTemp = combineVertArr(vertTemp,highlightVert);
 		//create the vertices for the hotbar
 		float[] hbc = hotbarColor;
+		float hotbarDetailOffset1 = 0.007f;
 		float[] hotbar = new float[] {-hotBarWidth, hotBarPos-hotBarHeight, hbc[0],hbc[1],hbc[2],hotBarWidth, hotBarPos-hotBarHeight,hbc[0],hbc[1],hbc[2],
-									  -hotBarWidth, hotBarPos, hbc[0],hbc[1],hbc[2],hotBarWidth, hotBarPos,hbc[0],hbc[1],hbc[2]};
+									  -hotBarWidth, hotBarPos, hbc[0],hbc[1],hbc[2],hotBarWidth, hotBarPos,hbc[0],hbc[1],hbc[2],
+									  -hotBarWidth-hotbarDetailOffset1, hotBarPos-hotBarHeight-hotbarDetailOffset1, hbc[0],hbc[1],hbc[2],hotBarWidth+hotbarDetailOffset1, hotBarPos-hotBarHeight-hotbarDetailOffset1,hbc[0],hbc[1],hbc[2],
+									  -hotBarWidth-hotbarDetailOffset1, hotBarPos+hotbarDetailOffset1, hbc[0],hbc[1],hbc[2],hotBarWidth+hotbarDetailOffset1, hotBarPos+hotbarDetailOffset1,hbc[0],hbc[1],hbc[2],
+									  -hotBarWidth-hotbarDetailOffset1, hotBarPos-hotBarHeight-hotbarDetailOffset1,hbc[0],hbc[1],hbc[2],-hotBarWidth-hotbarDetailOffset1, hotBarPos+hotbarDetailOffset1,hbc[0],hbc[1],hbc[2],
+									  hotBarWidth+hotbarDetailOffset1, hotBarPos-hotBarHeight-hotbarDetailOffset1,hbc[0],hbc[1],hbc[2],hotBarWidth+hotbarDetailOffset1, hotBarPos+hotbarDetailOffset1,hbc[0],hbc[1],hbc[2],
+		};
 		
 		float[] hotBarVertLines = new float[(numHotbarSlots+1)*10];
 		int incT = 0;
