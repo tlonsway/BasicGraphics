@@ -71,7 +71,7 @@ public class World {
 		Mesh map = new Mesh(true);
 		for(int w = -1*(wWidth/2); w < wWidth/2; w++) {
 			for(int l = -1*(wLength/2); l < (wLength/2); l++) {
-				float res = 0.7f;
+				float res = 0.5f;
 				if(Math.abs(w) > 10 || Math.abs(l) > 10) {
 					res = 0.05f;
 				}

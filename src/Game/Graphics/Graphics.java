@@ -63,6 +63,7 @@ public class Graphics {
 	float[] playerXZ = new float[2];
 	boolean worldUpdateReady = false;
 	float[] newWorldVert;
+	boolean updatingVAO = false;
 	
 	
 	public Graphics(int[] screenDims) {
@@ -346,9 +347,12 @@ public class Graphics {
 			
 			
 			
+			if (!updatingVAO) {
+				glfwSwapBuffers(window);
+				glfwPollEvents();
+			}
 			
-			glfwSwapBuffers(window);
-			glfwPollEvents();
+			
 			loops++;
 			if (worldUpdateReady) {
 				System.out.println("loops complete: " + loops);
@@ -496,6 +500,7 @@ public class Graphics {
 	}
 	
 	public void updateData(float[] vertices, int[] indices) {
+		long sTime = System.nanoTime();
 		this.vertices = vertices;
 		this.indices = indices;
 		int VBOt,VAOt,EBOt;
@@ -517,11 +522,16 @@ public class Graphics {
 		
 		//glVertexAttribPointer(0,3,GL_FLOAT,false,12,0l);
 		//glEnableVertexAttribArray(0);
+		updatingVAO = true;
 		glBindBuffer(GL_ARRAY_BUFFER,0);
 		glBindVertexArray(VAOt);
 		VBO=VBOt;VAO=VAOt;EBO=EBOt;
 		numElements = vertices.length;
 		//glBindVertexArray(0);
+		updatingVAO = false;
+		long eTime = System.nanoTime();
+		System.out.println("Buffer load time: " + (eTime-sTime)/(Math.pow(10,9)));
+		
 	}
 	
 	

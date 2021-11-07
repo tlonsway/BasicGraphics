@@ -121,9 +121,9 @@ public class Polygon implements Comparable {
 		float s1 = ((v1.get(1))*(v2.get(2)))-((v1.get(2))*(v2.get(1)));
         float s2 = ((v1.get(2))*(v2.get(0)))-((v1.get(0))*(v2.get(2)));
         float s3 = ((v1.get(0))*(v2.get(1)))-((v1.get(1))*(v2.get(0)));
-        if (Math.abs(v1.get(0)) < 0.5 || Math.abs(v1.get(2)) < 0.5) {
+        /*if (Math.abs(v1.get(0)) < 0.5 || Math.abs(v1.get(2)) < 0.5) {
         	System.out.println("Cross Product: " + s1 + " , " + s2 + " , " + s3);
-        }
+        }*/
         if (s2 < 0) {
         	s1 *= -1;
         	s2 *= -1;
