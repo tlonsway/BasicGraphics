@@ -15,7 +15,7 @@ public class World {
 	public World() {
 		noise = new Noise();
 		//int seed = 10000;
-		height = 100;
+		height = 300;
 		width = 100;
 		length = 100;
 		seed = (int)(Math.random()*100000000);
@@ -91,17 +91,48 @@ public class World {
 		return map;
 	}
 	public float getHeight(float x, float z) {
-		float biome = (float)(Noise.noise(x/800.0+seed, z/800.0+seed));
-		//float hillScale = (float)(Math.sin(Math.PI*biome+Math.PI/2)-0.7);
-		float hill = 0.4f*biome*(float)(Noise.noise(x/(70.0-40*biome)+seed, z/(70.0-40*biome)+seed));
-		float alt = height*((float)Math.pow(3*biome,3) + hill + (float)Noise.noise(x/2.5+seed+0.1, z/2.5+seed+0.1)*0.001f);
-		//float y = (float)(Math.tan(noise.noise(x/300.0+seed, z/300.0+seed))*height*mult);
-		//float y = (float)((Math.tan(noise.noise(x/200.0, z/200.0)*(Math.PI/2.0))/2+(Math.pow(noise.noise(x/200.0, z/200.0), 2)))*40);
-		//return y+(float)(noise.noise(x/Math.abs(y*.1+1)+seed, z/Math.abs(y*.1+1)+seed)*.06)+(float)(noise.noise(x/40.0+seed, z/40.0+seed)*4);	//texture
-		//return y+(float)(noise.noise(x/30.0+seed, z/30.0+seed)*5);	
-		//return y;
-		return alt;
+		double nx = x/width - 0.5; 
+		double ny = z/length - 0.5;
+		double aF = 0.5;
+		double bF = 2;
+		double cF = 8;
+		double e = Math.abs((1/aF) * Noise.noise(aF*nx+seed, aF*ny+seed) + (1/bF)* Noise.noise(bF*nx+seed, bF*ny+seed) + (1/cF) *Noise.noise(cF*nx+seed, cF*ny+seed));
+		e /= (1/aF) + (1/bF) + (1/cF);
+		float ret = (float)Math.pow(e, 1.60);
+		return ret*height;
 	}
+	public ArrayList<Mesh> getTrees(float x, float z){
+		ArrayList<Mesh> trees = new ArrayList<>();
+		double nx = x/width - 0.5; 
+		double ny = z/length - 0.5;
+		int R = 2;
+		double[][] blueNoise = new double[length][width];
+		for (int y = 0; y < height; y++) {
+			  for (int a = 0; a < width; a++) {
+			    // blue noise is high frequency; try varying this
+			    blueNoise[y][a] = Noise.noise(50 * nx, 50 * ny); 
+			  }
+			}
+		for (int yc = 0; yc < height; yc++) {
+			  for (int xc = 0; xc < width; xc++) {
+			    double max = 0;
+			    // there are more efficient algorithms than this
+			    for (int yn = yc - R; yn <= yc + R; yn++) {
+			      for (int xn = xc - R; xn <= xc + R; xn++) {
+			        if (0 <= yn && yn < height && 0 <= xn && xn < width) {
+			          double e = Noise.noise(yn,xn);
+			          if (e > max) { max = e; }
+			        }
+			      }
+			    }
+			    if (blueNoise[yc][xc] == max) {
+			      
+			    }
+			  }
+			}
+		return trees;
+	}
+	
 	public Mesh getWater() {
 		
 		Mesh map = new Mesh(null);
