@@ -97,7 +97,78 @@ public class World {
 		//return y+(float)(noise.noise(x/30.0+seed, z/30.0+seed)*5);	
 		//return y;
 	}
-	
+	public Mesh getWater() {
+		
+		Mesh map = new Mesh(null);
+		float resolution = 0.2f;
+		int chunkW = 2000;
+		
+
+		int chunkL = 2000;
+		int width = (int)(chunkW*(resolution));
+		int length = (int)(chunkL*(resolution));
+		float[][] grid = new float[width+1][length+1];
+		for(int x = 0; x < grid.length; x++) {
+			for(int y = 0; y < grid[0].length; y++) {
+				grid[x][y] = -20f;
+			}
+		}
+		float pR = 1.0f/resolution;
+		int xShift = -1000;
+		int zShift = -1000;
+		for(int row = 0; row < grid[0].length-1; row++) {
+			float[][] pts = {{xShift,grid[0][row],(row*pR)+zShift}, {xShift,grid[0][row+1], ((row+1)*pR)+zShift}, {pR+xShift, grid[1][row], (row*pR)+zShift}};
+			Polygon poly = new Polygon(pts[0], pts[1], pts[2]);
+			float blueNum = 0.8f+((float)Math.random()*0.1f-0.05f);
+			float[] col = new float[] {0.15f,0.3f,blueNum};
+			poly.setFColor(col);
+			//poly.setColN(0, getLandColor(pts[0][1]));
+			//poly.setColN(1, getLandColor(pts[1][1]));
+			//poly.setColN(2, getLandColor(pts[2][1]));
+			map.addToMesh(poly);
+			boolean up = false;
+			int x = 1;
+			while(x < grid.length) {
+				up = !up;
+				float[] p = new float[3];
+				if(up) {
+					p[0] = x*pR+xShift;
+					p[1] = grid[x][row+1];
+					p[2] = (row+1)*pR+zShift;
+				}
+				else {
+					p[0] = x*pR+xShift;
+					p[1] = grid[x][row];
+					p[2] = row*pR+zShift;
+				}
+				pts = shiftPoint(pts, p);
+				if(up) {
+					poly = new Polygon(pts[1], pts[2], pts[0]);
+					float blueNum2 = 0.8f+((float)Math.random()*0.1f-0.05f);
+					float[] col2 = new float[] {0.15f,0.3f,blueNum2};
+					poly.setFColors(new float[][] {col2, col2, col2});
+				}else {
+					poly = new Polygon(pts[0], pts[1], pts[2]);
+					float blueNum2 = 0.8f+((float)Math.random()*0.1f-0.05f);
+					float[] col2 = new float[] {0.15f,0.3f,blueNum2};
+					poly.setFColors(new float[][] {col2, col2, col2});
+				}
+				/*
+				if(row == grid[0].length-2) {
+                    poly.setFColors(new float[][] {{0f, 0f, 0f},{0f, 0f, 0f},{0f, 0f, 0f}});
+                }
+				if(x == grid.length-1) {
+					poly.setFColors(new float[][] {{0f, 0f, 0f},{0f, 0f, 0f},{0f, 0f, 0f}});
+				}*/
+				map.addToMesh(poly);
+				if(up) {
+					x++;
+				}
+			}
+		}
+		return map;
+		//float[] waterVert = new float
+	}
 	public void generateVerticeList() {
 		ArrayList<Polygon> polys = terrain.getPolygons();
 		ArrayList<Float> list = new ArrayList<Float>();

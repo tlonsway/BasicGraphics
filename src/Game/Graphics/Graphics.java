@@ -65,6 +65,10 @@ public class Graphics {
 	float[] newWorldVert;
 	boolean updatingVAO = false;
 	
+	int waterVAO;
+	int waterShaderProgram;
+	int waterVertexCount;
+	
 	
 	public Graphics(int[] screenDims) {
 		this.screenDims = screenDims;
@@ -129,6 +133,17 @@ public class Graphics {
 		glDeleteShader(skyFragShader.getShader());
 		
 		bindSkyVertices();
+		
+		Shader waterVertShader = new Shader("Shaders/basicProjWithModel.vtxs",GL_VERTEX_SHADER);
+		Shader waterFragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
+		waterShaderProgram = glCreateProgram();
+		glAttachShader(waterShaderProgram,waterVertShader.getShader());
+		glAttachShader(waterShaderProgram,waterFragShader.getShader());
+		glLinkProgram(waterShaderProgram);
+		glDeleteShader(waterVertShader.getShader());
+		glDeleteShader(waterFragShader.getShader());
+		
+		
 		
 		vertices = null;
 		indices = null;
@@ -204,6 +219,7 @@ public class Graphics {
 	public void loop() {
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
+		bindWaterVertices();
 		int loops = 0;
 		while(!glfwWindowShouldClose(window)) {
 			
@@ -253,6 +269,14 @@ public class Graphics {
 					e.printStackTrace();
 				}
 			}
+			
+			glUseProgram(waterShaderProgram);
+			int modelMatLocT = glGetUniformLocation(waterShaderProgram,"model");
+			glUniformMatrix4fv(modelMatLocT, false, iMatFlat);
+			glBindVertexArray(waterVAO);
+			glDrawArrays(GL_TRIANGLES,0,waterVertexCount);
+			
+			
 			
 			glUseProgram(shaderProgram);
 			
@@ -394,6 +418,10 @@ public class Graphics {
 			cam.rotate('x', rotateT[1], false);
 			cam.rotate('y', rotateT[0], true);
 			this.updateTransformMatrix();
+			glUseProgram(waterShaderProgram);
+			float[] matCom = combineMats(project.getProjMatFMat(),cam.getCamMat());
+			int fullMatLoc = glGetUniformLocation(waterShaderProgram,"fullMat");
+			glUniformMatrix4fv(fullMatLoc, false, matCom);
 			
 			//endTimer("Camera Transforms");
 			
@@ -421,6 +449,47 @@ public class Graphics {
 		skyVAO = VAOt;
 		glBindBuffer(GL_ARRAY_BUFFER,0);
 		glBindVertexArray(0);
+	}
+	
+	private void bindWaterVertices() {
+		//float[] verts = world.getWater();
+		//float[] verts = new float[0];
+		Mesh waterMesh = world.getWater();
+		//GameObject go = new GameObject("ocean",world,waterMesh);
+		ArrayList<Polygon> polys = waterMesh.getPolygons();
+		float[] vertices = new float[polys.size()*18];
+		int vertIn = 0;
+		for(Polygon p : polys) {
+			FloatMatrix[] polyPoints = p.getPoints();
+			for(int pi2=0;pi2<3;pi2++) {
+				for(int pi=0;pi<3;pi++) {
+					vertices[vertIn] = polyPoints[pi2].get(pi);
+					vertIn++;
+				}
+				float[] colT = p.fColor[pi2];
+				vertices[vertIn] = colT[0];
+				vertices[vertIn+1] = colT[1];
+				vertices[vertIn+2] = colT[2];
+				vertIn+=3;
+			}
+		}
+		
+		//float[] waterVerts = go.getVertices();
+		float[] waterVerts = vertices;
+		int VBOt,VAOt;
+		VBOt = glGenBuffers();
+		VAOt = glGenVertexArrays();
+		glBindVertexArray(VAOt);
+		glBindBuffer(GL_ARRAY_BUFFER,VBOt);
+		glBufferData(GL_ARRAY_BUFFER, waterVerts, GL_STATIC_DRAW);
+		glVertexAttribPointer(0,3,GL_FLOAT,false,24,0l);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(1,3,GL_FLOAT,false,24,12l);
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER,0);
+		glBindVertexArray(0);
+		waterVAO = VAOt;
+		waterVertexCount = vertices.length;
 	}
 	
 	private void updateFPS() {
