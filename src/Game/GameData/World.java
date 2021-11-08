@@ -110,7 +110,7 @@ public class World {
 		float[][] grid = new float[width+1][length+1];
 		for(int x = 0; x < grid.length; x++) {
 			for(int y = 0; y < grid[0].length; y++) {
-				grid[x][y] = -20f;
+				grid[x][y] = -70f;
 			}
 		}
 		float pR = 1.0f/resolution;
