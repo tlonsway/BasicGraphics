@@ -91,11 +91,16 @@ public class World {
 		return map;
 	}
 	public float getHeight(float x, float z) {
-		float y = (float)(Math.tan(noise.noise(x/300.0+seed, z/300.0+seed))*height*2);
+		float biome = (float)(Noise.noise(x/800.0+seed, z/800.0+seed));
+		//float hillScale = (float)(Math.sin(Math.PI*biome+Math.PI/2)-0.7);
+		float hill = 0.4f*biome*(float)(Noise.noise(x/(70.0-40*biome)+seed, z/(70.0-40*biome)+seed));
+		float alt = height*((float)Math.pow(3*biome,3) + hill + (float)Noise.noise(x/2.5+seed+0.1, z/2.5+seed+0.1)*0.001f);
+		//float y = (float)(Math.tan(noise.noise(x/300.0+seed, z/300.0+seed))*height*mult);
 		//float y = (float)((Math.tan(noise.noise(x/200.0, z/200.0)*(Math.PI/2.0))/2+(Math.pow(noise.noise(x/200.0, z/200.0), 2)))*40);
-		return y+(float)(noise.noise(x/Math.abs(y*.1+1)+seed, z/Math.abs(y*.1+1)+seed)*.06)+(float)(noise.noise(x/40.0+seed, z/40.0+seed)*4);	
+		//return y+(float)(noise.noise(x/Math.abs(y*.1+1)+seed, z/Math.abs(y*.1+1)+seed)*.06)+(float)(noise.noise(x/40.0+seed, z/40.0+seed)*4);	//texture
 		//return y+(float)(noise.noise(x/30.0+seed, z/30.0+seed)*5);	
 		//return y;
+		return alt;
 	}
 	public Mesh getWater() {
 		
@@ -265,7 +270,7 @@ public class World {
 	private float[] getLandColor(float yHeight) {
 		float heightPer = (yHeight+height)/(2*height);
 		float[][] colors = new float[][] {new float[] {0.949f, 0.729f, 0}, new float[] {0.2f, 0.6f, 0.2f}, new float[] {0.1569f, 0.1569f, 0.1569f}, new float[] {1, 1, 1}};
-		float[][] ranges = new float[][] {new float[] {0, 0.2f}, new float[] {0.1f, 0.8f}, new float[] {0.7f, 0.92f}, new float[] {0.9f, 1}};
+		float[][] ranges = new float[][] {new float[] {0, 0.2f}, new float[] {0.1f, 0.8f}, new float[] {0.5f, 1.7f}, new float[] {1.5f, 2f}};
 		float[] color = new float[3];
 		ArrayList<Integer> rangesIncluded = new ArrayList<Integer>();
 		for(int i = 0; i < ranges.length; i++) {
