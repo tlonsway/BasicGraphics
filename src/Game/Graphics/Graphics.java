@@ -152,6 +152,10 @@ public class Graphics {
 		glClearColor(0.275f,0.94f,0.97f,1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE); 
+		
+		
+		
+		
 		//xglEnable(GL_CULL_FACE); 
 		glLineWidth(3.f);
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
@@ -278,6 +282,7 @@ public class Graphics {
 			
 			
 			
+			
 			glUseProgram(shaderProgram);
 			
 			float[] cpt = cam.getCamPos();
@@ -304,6 +309,9 @@ public class Graphics {
 			
 			glBindVertexArray(VAO);
 			glDrawArrays(GL_TRIANGLES,0,numElements);
+			
+			
+			
 			
 			//endTimer("Draw Ground Mesh");
 			
@@ -375,7 +383,12 @@ public class Graphics {
 			
 			//glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,0);
 			
+			//glEnable(GL_BLEND);
+			//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			
+			
+			
+			//glDisable(GL_BLEND);
 			
 			if (!updatingVAO) {
 				glfwSwapBuffers(window);

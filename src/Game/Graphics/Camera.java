@@ -166,6 +166,18 @@ public class Camera {
 		return ret;
 	}
 	
+	public float[] getCamRotMatFlat() {
+		float[] ret = new float[16];
+		int t=0;
+		for(int r=0;r<4;r++) {
+			for(int c=0;c<4;c++) {
+				ret[t] = rotMat.get(r,c);
+				t++;
+			}
+		}
+		return ret;	
+	}
+	
 	public boolean touchingGround() {
 		Mesh groundBelow = world.generateChunk(world.seed, (int)(getCamPos()[0]), (int)(getCamPos()[2]), (int)bounds.getXWidth()*2, (int)bounds.getZLength()*2, 1);
 		//System.out.println("Number of POLYS: " + groundBelow.getPolygons().size());
