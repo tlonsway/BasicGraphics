@@ -166,6 +166,12 @@ public class Graphics {
 				arrow.setVelocity(arrVelVec);
 				addGameObject(arrow);
 			}
+			if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+				Mesh m = ObjectGeneration.generateTree((int)(Math.random()*100000000), 8);
+				GameObject go1 = new GameObject("Tree",world,m);
+				go1.translate(-cam.getCamPos()[0], -cam.getCamPos()[1]+10f, -cam.getCamPos()[2]);
+				this.addGameObject(go1);
+			}
 			
 			keyboardThread.keyEvent(key, action);
 			int hotBarSelected = keyboardThread.getHotbarKey(key, action);

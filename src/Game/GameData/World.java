@@ -93,17 +93,21 @@ public class World {
 	public float getHeight(float x, float z) {
 		float y = (float)(Math.tan(noise.noise(x/300.0+seed, z/300.0+seed))*height*2);
 		//float y = (float)((Math.tan(noise.noise(x/200.0, z/200.0)*(Math.PI/2.0))/2+(Math.pow(noise.noise(x/200.0, z/200.0), 2)))*40);
-		return y+(float)(noise.noise(x/30.0+seed, z/30.0+seed)*5);	
+		return y+(float)(noise.noise(x/Math.abs(y*.1+1)+seed, z/Math.abs(y*.1+1)+seed)*.06)+(float)(noise.noise(x/40.0+seed, z/40.0+seed)*4);	
+		//return y+(float)(noise.noise(x/30.0+seed, z/30.0+seed)*5);	
+		//return y;
 	}
 	
 	public void generateVerticeList() {
 		ArrayList<Polygon> polys = terrain.getPolygons();
 		ArrayList<Float> list = new ArrayList<Float>();
+		float[] listArr = new float[polys.size()*27];
 		int polyInc = 0;
+		int listArrInc = 0;
 		float[] lastPCol = new float[3];
 		for(Polygon p: polys) {
 			for(int i = 0; i < p.getPoints().length; i++) {
-				list.add(p.getPoints()[i].get(0));
+				/*list.add(p.getPoints()[i].get(0));
 				list.add(p.getPoints()[i].get(1));
 				list.add(p.getPoints()[i].get(2));
 				float[] pCol = p.fColor[i];
@@ -115,14 +119,27 @@ public class World {
 				float[] pNorm = p.getNorm().toArray();
 				list.add(pNorm[0]);
 				list.add(pNorm[1]);
-				list.add(pNorm[2]);
+				list.add(pNorm[2]);*/
+				listArr[listArrInc] = p.getPoints()[i].get(0);
+				listArr[listArrInc+1] = p.getPoints()[i].get(1);
+				listArr[listArrInc+2] = p.getPoints()[i].get(2);
+				float[] pCol = p.fColor[i];
+				listArr[listArrInc+3] = pCol[0];
+				listArr[listArrInc+4] = pCol[1];
+				listArr[listArrInc+5] = pCol[2];
+				float[] pNorm = p.getNorm().toArray();
+				listArr[listArrInc+6] = pNorm[0];
+				listArr[listArrInc+7] = pNorm[1];
+				listArr[listArrInc+8] = pNorm[2];
+				listArrInc+=9;
 			}
 			polyInc++;
-		}
+		}/*
 		vertices = new float[list.size()];
 		for(int i = 0; i < list.size(); i++) {
 			vertices[i] = list.get(i);
-		}
+		}*/
+		vertices = listArr;
 	}
 	
 	private boolean vertexEquals(ArrayList<Float> p1, ArrayList<Float> p2) {
@@ -203,9 +220,10 @@ public class World {
 			else if(rangesIncluded.size() < 1 && yHeight > 0) {
 				rangesIncluded.add(ranges.length-1);
 			}
-			color[0] = colors[rangesIncluded.get(0)][0];
-			color[1] = colors[rangesIncluded.get(0)][1];
-			color[2] = colors[rangesIncluded.get(0)][2];
+			//float alter = (float)Math.random()*.025f-.0125f;
+			color[0] = colors[rangesIncluded.get(0)][0];//+alter;
+			color[1] = colors[rangesIncluded.get(0)][1];//+alter;
+			color[2] = colors[rangesIncluded.get(0)][2];//+alter;
 		}
 		return color;
 	}
