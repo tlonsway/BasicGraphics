@@ -3,14 +3,22 @@
 layout (location = 0) in vec3 aPos;
 
 out vec4 ourColor;
+out float camRotY;
+//out vec2 sunProjScreen;
 
-uniform float camRotY;
+uniform float camRotYU;
+//uniform mat4 fullMat;
 
 void main() {
 	gl_Position = vec4(aPos,1.0f);
-	float cD = 1.25;
-	float redC = (-camRotY/cD+0.7)-aPos.y/2.0;
-	float greC = (camRotY/cD+0.8f)+aPos.y/2.0;
-	float bluC = (camRotY/cD+0.8f)+aPos.y/2.0;
-	ourColor = vec4(vec3(redC,greC,bluC),1.0f);
+	//float cD = 1.25;
+	//float redC = (-camRotY/cD+0.7)-aPos.y/2.0;
+	//float greC = (camRotY/cD+0.8f)+aPos.y/2.0;
+	//float bluC = (camRotY/cD+0.8f)+aPos.y/2.0;
+	ourColor = vec4(0.0f,0.0f,0.0f,1.0f);
+	//ourColor = vec4(vec3(redC,greC,bluC),1.0f);
+	camRotY = camRotYU;
+	//vec3 sunPos = vec3(-10000,6000,-10000);
+	//vec4 sunProj = fullMat * vec4(sunPos,1.0f);
+	//sunProjScreen = vec3(sunProj.x/sunProj.z,sunProj.y/sunProj.z,sunProj.z); 
 }

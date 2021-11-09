@@ -1,0 +1,47 @@
+#version 410 core
+
+out vec4 FragColor;
+in vec4 ourColor;
+//in vec4 gl_FragCoord;
+in vec2 gl_PointCoord;
+in float camRotY;
+in vec3 sunProjScreen;
+
+layout(pixel_center_integer) in vec4 gl_FragCoord;
+
+uniform vec3 sunPosition;
+
+void main() {
+	float ratio = 1080.0f/1920.0f;
+	vec2 frgPos = vec2(2*(gl_FragCoord.x/1920.0f)-1.0f,2*(gl_FragCoord.y/1080.0f)-1.0f);
+	
+	
+	float cD = 1.25;
+	float redC = (-camRotY/cD+0.7)-frgPos.y/2;
+	float greC = (camRotY/cD+0.8f)+frgPos.y/2;
+	float bluC = (camRotY/cD+0.8f)+frgPos.y/2;
+	vec3 skyCol = vec3(redC,greC,bluC);
+
+	vec2 sunPos = vec2(sunPosition.x,sunPosition.y);
+	
+	vec3 sunCol = vec3(1.0f,0.6f,0.0f);
+	float sunIntensity = 1.2f;
+	
+	
+	float disTerm1 = sunPos.x-frgPos.x;
+	float disTerm2 = ratio*(sunPos.y-frgPos.y);
+	
+	float sunDist = sqrt(disTerm1*disTerm1+disTerm2*disTerm2);
+	float col = (1/(3f*sqrt(sunDist)));
+	vec3 sunPx = sunIntensity*col*sunCol;
+	float sunContrib = (1/sqrt(10.0f*sunDist));
+	if (sunPosition.z < 0.0f) {
+		sunContrib = 0.0f;
+	}
+	
+	float skyContrib = 1-sunContrib; //1-sunDist
+	vec3 sunPxCon = sunContrib * sunPx;
+	vec3 skyPxCon = skyContrib * skyCol;
+	
+	FragColor = vec4(sunPxCon.x+skyPxCon.x,sunPxCon.y+skyPxCon.y,sunPxCon.z+skyPxCon.z,1.0f);
+}

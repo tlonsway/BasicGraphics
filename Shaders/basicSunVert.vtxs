@@ -8,10 +8,14 @@ uniform mat4 fullMat;
 uniform mat4 model;
 
 void main() {
-	sunPos = vec3(1000.0f,1000.0f,1000.0f);
+	//sunPos = vec3(1000.0f,1000.0f,1000.0f);
+	sunPos = vec2(0f,0f);
 	gl_Position = vec4(aPos,1.0f);
-	
-	
-	
-	ourColor = vec4(aColor,0.6f);
+	sunDist = sqrt((sunPos.x-aPos.x)*(sunPos.x-aPos.x)+(sunPos.y-aPos.y)*(sunPos.y-aPos.y));
+	col = 1-(1/sunDist);
+	if (col > 0.5) {
+		ourColor = vec4(col,col,col,1.0f);
+	} else {
+		ourColor = vec4(0f,0f,0f,0.0f);
+	}
 }

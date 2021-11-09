@@ -69,6 +69,10 @@ public class Graphics {
 	int waterShaderProgram;
 	int waterVertexCount;
 	
+	boolean sunUpdate = false;
+	float[] newSunPos;
+	Thread dayNightThreadT;
+	DayNightThread dayNightThreadDNT;
 	
 	public Graphics(int[] screenDims) {
 		this.screenDims = screenDims;
@@ -117,7 +121,8 @@ public class Graphics {
 		glLinkProgram(UIShaderProgram);
 		
 		Shader skyVertShader = new Shader("Shaders/simpleSkyVert.vtxs",GL_VERTEX_SHADER);
-		Shader skyFragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
+		//Shader skyFragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
+		Shader skyFragShader = new Shader("Shaders/basicSunFrag.frgs",GL_FRAGMENT_SHADER);
 		skyShaderProgram = glCreateProgram();
 		glAttachShader(skyShaderProgram,skyVertShader.getShader());
 		glAttachShader(skyShaderProgram,skyFragShader.getShader());
@@ -202,6 +207,11 @@ public class Graphics {
 			mouseThread.mouseMovement(xpos, ypos);
 		});
 		cam.translate(0f, -60f, 0f);
+		
+		dayNightThreadDNT = new DayNightThread(this);
+		dayNightThreadT = new Thread(dayNightThreadDNT);
+		dayNightThreadT.start();
+		
 		//loop();
 	}
 	
@@ -224,6 +234,7 @@ public class Graphics {
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
 		bindWaterVertices();
+		
 		int loops = 0;
 		while(!glfwWindowShouldClose(window)) {
 			
@@ -246,11 +257,13 @@ public class Graphics {
 			
 			glUseProgram(skyShaderProgram);
 			
-			int camRotYUniformLoc = glGetUniformLocation(skyShaderProgram, "camRotY");
+			int camRotYUniformLoc = glGetUniformLocation(skyShaderProgram, "camRotYU");
 			//System.out.println("Uniform Loc: " + camRotYUniformLoc);
 			glUniform1f(camRotYUniformLoc, -(float)Math.sin(cam.getRotations()[0]));
 			//System.out.println("IN VALUE: " + -(float)Math.sin(cam.getRotations()[0]));
 			//System.out.println("CamRotY: " + cam.getRotations()[0] + " sin(camRotY): " + Math.sin(cam.getRotations()[0]));
+			
+			
 			
 			glDisable(GL_DEPTH_TEST);
 			
@@ -431,6 +444,28 @@ public class Graphics {
 			cam.rotate('x', rotateT[1], false);
 			cam.rotate('y', rotateT[0], true);
 			this.updateTransformMatrix();
+			
+			//glUseProgram(skyShaderProgram);
+			//int skyFullMatUniformLoc = glGetUniformLocation(skyShaderProgram, "fullMat");
+			//float[] matComT = combineMats(project.getProjMatFMat(),cam.getCamMat());
+			//glUniformMatrix4fv(skyFullMatUniformLoc, false, matComT);
+			//FloatMatrix projMat = project.getProjMatFMat();
+			//FloatMatrix camMat = cam.getCamMat();
+			//FloatMatrix sunPoint = new FloatMatrix(new float[] {-10000.0f,6000.0f,-10000.0f,1.0f});
+			//FloatMatrix resultTemp = projMat.mmul(camMat.mmul(sunPoint));
+			//float zValTemp = resultTemp.get(2);
+			//resultTemp.divi(resultTemp.get(2));
+			//System.out.println("Result Location: " + resultTemp);
+			//float[] sunPositionProjected = new float[] {resultTemp.get(0),resultTemp.get(1),zValTemp};
+			//int skySunProjUniformLoc = glGetUniformLocation(skyShaderProgram, "sunPosition");
+			//glUniform3fv(skySunProjUniformLoc, sunPositionProjected);
+			
+			//if (sunUpdate) {
+			//	sunUpdate = false;
+			updateSunPosition(newSunPos);
+			//}
+			
+			
 			glUseProgram(waterShaderProgram);
 			float[] matCom = combineMats(project.getProjMatFMat(),cam.getCamMat());
 			int fullMatLoc = glGetUniformLocation(waterShaderProgram,"fullMat");
@@ -443,7 +478,40 @@ public class Graphics {
 			
 			//endTimer("Gravity Thread");
 		}
+		try {
+			dayNightThreadDNT.close();
+			((Thread)dayNightThreadT).join();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 	}
+	
+	public void initSunUpdate(float[] newPos) {
+		sunUpdate = true;
+		newSunPos = newPos;
+	}
+	
+	public void updateSunPosition(float[] newSunPos) {
+		glUseProgram(skyShaderProgram);
+		FloatMatrix projMat = project.getProjMatFMat();
+		FloatMatrix camMat = cam.getCamMat();
+		//FloatMatrix sunPoint = new FloatMatrix(new float[] {-10000.0f,6000.0f,-10000.0f,1.0f});
+		FloatMatrix sunPoint = new FloatMatrix(newSunPos);
+		FloatMatrix resultTemp = projMat.mmul(camMat.mmul(sunPoint));
+		float zValTemp = resultTemp.get(2);
+		resultTemp.divi(resultTemp.get(2));
+		//System.out.println("Result Location: " + resultTemp);
+		float[] sunPositionProjected = new float[] {resultTemp.get(0),resultTemp.get(1),zValTemp};
+		int skySunProjUniformLoc = glGetUniformLocation(skyShaderProgram, "sunPosition");
+		glUniform3fv(skySunProjUniformLoc, sunPositionProjected);
+		glUseProgram(shaderProgram);
+		int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
+		//int lightColLoc = glGetUniformLocation(shaderProgram, "lightColor");
+		glUniform3fv(lightPosLoc, newSunPos); //light position
+		//glUniform3fv(lightColLoc, new float[] {1.0f,1.0f,1.0f}); //light color
+	}
+	
+	
 	public World getWorld() {
 		return world;
 	}
