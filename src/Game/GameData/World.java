@@ -15,7 +15,7 @@ public class World {
 	public World() {
 		noise = new Noise();
 		//int seed = 10000;
-		height = 300;
+		height = 400;
 		width = 100;
 		length = 100;
 		seed = (int)(Math.random()*100000000);
@@ -35,7 +35,7 @@ public class World {
 	public World(int seed) {
 		noise = new Noise();
 		//int seed = 10000;
-		height = 100;
+		height = 200;
 		width = 100;
 		length = 100;
 		this.seed = seed;
@@ -90,46 +90,37 @@ public class World {
 		}
 		return map;
 	}
+	
+	//GET HEIGHT
 	public float getHeight(float x, float z) {
 		double nx = x/width - 0.5; 
 		double ny = z/length - 0.5;
 		double aF = 0.5;
-		double bF = 2;
+		double bF = 1;
 		double cF = 8;
 		double e = Math.abs((1/aF) * Noise.noise(aF*nx+seed, aF*ny+seed) + (1/bF)* Noise.noise(bF*nx+seed, bF*ny+seed) + (1/cF) *Noise.noise(cF*nx+seed, cF*ny+seed));
 		e /= (1/aF) + (1/bF) + (1/cF);
-		float ret = (float)Math.pow(e, 1.60);
+		nx = (nx/25.0); 
+		ny = (ny/25.0); 
+		double d = Math.sqrt(nx*nx + ny*ny) / 0.2;//Math.sqrt(0.5);
+		if(d > 1) {
+			d = 1;
+		}
+		e = Math.abs((1 + e - d) / 2);
+		float ret = (float)Math.pow(e, 1.80);
 		return ret*height;
 	}
-	public ArrayList<Mesh> getTrees(float x, float z){
+	public ArrayList<Mesh> generateTrees(float x, float z){
 		ArrayList<Mesh> trees = new ArrayList<>();
-		double nx = x/width - 0.5; 
-		double ny = z/length - 0.5;
-		int R = 2;
-		double[][] blueNoise = new double[length][width];
-		for (int y = 0; y < height; y++) {
-			  for (int a = 0; a < width; a++) {
-			    // blue noise is high frequency; try varying this
-			    blueNoise[y][a] = Noise.noise(50 * nx, 50 * ny); 
-			  }
-			}
-		for (int yc = 0; yc < height; yc++) {
-			  for (int xc = 0; xc < width; xc++) {
-			    double max = 0;
-			    // there are more efficient algorithms than this
-			    for (int yn = yc - R; yn <= yc + R; yn++) {
-			      for (int xn = xc - R; xn <= xc + R; xn++) {
-			        if (0 <= yn && yn < height && 0 <= xn && xn < width) {
-			          double e = Noise.noise(yn,xn);
-			          if (e > max) { max = e; }
-			        }
-			      }
-			    }
-			    if (blueNoise[yc][xc] == max) {
-			      
-			    }
-			  }
-			}
+		int treesPerChunk = 10;
+		
+		for(int i = 0; i < treesPerChunk; i++) {
+			double a = width*Math.abs(Noise.noise(seed+0.01+2*i));
+			double b = length*Math.abs(Noise.noise(seed+0.01+2*i+1));
+			Mesh tree = ObjectGeneration.generateTree(seed, 5);
+			//tree.translate((float)a, getHeight((float)(x + a),(float)( z + b))+100, (float)b);
+			tree.translate(0, 100, 0);
+		}	
 		return trees;
 	}
 	
@@ -146,7 +137,7 @@ public class World {
 		float[][] grid = new float[width+1][length+1];
 		for(int x = 0; x < grid.length; x++) {
 			for(int y = 0; y < grid[0].length; y++) {
-				grid[x][y] = -70f;
+				grid[x][y] = 3.5f;
 			}
 		}
 		float pR = 1.0f/resolution;
@@ -299,10 +290,11 @@ public class World {
 	}
 	//0.2, 0.6, 0.2 
 	private float[] getLandColor(float yHeight) {
-		float heightPer = (yHeight+height)/(2*height);
+		float heightPer = yHeight/height;
 		float[][] colors = new float[][] {new float[] {0.949f, 0.729f, 0}, new float[] {0.2f, 0.6f, 0.2f}, new float[] {0.1569f, 0.1569f, 0.1569f}, new float[] {1, 1, 1}};
-		float[][] ranges = new float[][] {new float[] {0, 0.2f}, new float[] {0.1f, 0.8f}, new float[] {0.5f, 1.7f}, new float[] {1.5f, 2f}};
+		float[][] ranges = new float[][] {new float[] {-5f, 0.02f}, new float[] {0.01f, 0.8f}, new float[] {0.5f, 1.7f}, new float[] {1.5f, 5f}};
 		float[] color = new float[3];
+		
 		ArrayList<Integer> rangesIncluded = new ArrayList<Integer>();
 		for(int i = 0; i < ranges.length; i++) {
 			if(heightPer >= ranges[i][0] && heightPer <= ranges[i][1]) {
@@ -468,6 +460,14 @@ public class World {
 				if(up) {
 					x++;
 				}
+			}
+		}
+		
+		if(resolution == 1 && chunkW > 30 && chunkL > 30) {
+			System.out.println("Generating trees!!!!");
+			ArrayList<Mesh> trees = generateTrees(xShift, zShift);
+			for(Mesh tree: trees) {
+				map.addMesh(tree);
 			}
 		}
 		return map;
