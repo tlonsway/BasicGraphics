@@ -463,6 +463,29 @@ public class Graphics {
 			//if (sunUpdate) {
 			//	sunUpdate = false;
 			updateSunPosition(newSunPos);
+			glUseProgram(skyShaderProgram);
+			int timeUniformLoc = glGetUniformLocation(skyShaderProgram, "time");
+			glUniform1i(timeUniformLoc,dayNightThreadDNT.getTime());
+			int sunColorUniformLoc = glGetUniformLocation(skyShaderProgram, "sunColor");
+			double timeVal = ((double)dayNightThreadDNT.getTime()/(1000.0f));
+			float sunRedT = 1.0f;
+			//float sunGreenT = (float)(((Math.cos(1.2*timeVal)+1.0)/2.5) + (0.4)*Math.sin(0.06*timeVal));
+			float sunGreenT = (float)(Math.max(-0.0343*(1.2*timeVal-3.1415)*(1.2*timeVal-3.1415)*(1.2*timeVal-3.1415), 0.0) + Math.cos((0.5)*((1/2.5)*timeVal-3.5)));
+			float sunBlueT = (float)(1.0/(100*(timeVal+0.44)));
+			if (sunGreenT > 1.0f) {
+				sunGreenT = 1.0f;
+			}
+			if (sunGreenT < 0.0f) {
+				sunGreenT = 0.0f;
+			}
+			//System.out.print("timeVal: " + timeVal);
+			//System.out.println(" Sun color: GREEN: " + sunGreenT + " BLUE: " + sunBlueT);
+			glUniform3fv(sunColorUniformLoc,new float[] {sunRedT,sunGreenT,sunBlueT});
+			
+			glUseProgram(shaderProgram);
+			int lightColLoc = glGetUniformLocation(shaderProgram, "lightColor");
+			glUniform3fv(lightColLoc, new float[] {sunRedT,sunGreenT,sunBlueT}); //light color
+			
 			//}
 			
 			
