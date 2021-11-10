@@ -53,7 +53,7 @@
 	<classpathentry kind="lib" path="libraries/lwjgl/lwjgl-openal-natives-windows.jar"/>
 	<classpathentry kind="lib" path="libraries/lwjgl/lwjgl-opencl.jar"/>
 	<classpathentry kind="lib" path="libraries/lwjgl/lwjgl-opencl-javadoc.jar"/>
-	<classpathentry kind="lib" path="libraries/lwjgl/lwjgl-opengl.jar"/>
+	<classpathentry kind="lib" path="libraries/lwjgl/lwjgl-opengl.jar" sourcepath="C:/Users/brian/Desktop"/>
 	<classpathentry kind="lib" path="libraries/lwjgl/lwjgl-opengles.jar"/>
 	<classpathentry kind="lib" path="libraries/lwjgl/lwjgl-opengles-javadoc.jar"/>
 	<classpathentry kind="lib" path="libraries/lwjgl/lwjgl-opengles-natives-windows.jar"/>

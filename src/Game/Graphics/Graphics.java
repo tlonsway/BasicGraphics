@@ -74,6 +74,11 @@ public class Graphics {
 	Thread dayNightThreadT;
 	DayNightThread dayNightThreadDNT;
 	
+	//Tesselation stuff
+	int tessVAO;
+	int CPcount;
+	int tesselationShaderProgram;
+	
 	public Graphics(int[] screenDims) {
 		this.screenDims = screenDims;
 		//screenDims = new int[] {1920,1080};
@@ -128,6 +133,21 @@ public class Graphics {
 		glAttachShader(skyShaderProgram,skyFragShader.getShader());
 		glLinkProgram(skyShaderProgram);
 		
+		Shader tessCS = new Shader("Shaders/tcs.vtxs",GL_TESS_CONTROL_SHADER);
+		Shader tessES = new Shader("Shaders/tes.vtxs",GL_TESS_EVALUATION_SHADER);
+		System.out.println("Created objects");
+		tesselationShaderProgram = glCreateProgram();
+		glAttachShader(tesselationShaderProgram,vertShader.getShader());
+		glAttachShader(tesselationShaderProgram,tessCS.getShader());
+		glAttachShader(tesselationShaderProgram,tessES.getShader());
+		glAttachShader(tesselationShaderProgram,fragShader.getShader());
+		System.out.println("Attached shaders");
+		glLinkProgram(tesselationShaderProgram);
+		System.out.println("Linked program");
+		
+		glDeleteShader(tessCS.getShader());
+		glDeleteShader(tessES.getShader());
+		
 		glDeleteShader(vertShader.getShader());
 		glDeleteShader(fragShader.getShader());
 		
@@ -147,6 +167,7 @@ public class Graphics {
 		glLinkProgram(waterShaderProgram);
 		glDeleteShader(waterVertShader.getShader());
 		glDeleteShader(waterFragShader.getShader());
+		
 		
 		
 		

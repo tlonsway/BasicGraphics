@@ -1,21 +1,30 @@
 package Game.Graphics;
 
-import org.lwjgl.*;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
+//import org.lwjgl.*;
+//import org.lwjgl.glfw.*;
+//import org.lwjgl.opengl.*;
+//import org.lwjgl.system.*;
 
-import java.nio.*;
-import org.jblas.*;
+//import java.nio.*;
+//import org.jblas.*;
 
 import java.io.*;
 
-import static org.lwjgl.glfw.Callbacks.*;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL41.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
+//import static org.lwjgl.glfw.Callbacks.*;
+//import static org.lwjgl.glfw.GLFW.*;
+//import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL41.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL41.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL41.GL_TESS_CONTROL_SHADER;
+import static org.lwjgl.opengl.GL41.GL_TESS_EVALUATION_SHADER;
+import static org.lwjgl.opengl.GL41.GL_COMPILE_STATUS;
+import static org.lwjgl.opengl.GL41.glGetShaderiv;
+import static org.lwjgl.opengl.GL41.glGetError;
+import static org.lwjgl.opengl.GL41.glCreateShader;
+import static org.lwjgl.opengl.GL41.glShaderSource;
+import static org.lwjgl.opengl.GL41.glCompileShader;
+//import static org.lwjgl.system.MemoryStack.*;
+//import static org.lwjgl.system.MemoryUtil.*;
 
 public class Shader {
 	
@@ -29,7 +38,7 @@ public class Shader {
 			System.err.println("Shader with path: " + fileName + " could not be found");
 			return;
 		}
-		if (!(shaderType == GL_VERTEX_SHADER || shaderType == GL_FRAGMENT_SHADER)) {
+		if (!(shaderType == GL_VERTEX_SHADER || shaderType == GL_FRAGMENT_SHADER || shaderType == GL_TESS_CONTROL_SHADER || shaderType == GL_TESS_EVALUATION_SHADER)) {
 			System.err.println("Shader of type" + shaderType + " is not supported");
 			return;
 		}
@@ -59,9 +68,9 @@ public class Shader {
 		glGetShaderiv(shaderPointer,GL_COMPILE_STATUS, success);
 		//System.out.println("Shader Compile Status: " + success[0]);
 		if (success[0] != 1) { 
-			System.out.println("Shader failed to compile: " + fileName);
+			System.out.println("Shader failed to compile: " + fileName+ " "+success[0]);
 		} else {
-			System.out.println("Shader successfully compiled: " + fileName);
+			System.out.println("Shader successfully compiled: " + fileName+ " "+success[0]);
 		}
 		int err = glGetError();
 		if (err != 0) {
