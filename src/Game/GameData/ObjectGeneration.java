@@ -70,7 +70,7 @@ public class ObjectGeneration {
 		branch.rotate(endPoint, 'z', rotations[2]);
 		nextEndPoint = Game.Graphics.Operations.rotatePoint(nextEndPoint, 'z', rotations[2]);
 		float[] nep = new float[] {endPoint[0]+nextEndPoint.get(0), endPoint[1]+nextEndPoint.get(1), endPoint[2]+nextEndPoint.get(2)};
-		if(level < 3) {
+		if(level < 1) {
 			boolean z = false;
 			if(level%2 == 0) {
 				z=true;
