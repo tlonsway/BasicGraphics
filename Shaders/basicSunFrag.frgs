@@ -2,9 +2,7 @@
 
 out vec4 FragColor;
 in vec4 ourColor;
-in vec2 gl_PointCoord;
 in float camRotY;
-in vec3 sunProjScreen;
 
 layout(pixel_center_integer) in vec4 gl_FragCoord;
 
