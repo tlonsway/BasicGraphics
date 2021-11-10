@@ -1,8 +1,8 @@
 #version 410 core
 
 // define the number of CPs in the output patch
-//layout (vertices = 3) out;
-layout (vertices = 2) out;
+layout (vertices = 3) out;
+//layout (vertices = 2) out;
 
 uniform vec3 gEyeWorldPos;
 
@@ -13,13 +13,15 @@ in vec3 Normal_CS_in[];
 
 // attributes of the output CPs
 out vec3 WorldPos_ES_in[];
-//out vec2 TexCoord_ES_in[];
+out vec2 TexCoord_ES_in[];
 out vec3 Normal_ES_in[];
+
+float GetTessLevel(float Distance0, float Distance1);
 
 void main()
 {
     // Set the control points of the output patch
-    //TexCoord_ES_in[gl_InvocationID] = TexCoord_CS_in[gl_InvocationID];
+    TexCoord_ES_in[gl_InvocationID] = TexCoord_CS_in[gl_InvocationID];
     Normal_ES_in[gl_InvocationID] = Normal_CS_in[gl_InvocationID];
     WorldPos_ES_in[gl_InvocationID] = WorldPos_CS_in[gl_InvocationID];
     

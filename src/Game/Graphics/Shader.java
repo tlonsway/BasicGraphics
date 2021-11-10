@@ -13,16 +13,7 @@ import java.io.*;
 //import static org.lwjgl.glfw.Callbacks.*;
 //import static org.lwjgl.glfw.GLFW.*;
 //import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL41.GL_VERTEX_SHADER;
-import static org.lwjgl.opengl.GL41.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL41.GL_TESS_CONTROL_SHADER;
-import static org.lwjgl.opengl.GL41.GL_TESS_EVALUATION_SHADER;
-import static org.lwjgl.opengl.GL41.GL_COMPILE_STATUS;
-import static org.lwjgl.opengl.GL41.glGetShaderiv;
-import static org.lwjgl.opengl.GL41.glGetError;
-import static org.lwjgl.opengl.GL41.glCreateShader;
-import static org.lwjgl.opengl.GL41.glShaderSource;
-import static org.lwjgl.opengl.GL41.glCompileShader;
+import static org.lwjgl.opengl.GL41.*;
 //import static org.lwjgl.system.MemoryStack.*;
 //import static org.lwjgl.system.MemoryUtil.*;
 
@@ -67,8 +58,10 @@ public class Shader {
 		int[] success = new int[1];
 		glGetShaderiv(shaderPointer,GL_COMPILE_STATUS, success);
 		//System.out.println("Shader Compile Status: " + success[0]);
-		if (success[0] != 1) { 
+		if (success[0] != GL_TRUE) { 
 			System.out.println("Shader failed to compile: " + fileName+ " "+success[0]);
+			String log = glGetShaderInfoLog(shaderPointer);
+			System.out.println("Log:\n"+log);
 		} else {
 			System.out.println("Shader successfully compiled: " + fileName+ " "+success[0]);
 		}
