@@ -28,6 +28,10 @@ public class Polygon implements Comparable {
 		}
 	}
 	
+	public Polygon(FloatMatrix[] pts) {
+		points = pts;
+	}
+	
 	public Polygon(float[] p1, float[] p2, float[] p3, int[] color) {
 		this.color = color;
 		points = new FloatMatrix[3];
@@ -41,6 +45,7 @@ public class Polygon implements Comparable {
 			points[i] = tFMat;
 		}
 	}
+	
 	public void setColN(int n, float[] val) {
 		switch(n) {
 		case(0): col1=val; break;
@@ -168,7 +173,7 @@ public class Polygon implements Comparable {
 	
 	//color of the new polygon will be the same as the color of the first vertex
 	public Polygon clone() {
-		Polygon p = new Polygon(new float[] {points[0].get(0), points[0].get(1), points[0].get(2)}, new float[] {points[1].get(0), points[1].get(1), points[1].get(2)}, new float[] {points[2].get(0), points[2].get(1), points[2].get(2)});
+		Polygon p = new Polygon(new FloatMatrix[] {new FloatMatrix(points[0].data), new FloatMatrix(points[1].data), new FloatMatrix(points[2].data)} );
 		p.setFColor(new float[] {fColor[0][0], fColor[0][1], fColor[0][2]});
 		return p;
 	}
