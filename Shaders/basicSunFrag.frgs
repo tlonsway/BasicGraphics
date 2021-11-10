@@ -2,7 +2,6 @@
 
 out vec4 FragColor;
 in vec4 ourColor;
-//in vec4 gl_FragCoord;
 in vec2 gl_PointCoord;
 in float camRotY;
 in vec3 sunProjScreen;
@@ -22,9 +21,7 @@ void main() {
 	float bluC = (camRotY/cD+0.8f)+frgPos.y/2;
 	vec3 skyCol = cos(time/1000.0f)*vec3(redC,greC,bluC);
 	vec2 sunPos = vec2(sunPosition.x,sunPosition.y);
-	//vec3 sunCol = vec3(1.0f,0.6f,0.0f);
 	vec3 sunCol = sunColor;
-	//vec3 sunCol = vec3(1.0f,0.7f,0.0007f);
 	float sunIntensity = 1.2f;
 	float disTerm1 = sunPos.x-frgPos.x;
 	float disTerm2 = ratio*(sunPos.y-frgPos.y);
