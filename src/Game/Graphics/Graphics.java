@@ -305,7 +305,7 @@ public class Graphics {
 					e.printStackTrace();
 				}
 			}
-			boolean tess = true;
+			boolean tess = false;
 			if(!tess) {
 				glUseProgram(waterShaderProgram);
 				int modelMatLocT = glGetUniformLocation(waterShaderProgram,"model");
@@ -657,10 +657,11 @@ public class Graphics {
 	}
 	
 	private void updateTransformMatrix() {
-		glUseProgram(tesselationShaderProgram);
+		//glUseProgram(tesselationShaderProgram);
+		glUseProgram(shaderProgram);
 		float[] matCom = combineMats(project.getProjMatFMat(),cam.getCamMat());
-		//int fullMatLoc = glGetUniformLocation(shaderProgram,"fullMat");
-		int fullMatLoc = glGetUniformLocation(tesselationShaderProgram,"fullMat");
+		int fullMatLoc = glGetUniformLocation(shaderProgram,"fullMat");
+		//int fullMatLoc = glGetUniformLocation(tesselationShaderProgram,"fullMat");
 		glUniformMatrix4fv(fullMatLoc, false, matCom);
 		
 	}
