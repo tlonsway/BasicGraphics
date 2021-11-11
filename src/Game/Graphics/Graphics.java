@@ -287,7 +287,7 @@ public class Graphics {
 			glDisable(GL_DEPTH_TEST);
 			
 			glBindVertexArray(skyVAO);
-			//glDrawArrays(GL_TRIANGLES,0,6);
+			glDrawArrays(GL_TRIANGLES,0,6);
 			glEnable(GL_DEPTH_TEST);
 			
 			if (UIActive) {
@@ -474,20 +474,20 @@ public class Graphics {
 			cam.rotate('y', rotateT[0], true);
 			this.updateTransformMatrix();
 			
-			//glUseProgram(skyShaderProgram);
-			//int skyFullMatUniformLoc = glGetUniformLocation(skyShaderProgram, "fullMat");
-			//float[] matComT = combineMats(project.getProjMatFMat(),cam.getCamMat());
-			//glUniformMatrix4fv(skyFullMatUniformLoc, false, matComT);
-			//FloatMatrix projMat = project.getProjMatFMat();
-			//FloatMatrix camMat = cam.getCamMat();
-			//FloatMatrix sunPoint = new FloatMatrix(new float[] {-10000.0f,6000.0f,-10000.0f,1.0f});
-			//FloatMatrix resultTemp = projMat.mmul(camMat.mmul(sunPoint));
-			//float zValTemp = resultTemp.get(2);
-			//resultTemp.divi(resultTemp.get(2));
+			glUseProgram(skyShaderProgram);
+			int skyFullMatUniformLoc = glGetUniformLocation(skyShaderProgram, "fullMat");
+			float[] matComT = combineMats(project.getProjMatFMat(),cam.getCamMat());
+			glUniformMatrix4fv(skyFullMatUniformLoc, false, matComT);
+			FloatMatrix projMat = project.getProjMatFMat();
+			FloatMatrix camMat = cam.getCamMat();
+			FloatMatrix sunPoint = new FloatMatrix(new float[] {-10000.0f,6000.0f,-10000.0f,1.0f});
+			FloatMatrix resultTemp = projMat.mmul(camMat.mmul(sunPoint));
+			float zValTemp = resultTemp.get(2);
+			resultTemp.divi(resultTemp.get(2));
 			//System.out.println("Result Location: " + resultTemp);
-			//float[] sunPositionProjected = new float[] {resultTemp.get(0),resultTemp.get(1),zValTemp};
-			//int skySunProjUniformLoc = glGetUniformLocation(skyShaderProgram, "sunPosition");
-			//glUniform3fv(skySunProjUniformLoc, sunPositionProjected);
+			float[] sunPositionProjected = new float[] {resultTemp.get(0),resultTemp.get(1),zValTemp};
+			int skySunProjUniformLoc = glGetUniformLocation(skyShaderProgram, "sunPosition");
+			glUniform3fv(skySunProjUniformLoc, sunPositionProjected);
 			
 			//if (sunUpdate) {
 			//	sunUpdate = false;
@@ -657,8 +657,10 @@ public class Graphics {
 	}
 	
 	private void updateTransformMatrix() {
+		glUseProgram(tesselationShaderProgram);
 		float[] matCom = combineMats(project.getProjMatFMat(),cam.getCamMat());
-		int fullMatLoc = glGetUniformLocation(shaderProgram,"fullMat");
+		//int fullMatLoc = glGetUniformLocation(shaderProgram,"fullMat");
+		int fullMatLoc = glGetUniformLocation(tesselationShaderProgram,"fullMat");
 		glUniformMatrix4fv(fullMatLoc, false, matCom);
 		
 	}
