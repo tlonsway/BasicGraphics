@@ -24,7 +24,9 @@ public class TessGraphics {
 	int[] dimensions;
 	long window;
 	int tessProg;
+	int testProg;
 	Camera cam;
+	int VAO;
 	public TessGraphics(int[] dimensions) {
 		this.dimensions = dimensions;
 		window = start(dimensions, "Tesselation");
@@ -34,6 +36,8 @@ public class TessGraphics {
 		Shader tcs = new Shader("Shaders/tesselation/fs.glsl", GL_TESS_CONTROL_SHADER);
 		Shader tes = new Shader("Shaders/tesselation/fs.glsl", GL_TESS_EVALUATION_SHADER);
 		Shader fs = new Shader("Shaders/tesselation/fs.glsl", GL_FRAGMENT_SHADER);
+		Shader bvs = new Shader("Shader/basicProjection.vtxs", GL_VERTEX_SHADER);
+		Shader bfs = new Shader("Shader/singleColor.vtxs", GL_VERTEX_SHADER);
 		
 		tessProg = glCreateProgram();
 		glAttachShader(tessProg, vs.getShader());
@@ -42,22 +46,45 @@ public class TessGraphics {
 		glAttachShader(tessProg, fs.getShader());
 		glLinkProgram(tessProg);
 		
+		testProg = glCreateProgram();
+		glAttachShader(testProg, bvs.getShader());
+		glAttachShader(testProg, bfs.getShader());
+		
 		glDeleteShader(vs.getShader());
 		glDeleteShader(tcs.getShader());
 		glDeleteShader(tes.getShader());
 		glDeleteShader(fs.getShader());
+		glDeleteShader(bvs.getShader());
+		glDeleteShader(bfs.getShader());
 		
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
 				glfwSetWindowShouldClose(window, true);
 		});
+		
+		int VBO = glGenBuffers();
+		VAO = glGenVertexArrays();
+		glBindVertexArray(VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		float[] testPoints = new float[] {-0.3f, -0.3f, 0.1f, 0.8f, 0, 0, 
+						  			        0, 0.3f, 0.1f, 0, 0.8f, 0,
+									        0.3f, -0.3f, 0.1f, 0, 0, 0.8f};
+		glBufferData(GL_ARRAY_BUFFER, testPoints, GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 6, GL_FLOAT, false, 24, 0l);
 	}
+	
 	public void loop() {
 		glfwMakeContextCurrent(window);
+		GL.createCapabilities();
 		while(!glfwWindowShouldClose(window)) {
+			System.out.println("Looping");
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glUseProgram(testProg);
+			glBindVertexArray(VAO);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
 		}
 	}
+	
 	public static long start(int[] screenDims, String windowTitle) {
 		glfwInit();
 		glfwDefaultWindowHints();
