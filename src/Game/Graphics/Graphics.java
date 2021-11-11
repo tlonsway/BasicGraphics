@@ -75,8 +75,7 @@ public class Graphics {
 	DayNightThread dayNightThreadDNT;
 	
 	//Tesselation stuff
-	int tessVAO;
-	int CPcount;
+	int[] tessVAOs;
 	int tesselationShaderProgram;
 	
 	public Graphics(int[] screenDims) {
@@ -105,7 +104,8 @@ public class Graphics {
 		//fragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
 		vertShader = new Shader("Shaders/basicProjModelLighting.vtxs",GL_VERTEX_SHADER);
 		fragShader = new Shader("Shaders/basicLighting.frgs",GL_FRAGMENT_SHADER);
-		
+		Shader tessFragShader = new Shader("Shaders/tess_fs.vtxs", GL_FRAGMENT_SHADER);
+		Shader tessGeoShader = new Shader("Shaders/tess_gs.vtxs", GL_GEOMETRY_SHADER);
 		shaderProgram = glCreateProgram();
 		glAttachShader(shaderProgram,vertShader.getShader());
 		glAttachShader(shaderProgram,fragShader.getShader());
@@ -136,14 +136,14 @@ public class Graphics {
 		Shader tessCS = new Shader("Shaders/tcs.vtxs",GL_TESS_CONTROL_SHADER);
 		Shader tessES = new Shader("Shaders/tes.vtxs",GL_TESS_EVALUATION_SHADER);
 		System.out.println("Created objects");
+		
 		tesselationShaderProgram = glCreateProgram();
 		glAttachShader(tesselationShaderProgram,vertShader.getShader());
 		glAttachShader(tesselationShaderProgram,tessCS.getShader());
 		glAttachShader(tesselationShaderProgram,tessES.getShader());
-		glAttachShader(tesselationShaderProgram,fragShader.getShader());
-		System.out.println("Attached shaders");
+		glAttachShader(tesselationShaderProgram, tessGeoShader.getShader());
+		glAttachShader(tesselationShaderProgram,tessFragShader.getShader());
 		glLinkProgram(tesselationShaderProgram);
-		System.out.println("Linked program");
 		
 		glDeleteShader(tessCS.getShader());
 		glDeleteShader(tessES.getShader());
@@ -158,6 +158,7 @@ public class Graphics {
 		glDeleteShader(skyFragShader.getShader());
 		
 		bindSkyVertices();
+		bindTessVertices();
 		
 		Shader waterVertShader = new Shader("Shaders/basicProjWithModel.vtxs",GL_VERTEX_SHADER);
 		Shader waterFragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
@@ -178,9 +179,6 @@ public class Graphics {
 		glClearColor(0.275f,0.94f,0.97f,1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE); 
-		
-		
-		
 		
 		//xglEnable(GL_CULL_FACE); 
 		glLineWidth(3.f);
@@ -289,7 +287,7 @@ public class Graphics {
 			glDisable(GL_DEPTH_TEST);
 			
 			glBindVertexArray(skyVAO);
-			glDrawArrays(GL_TRIANGLES,0,6);
+			//glDrawArrays(GL_TRIANGLES,0,6);
 			glEnable(GL_DEPTH_TEST);
 			
 			if (UIActive) {
@@ -307,109 +305,119 @@ public class Graphics {
 					e.printStackTrace();
 				}
 			}
-			
-			glUseProgram(waterShaderProgram);
-			int modelMatLocT = glGetUniformLocation(waterShaderProgram,"model");
-			glUniformMatrix4fv(modelMatLocT, false, iMatFlat);
-			glBindVertexArray(waterVAO);
-			glDrawArrays(GL_TRIANGLES,0,waterVertexCount);
-			
-			
-			
-			
-			glUseProgram(shaderProgram);
-			
-			float[] cpt = cam.getCamPos();
-			//int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
-			//glUniform3fv(lightPosLoc,new float[] {-cpt[0],-cpt[1],-cpt[2]});
-			
-			int viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
-			glUniform3fv(viewPosLoc,new float[] {-cpt[0],-cpt[1],-cpt[2]});
-			
-			int modelMatLoc = glGetUniformLocation(shaderProgram,"model");
-			glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
-			
-			
-			
-			//int transFloatLoc = glGetUniformLocation(shaderProgram,"transP");
-			//glUniform1f(transFloatLoc, 1f);
-			
-			//endTimer("LoopInit");
-			
-			int modelInvTranMatLoc = glGetUniformLocation(shaderProgram, "invTranMod");
-			//FloatMatrix invTranModFM = Solve.pinv(go.getModelMat().transpose());
-			//float[] flatMat = invTranModFM.data;
-			glUniformMatrix4fv(modelInvTranMatLoc,false,iMatFlat);
-			
-			glBindVertexArray(VAO);
-			glDrawArrays(GL_TRIANGLES,0,numElements);
-			
-			
-			
-			
-			//endTimer("Draw Ground Mesh");
-			
-			int objID = 0;
-		
-			
-			for(GameObject go : objects) {
+			boolean tess = true;
+			if(!tess) {
+				glUseProgram(waterShaderProgram);
+				int modelMatLocT = glGetUniformLocation(waterShaderProgram,"model");
+				glUniformMatrix4fv(modelMatLocT, false, iMatFlat);
+				glBindVertexArray(waterVAO);
+				glDrawArrays(GL_TRIANGLES,0,waterVertexCount);
 				
-				if (drawBounds) {
+				
+				
+				
+				glUseProgram(shaderProgram);
+				
+				float[] cpt = cam.getCamPos();
+				//int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
+				//glUniform3fv(lightPosLoc,new float[] {-cpt[0],-cpt[1],-cpt[2]});
+				
+				int viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
+				glUniform3fv(viewPosLoc,new float[] {-cpt[0],-cpt[1],-cpt[2]});
+				
+				int modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+				glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
+				
+				
+				
+				//int transFloatLoc = glGetUniformLocation(shaderProgram,"transP");
+				//glUniform1f(transFloatLoc, 1f);
+				
+				//endTimer("LoopInit");
+				
+				int modelInvTranMatLoc = glGetUniformLocation(shaderProgram, "invTranMod");
+				//FloatMatrix invTranModFM = Solve.pinv(go.getModelMat().transpose());
+				//float[] flatMat = invTranModFM.data;
+				glUniformMatrix4fv(modelInvTranMatLoc,false,iMatFlat);
+				
+				glBindVertexArray(VAO);
+				glDrawArrays(GL_TRIANGLES,0,numElements);
+			
+				
+				
+				
+				//endTimer("Draw Ground Mesh");
+				
+				int objID = 0;
+			
+				
+				for(GameObject go : objects) {
+					
+					if (drawBounds) {
+						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+						glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
+						
+						
+						
+						glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+						
+						int VBOt,VAOt;
+						VBOt = glGenBuffers();
+						VAOt = glGenVertexArrays();
+						glBindVertexArray(VAOt);
+						glBindBuffer(GL_ARRAY_BUFFER,VBOt);
+						float[] vert = go.getBounds().getVertices();
+						glBufferData(GL_ARRAY_BUFFER, vert, GL_STREAM_DRAW);
+						glVertexAttribPointer(0,3,GL_FLOAT,false,24,0l);
+						glEnableVertexAttribArray(0);
+						glVertexAttribPointer(1,3,GL_FLOAT,false,24,12l);
+						glEnableVertexAttribArray(1);
+						glBindBuffer(GL_ARRAY_BUFFER,0);
+						glDrawArrays(GL_TRIANGLES,0,vert.length);
+						
+						
+						glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+					}
+	
+					
+					//startTimer();
+					//System.out.println("Rendering Object ID " + objID);
 					modelMatLoc = glGetUniformLocation(shaderProgram,"model");
-					glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
+					glUniformMatrix4fv(modelMatLoc, false, go.getModelMatFlat());
 					
+					modelInvTranMatLoc = glGetUniformLocation(shaderProgram, "invTranMod");
+					FloatMatrix invTranModFM = Solve.pinv(go.getModelMat().transpose());
+					float[] flatMat = invTranModFM.data;
+					glUniformMatrix4fv(modelInvTranMatLoc,false,flatMat);
 					
-					
-					glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-					
-					int VBOt,VAOt;
-					VBOt = glGenBuffers();
-					VAOt = glGenVertexArrays();
-					glBindVertexArray(VAOt);
-					glBindBuffer(GL_ARRAY_BUFFER,VBOt);
-					float[] vert = go.getBounds().getVertices();
-					glBufferData(GL_ARRAY_BUFFER, vert, GL_STREAM_DRAW);
-					glVertexAttribPointer(0,3,GL_FLOAT,false,24,0l);
-					glEnableVertexAttribArray(0);
-					glVertexAttribPointer(1,3,GL_FLOAT,false,24,12l);
-					glEnableVertexAttribArray(1);
-					glBindBuffer(GL_ARRAY_BUFFER,0);
-					glDrawArrays(GL_TRIANGLES,0,vert.length);
-					
-					
-					glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+					//endTimer("Uniform Updating");
+					//System.out.println("Object Model Matrix: " );
+					//for(float f : go.getModelMatFlat()) {
+					//	System.out.print(f + " ");
+					//}
+					//System.out.println();
+					glBindVertexArray(go.getVAO());
+					//endTimer("Bind VAO");
+					//int numE = go.getVertices().length;
+					if(go.vertT!=null) {
+						int numE = go.vertT.length;
+						//endTimer("Get Arr Len");
+						glDrawArrays(GL_TRIANGLES,0,numE);
+					}
+					//endTimer("Draw Call");
+					objID++;
+					//if (cam.bounds.intersectsAABB(go.getBounds())) {
+						//System.out.println("CAMERA INTERSECTING OBJECT");
+					//}
 				}
-
-				
-				//startTimer();
-				//System.out.println("Rendering Object ID " + objID);
-				modelMatLoc = glGetUniformLocation(shaderProgram,"model");
-				glUniformMatrix4fv(modelMatLoc, false, go.getModelMatFlat());
-				
-				modelInvTranMatLoc = glGetUniformLocation(shaderProgram, "invTranMod");
-				FloatMatrix invTranModFM = Solve.pinv(go.getModelMat().transpose());
-				float[] flatMat = invTranModFM.data;
-				glUniformMatrix4fv(modelInvTranMatLoc,false,flatMat);
-				
-				//endTimer("Uniform Updating");
-				//System.out.println("Object Model Matrix: " );
-				//for(float f : go.getModelMatFlat()) {
-				//	System.out.print(f + " ");
-				//}
-				//System.out.println();
-				glBindVertexArray(go.getVAO());
-				//endTimer("Bind VAO");
-				//int numE = go.getVertices().length;
-				if(go.vertT!=null) {
-					int numE = go.vertT.length;
-					//endTimer("Get Arr Len");
-					glDrawArrays(GL_TRIANGLES,0,numE);
+			}else {
+				glUseProgram(tesselationShaderProgram);
+				for(int i = 0; i < tessVAOs.length; i++) {
+					glBindVertexArray(tessVAOs[i]);
+					glDrawArrays(GL_PATCHES,0,4);
 				}
-				//endTimer("Draw Call");
-				objID++;
-				//if (cam.bounds.intersectsAABB(go.getBounds())) {
-					//System.out.println("CAMERA INTERSECTING OBJECT");
-				//}
+				glDisableVertexAttribArray(0);
+				glBindVertexArray(0);
 			}
 			
 			//endTimer("Draw GameObjects");
@@ -562,6 +570,30 @@ public class Graphics {
 	public ArrayList<GameObject> getGameObjects(){
 		return objects;
 	}
+	
+	private void bindTessVertices() {
+		int worldWidth = 20;
+		int worldLength = 20;
+		int chunkDim = 100;
+		tessVAOs = new int[20*20];
+		for(int x = 0; x < worldWidth; x++) {
+			for(int y = 0; y < worldLength; y++) {
+				int vbo = glGenBuffers();
+				int VAO = glGenVertexArrays();
+				tessVAOs[x*worldWidth+y] = VAO;
+				glBindVertexArray(VAO);
+				glBindBuffer(GL_ARRAY_BUFFER, VBO);
+				int xLoc = x-(worldWidth/2);
+				int yLoc = y-(worldLength/2);
+				float[] verts = new float[] {xLoc*chunkDim, yLoc*chunkDim, xLoc*chunkDim, yLoc*chunkDim+chunkDim, xLoc*chunkDim+chunkDim, yLoc*chunkDim+chunkDim, xLoc*chunkDim+chunkDim, yLoc*chunkDim};
+				glBufferData(GL_ARRAY_BUFFER, verts, GL_STATIC_DRAW);
+				glVertexAttribPointer(0, 2, GL_FLOAT, false, 8, 0l);
+				glPatchParameteri(GL_PATCH_VERTICES, 4);
+				glBindVertexArray(0);
+			}
+		}
+	}
+	
 	private void bindSkyVertices() {
 		int VBOt,VAOt;
 		VBOt = glGenBuffers();

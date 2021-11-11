@@ -29,7 +29,7 @@ public class Shader {
 			System.err.println("Shader with path: " + fileName + " could not be found");
 			return;
 		}
-		if (!(shaderType == GL_VERTEX_SHADER || shaderType == GL_FRAGMENT_SHADER || shaderType == GL_TESS_CONTROL_SHADER || shaderType == GL_TESS_EVALUATION_SHADER)) {
+		if (!(shaderType == GL_GEOMETRY_SHADER || shaderType == GL_VERTEX_SHADER || shaderType == GL_FRAGMENT_SHADER || shaderType == GL_TESS_CONTROL_SHADER || shaderType == GL_TESS_EVALUATION_SHADER)) {
 			System.err.println("Shader of type" + shaderType + " is not supported");
 			return;
 		}
