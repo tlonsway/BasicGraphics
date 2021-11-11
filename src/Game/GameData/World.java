@@ -79,7 +79,7 @@ public class World {
 		ArrayList<Mesh> map = new ArrayList<>();
 		for(int w = -1*(wWidth/2); w < wWidth/2; w++) {
 			for(int l = -1*(wLength/2); l < (wLength/2); l++) {
-				float res = 1f;
+				float res = 0.5f;
 				if(Math.abs(w) > 10 || Math.abs(l) > 10) {
 					res = 0.05f;
 				}
@@ -281,6 +281,13 @@ public class World {
 			color[1] = colors[rangesIncluded.get(0)][1];//+alter;
 			color[2] = colors[rangesIncluded.get(0)][2];//+alter;
 		}
+		float redAlt = ((float)Math.random()*0.04f-0.02f);
+		float greenAlt = ((float)Math.random()*0.04f-0.02f);
+		float blueAlt = ((float)Math.random()*0.04f-0.02f);
+		color[0] += redAlt;
+		color[1] += greenAlt;
+		color[2] += blueAlt;
+		
 		return color;
 	}
 	private float blendColorValue(float a, float b, float ratio) {
@@ -403,9 +410,9 @@ public class World {
 					p[2] = row*pR+zShift;
 				}
 				pts = shiftPoint(pts, p);
+				poly = new Polygon(pts[1], pts[2], pts[0]);
+				
 				if(up) {
-					poly = new Polygon(pts[1], pts[2], pts[0]);
-					
 					poly.setFColors(new float[][] {getLandColor(pts[1][1]), getLandColor(pts[2][1]), getLandColor(pts[0][1])});
 				}else {
 					poly = new Polygon(pts[0], pts[1], pts[2]);
