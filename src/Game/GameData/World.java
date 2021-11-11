@@ -7,6 +7,8 @@ import Game.Graphics.*;
 public class World {
 	ArrayList<Mesh> terrain;
 	Noise noise;
+	Mesh tree;
+	Graphics g;
 	ArrayList<Mesh> objects;
 	HashMap<String, Mesh> chunkBuf;
 	HashMap<String, float[]> chunkVertBuf;
@@ -15,6 +17,7 @@ public class World {
 	public int[] indices;
 	public int seed;
 	public World() {
+		this.g = g;
 		chunkBuf = new HashMap<>();
 		chunkVertBuf = new HashMap<>();
 		noise = new Noise();
@@ -35,7 +38,19 @@ public class World {
 		//System.out.println("Generated "+terrain.getPolygons().size()+" Polygons");
 		System.out.println("Seed: "+seed);
 		objects = new ArrayList<Mesh>();
+		
+		
 	}
+	public void setGraphics(Graphics g) {
+		this.g = g;
+		tree = ObjectGeneration.generateTree(seed, 3);
+		for(int x = -2; x < 2; x++) {
+			for(int y = -2; y < 2; y++) {
+				generateTrees(x*width, y*length); 
+			}
+		}
+	}
+	
 	public World(int seed) {
 		noise = new Noise();
 		//int seed = 10000;
@@ -72,7 +87,6 @@ public class World {
 		long eTime2 = System.nanoTime();
 		System.out.println("GenerateWorld took: " + (eTime1-sTime));
 		System.out.println("GenerateVertex took: " + (eTime2-eTime1));
-		
 	}
 	
 	private ArrayList<Mesh> generateWorld(int startX, int startY, int wWidth, int wLength) {
@@ -125,15 +139,15 @@ public class World {
 	public Mesh generateTrees(float x, float z){
 		Mesh trees = new Mesh(true);
 		Mesh tree = ObjectGeneration.generateTree(seed,5);
-		int treesPerChunk = 5;
+		int treesPerChunk = 2;
 		for(int i = 0; i < treesPerChunk; i++) {
 			double a = width*Math.abs(Noise.noise(seed+0.5+2*i));
 			double b = width*Math.abs(Noise.noise(seed+0.5+2*i+1));
-			double h = getHeight((float)(a+x), (float)(b+z));
+			double h = getHeight((float)(a+x), (float)(b+z))+11;
 			if(h > height*0.09 && h < height*0.58) {
-				Mesh tmp = tree.clone();
-				tmp.translate((float)(a+x), (float)h, (float)(b+z));
-				trees.addMesh(tmp);
+				GameObject go = new GameObject("tree", this, tree);
+				go.setPosition(new float[] {(float)(a+x), (float)h, (float)(b+z)});
+				g.addGameObject(go);
 			}
 		}	
 		return trees;
@@ -426,7 +440,6 @@ public class World {
 		}
 		map.generateVertices();
 		if(resolution == 1 && chunkW > 30 && chunkL > 30) {
-			map.addMesh(generateTrees(xShift, zShift));
 			chunkBuf.put(xShift+":"+zShift, map);
 			
 		}

@@ -21,7 +21,7 @@ public class GraphicsTest {
 		World world = new World();
 		
 		g.setWorld(world);
-		
+		world.setGraphics(g);
 		float[] vert = world.vertices;
 		int[] ind = world.indices;;
 		g.updateData(vert, ind);
