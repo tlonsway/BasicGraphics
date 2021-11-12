@@ -5,6 +5,7 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
+import Game.sound.SoundManager;
 import Game.GameData.*;
 import Game.Graphics.*;
 import Game.Network.*;
@@ -33,7 +34,7 @@ public class GameManager {
 	
 	KeyboardManager keyboardThread;
 	MouseManager mouseThread;
-	
+	SoundManager soundManager;
 	Thread dayNightThreadT;
 	DayNightThread dayNightThreadDNT;
 	
@@ -58,6 +59,11 @@ public class GameManager {
 		mouseThread = new MouseManager();
 		gravity = new GravityThread();
 		cam = new Camera(screenDims);
+		//Sound stuff
+		soundManager = new SoundManager(cam);
+		soundManager.addBuffer("Data/Audio/noise.ogg", "pop"); 
+		soundManager.addSource("pop" , "speaker", true, false);
+		soundManager.setSourcePosition("speaker", 0, 60, 0);
 		gravity.setCamera(cam);
 		proj = new Projection(70f, 0.1f, 10000f, screenDims);
 		
@@ -88,12 +94,14 @@ public class GameManager {
 	
 	
 	public void gameLoop() {
+		soundManager.playSound("speaker");
 		while(gameRunning) {
 			renderer.renderFrame();
 			camPositionUpdate();
 			chunkUpdateCheck();
 			updateWorldIfReady();
 			updateSunColor();
+			soundManager.updateListner();
 			gravity.run();
 		}
 		try {

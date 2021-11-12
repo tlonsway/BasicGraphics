@@ -6,6 +6,7 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import Game.GameData.*;
+import Game.sound.SoundManager;
 import Game.Graphics.*;
 import Game.Network.*;
 import Game.Init.Setup;
@@ -43,7 +44,7 @@ public class Graphics {
 	ArrayList<GameObject> objects;
 	public ArrayList<GameObject> objectQueue;
 	UIManager UIManager;
-	
+	SoundManager soundManager;
 	static final float[] iMatFlat = new float[] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
 	
 	long timeTemp;
@@ -97,6 +98,9 @@ public class Graphics {
 	
 	public void init() {
 		cam = new Camera(screenDims);
+		soundManager = new SoundManager(cam);
+		soundManager.addBuffer("Data/Audio/noise.ogg", "pop");
+		soundManager.addSource("pop" , "speaker", true, true);
 		gravity.setCamera(cam);
 		project = new Projection(70f, 0.1f, 10000f, screenDims);
 		//vertShader = new Shader("Shaders/basicProjection.vtxs",GL_VERTEX_SHADER);
@@ -255,7 +259,7 @@ public class Graphics {
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
 		bindWaterVertices();
-		
+		//soundManager.playSound("speaker");
 		int loops = 0;
 		while(!glfwWindowShouldClose(window)) {
 			
@@ -526,10 +530,9 @@ public class Graphics {
 			glUniformMatrix4fv(fullMatLoc, false, matCom);
 			
 			//endTimer("Camera Transforms");
-			
+			soundManager.updateListner();
 			gravity.setGameObjects(objects);
 		 	gravity.run();
-			
 			//endTimer("Gravity Thread");
 		}
 		try {

@@ -1,15 +1,24 @@
 package Game.sound;
 
-import static org.lwjgl.openal.AL11.*;
-import org.lwjgl.openal.*;
-import static org.lwjgl.openal.AL.*;
-import static org.lwjgl.openal.ALC.*;
-import static org.lwjgl.openal.ALC11.*;
+import org.lwjgl.stb.*;
+import java.nio.*;
+import static org.lwjgl.openal.AL10.*;
 
 public class SoundBuffer {
-	private final long bufID;
-	public SoundBuffer(String AudioFile) {
+	private final int bufID;
+	public SoundBuffer(String AudioFileName) {
 		bufID = alGenBuffers();
-		
+		try(STBVorbisInfo info = STBVorbisInfo.malloc()){
+			ShortBuffer pcm = IOUtil.readVorbis(AudioFileName, 32 * 1024, info);
+            alBufferData(bufID, AL_FORMAT_MONO16, pcm, info.sample_rate());
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	} 
+	public int getBufferID() {
+		return bufID;
+	}
+	public void delete() {
+		alDeleteBuffers(bufID);
 	}
 }
