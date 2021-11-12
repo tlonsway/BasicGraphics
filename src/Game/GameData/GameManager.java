@@ -63,7 +63,7 @@ public class GameManager {
 		soundManager = new SoundManager(cam);
 		soundManager.addBuffer("Data/Audio/noise.ogg", "pop"); 
 		soundManager.addSource("pop" , "speaker", true, false);
-		soundManager.setSourcePosition("speaker", 0, 60, 0);
+		soundManager.setSourcePosition("speaker", 0f, 180f, 0f);
 		gravity.setCamera(cam);
 		proj = new Projection(70f, 0.1f, 10000f, screenDims);
 		
@@ -96,6 +96,9 @@ public class GameManager {
 	public void gameLoop() {
 		soundManager.playSound("speaker");
 		while(gameRunning) {
+			
+			float[] camPos = cam.getCamPos();
+			System.out.println("Camera position: (" + camPos[0] + "," + camPos[1] + "," + camPos[2] + ")");
 			renderer.renderFrame();
 			camPositionUpdate();
 			chunkUpdateCheck();

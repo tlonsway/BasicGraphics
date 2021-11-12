@@ -15,7 +15,7 @@ public class SoundListener {
 	}
 	public void setPosition() {
 		float[] loc = cam.getCamPos();
-		alListener3f(AL_POSITION, loc[0], loc[1], loc[2]);
+		alListener3f(AL_POSITION, -loc[0], -loc[1], -loc[2]);
 	}
 	public void setOrientation() {
 		FloatMatrix rot = cam.getRotMat();
