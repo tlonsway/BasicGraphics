@@ -83,7 +83,7 @@ public class Graphics {
 		//screenDims = new int[] {1920,1080};
 		String windowTitle = "Game Window";
 		window = Setup.start(screenDims, windowTitle);
-		keyboardThread = new KeyboardManager(this);
+		keyboardThread = new KeyboardManager();
 		mouseThread = new MouseManager();
 		gravity = new GravityThread();
 		objects = new ArrayList<GameObject>();
@@ -181,7 +181,7 @@ public class Graphics {
 		glEnable(GL_MULTISAMPLE); 
 		
 		//xglEnable(GL_CULL_FACE); 
-		glLineWidth(3.f);
+		glLineWidth(3.0f);
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
 				glfwSetWindowShouldClose(window, true);
@@ -227,9 +227,11 @@ public class Graphics {
 		});
 		cam.translate(0f, -60f, 0f);
 		
+		/* temporarily removed during organization overhaul
 		dayNightThreadDNT = new DayNightThread(this);
 		dayNightThreadT = new Thread(dayNightThreadDNT);
 		dayNightThreadT.start();
+		*/
 		
 		//loop();
 	}

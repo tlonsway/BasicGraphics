@@ -5,9 +5,11 @@ import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import org.jblas.FloatMatrix;
 import org.lwjgl.opengl.GL;
 
+import Game.GameData.GameManager;
+
 public class DayNightThread implements Runnable {
 
-	Graphics g;
+	GameManager g;
 	boolean paused;
 	FloatMatrix sunPosition;
 	int time = 0;
@@ -15,7 +17,7 @@ public class DayNightThread implements Runnable {
 	
 	static final float ticksPerSecond = 120f;
 	
-	public DayNightThread(Graphics g) {
+	public DayNightThread(GameManager g) {
 		this.g = g;
 		paused = false;
 		sunPosition = new FloatMatrix(new float[] {0f,10000.0f,0f,1.0f});
@@ -27,7 +29,7 @@ public class DayNightThread implements Runnable {
 			FloatMatrix newPoint = Operations.rotatePoint(sunPosition, 'z', 0.001f);
 			sunPosition = newPoint;
 			//g.updateSunPosition(sunPosition.data);
-			g.initSunUpdate(sunPosition.data);
+			g.sunPositionUpdate(sunPosition.data);
 			time=(time+1)%6283;
 			//System.out.println("Time: " + time);
 			

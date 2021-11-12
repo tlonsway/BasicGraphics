@@ -4,11 +4,11 @@ import Game.GameData.World;
 
 public class WorldUpdateThread implements Runnable {
 
-	Graphics g;
+	GameManager g;
 	World w;
 	int[] playerLoc;
 	
-	public WorldUpdateThread(Graphics g, World w, int[] playerLoc) {
+	public WorldUpdateThread(GameManager g, World w, int[] playerLoc) {
 		this.g = g;
 		this.w = w;
 		this.playerLoc = playerLoc;

@@ -7,7 +7,6 @@ import Game.Graphics.Graphics;
 
 public class KeyboardManager {
 	
-	Graphics g;
 	boolean wDown = false;
 	boolean aDown = false;
 	boolean sDown = false;
@@ -19,8 +18,8 @@ public class KeyboardManager {
 	boolean shiftDown = false;
 	
 	
-	public KeyboardManager(Graphics g) {
-		this.g = g;
+	public KeyboardManager() {
+		
 	}
 	
 	public static int getHotbarKey(int key, int action) { 
