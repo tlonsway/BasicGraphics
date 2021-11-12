@@ -453,7 +453,7 @@ public class Graphics {
 				loops = 0;
 				System.out.println("Generating new chunk");
 				playerXZ = currentXZ;
-				new Thread(new WorldUpdateThread(this,world,new int[] {(int)currentXZ[0],(int)currentXZ[1]})).start();
+				//new Thread(new WorldUpdateThread(this,world,new int[] {(int)currentXZ[0],(int)currentXZ[1]})).start();
 				//world.updateWorld(-(int)currentXZ[0],-(int)currentXZ[1]);
 				//this.updateData(world.vertices, world.indices);
 				long eTime = System.nanoTime();
