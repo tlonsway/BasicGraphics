@@ -63,7 +63,7 @@ public class Graphics {
 	float[] playerXZ = new float[2];
 	boolean worldUpdateReady = false;
 	float[] newWorldVert;
-	boolean updatingVAO = false;
+	boolean updatingVAO = false; 
 	
 	int waterVAO;
 	int waterShaderProgram;
