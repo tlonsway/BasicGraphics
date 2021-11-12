@@ -1,5 +1,6 @@
 package Game.Graphics;
 
+import Game.GameData.GameManager;
 import Game.GameData.World;
 
 public class WorldUpdateThread implements Runnable {
@@ -16,7 +17,8 @@ public class WorldUpdateThread implements Runnable {
 	
 	public void run() {
 		w.updateWorld(-playerLoc[0], -playerLoc[1]);
-		g.setWorldUpdateReady(w.vertices);
+		g.setWorldUpdateReady();
+		//g.setWorldUpdateReady(w.vertices);
 		//g.updateData(w.vertices, w.indices);
 	}
 }

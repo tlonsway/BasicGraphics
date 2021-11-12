@@ -16,7 +16,10 @@ import org.jblas.*;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glLineWidth;
@@ -46,8 +49,10 @@ public class Rendering {
 	
 	public void renderFrame() {
 		if (!glfwWindowShouldClose(manager.getWindow())) {
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			sky.render();
 			terrain.render();
+			
 			glfwSwapBuffers(manager.getWindow());
 			glfwPollEvents();
 		} else {
@@ -57,5 +62,9 @@ public class Rendering {
 	
 	public void updateTransformMatrix() {
 		terrain.updateTransformMatrix();
+	}
+	
+	public void updateWorld() {
+		terrain.updateWorld();
 	}
 }

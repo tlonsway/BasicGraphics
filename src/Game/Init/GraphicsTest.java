@@ -9,7 +9,7 @@ public class GraphicsTest {
 		
 		int[] screenDims = new int[] {1920,1080};
 		
-		Graphics g = new Graphics(screenDims);
+		GameManager g = new GameManager(screenDims);
 		//float[] vertices = new float[] {-0.1f,0.1f,-1.2f,
 		//		0f,-0.1f,-1.2f,
 		//		0.1f,0.1f,-1.2f};
@@ -21,10 +21,11 @@ public class GraphicsTest {
 		World world = new World();
 		
 		g.setWorld(world);
-		world.setGraphics(g);
-		float[] vert = world.vertices;
-		int[] ind = world.indices;;
-		g.updateData(vert, ind);
+		//world.setGraphics(g);
+		//float[] vert = world.vertices;
+		//int[] ind = world.indices;;
+		//g.updateData(vert, ind);
+		g.setWorldUpdateReady();
 		System.out.println("World mesh complete");
 		
 		
@@ -68,6 +69,7 @@ public class GraphicsTest {
 		//polyBound.setObject(go1);
 		
 		//go1.rotate('y', (float)(Math.PI/2), false);
-		g.loop();
+		//g.loop();
+		g.gameLoop();
 	}	
 }

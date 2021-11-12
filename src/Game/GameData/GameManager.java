@@ -48,8 +48,10 @@ public class GameManager {
 	float[] sunColor;
 	
 	float[] playerXZ = new float[2];
+	boolean worldUpdateReady = false;
 	
-	public GameManager() {
+	
+	public GameManager(int[] screenDims) {
 		gameRunning = true;
 		window = Setup.start(screenDims, "Game Window");
 		keyboardThread = new KeyboardManager();
@@ -58,7 +60,7 @@ public class GameManager {
 		cam = new Camera(screenDims);
 		gravity.setCamera(cam);
 		proj = new Projection(70f, 0.1f, 10000f, screenDims);
-		renderer = new Rendering(this);
+		
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
 			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
 				glfwSetWindowShouldClose(window, true);
@@ -74,15 +76,23 @@ public class GameManager {
 		dayNightThreadDNT = new DayNightThread(this);
 		dayNightThreadT = new Thread(dayNightThreadDNT);
 		dayNightThreadT.start();
+		
+		sunPosition = new float[3];
+		sunColor = new float[3];
+		
+		renderer = new Rendering(this);
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
-		gameLoop();
+		//gameLoop();
 	}
+	
 	
 	public void gameLoop() {
 		while(gameRunning) {
 			renderer.renderFrame();
 			camPositionUpdate();
+			chunkUpdateCheck();
+			updateWorldIfReady();
 			updateSunColor();
 			gravity.run();
 		}
@@ -94,17 +104,27 @@ public class GameManager {
 		}
 	}
 	
+	public void setWorld(World w) {
+		this.world = w;
+		cam.setWorld(w);
+	}
+	
 	private void chunkUpdateCheck() {
 		float[] currentXZ = new float[] {cam.getCamPos()[0],cam.getCamPos()[2]};
 		if (Math.sqrt((currentXZ[0]-playerXZ[0])*(currentXZ[0]-playerXZ[0])+(currentXZ[1]-playerXZ[1])*(currentXZ[1]-playerXZ[1])) > 200) {
-			loops = 0;
-			System.out.println("Generating new chunk");
 			playerXZ = currentXZ;
 			new Thread(new WorldUpdateThread(this,world,new int[] {(int)currentXZ[0],(int)currentXZ[1]})).start();
-			//world.updateWorld(-(int)currentXZ[0],-(int)currentXZ[1]);
-			//this.updateData(world.vertices, world.indices);
-			long eTime = System.nanoTime();
-			System.out.println("Time for thread starting: " + (eTime-sTime));
+		}
+	}
+	
+	public void setWorldUpdateReady() {
+		worldUpdateReady = true;
+	}
+	
+	private void updateWorldIfReady() {
+		if (worldUpdateReady) {
+			renderer.updateWorld();
+			worldUpdateReady = false;
 		}
 	}
 	
