@@ -45,6 +45,7 @@ public class SoundManager {
  		for(String key : buffers.keySet()) {
  			buffers.get(key).delete();
  		}
+ 		alcCloseDevice(device);
  	}
  	
  	public void setSourcePosition(String sourceName, float x, float y, float z) {
