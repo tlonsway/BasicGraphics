@@ -1,5 +1,7 @@
 package Game.sound;
 import Game.Graphics.Camera;
+import Game.Graphics.Operations;
+
 import static org.lwjgl.openal.AL10.*;
 import org.jblas.*;
 public class SoundListener {
@@ -18,9 +20,11 @@ public class SoundListener {
 		alListener3f(AL_POSITION, -loc[0], -loc[1], -loc[2]);
 	}
 	public void setOrientation() {
-		FloatMatrix rot = cam.getRotMat();
-		FloatMatrix dir = new FloatMatrix(new float[] {0f, 0f, 1f, 1f});
-		FloatMatrix result = rot.mmul(dir);
+		float[] rots = cam.getRotations();
+		FloatMatrix dir = new FloatMatrix(new float[] {0f, 0f, -1f, 1f});
+		FloatMatrix result = Operations.rotatePoint(dir, 'x', -rots[0]);
+		result = Operations.rotatePoint(result, 'y', -rots[1]);
+		result = Operations.rotatePoint(result, 'z', -rots[2]);
 		float sum = 0;
 		for(int i=0;i<3;i++) {
 			float f = result.get(i);
