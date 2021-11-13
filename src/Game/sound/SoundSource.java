@@ -11,6 +11,7 @@ public class SoundSource {
 		if(relative) {
 			alSourcei(sourceID, AL_LOOPING, AL_TRUE);
 		}
+		setGain(1);
 	}
 	
 	public void setBuffer(int bufferID) {
