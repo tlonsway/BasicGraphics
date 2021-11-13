@@ -129,11 +129,15 @@ public class Polygon implements Comparable {
         /*if (Math.abs(v1.get(0)) < 0.5 || Math.abs(v1.get(2)) < 0.5) {
         	System.out.println("Cross Product: " + s1 + " , " + s2 + " , " + s3);
         }*/
-        if (s2 < 0) {
+        
+        
+        if (s2 < 0.0) {
         	s1 *= -1;
         	s2 *= -1;
         	s3 *= -1;
         }
+        
+        //System.out.println(s2);
         return new FloatMatrix(new float[] {-s1,-s2,-s3});
 	}
 	

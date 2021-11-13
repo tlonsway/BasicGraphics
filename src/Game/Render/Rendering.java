@@ -34,16 +34,19 @@ public class Rendering {
 	int[] screenDims;
 	RenderSky sky;
 	RenderTerrain terrain;
-	
+	RenderWater water;
+	RenderUI UI;
 	
 	public Rendering(GameManager manager) {
 		this.manager = manager;
 		this.screenDims = manager.getScreenDims();
 		sky = new RenderSky(manager);
 		terrain = new RenderTerrain(manager);
+		water = new RenderWater(manager);
+		UI = new RenderUI(manager);
 		glClearColor(0.275f,0.94f,0.97f,1.0f);
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_MULTISAMPLE); 
+		glEnable(GL_MULTISAMPLE);
 		glLineWidth(3.0f);
 	}
 	
@@ -51,8 +54,9 @@ public class Rendering {
 		if (!glfwWindowShouldClose(manager.getWindow())) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			sky.render();
+			UI.render();
 			terrain.render();
-			
+			water.render();
 			glfwSwapBuffers(manager.getWindow());
 			glfwPollEvents();
 		} else {
@@ -62,6 +66,7 @@ public class Rendering {
 	
 	public void updateTransformMatrix() {
 		terrain.updateTransformMatrix();
+		water.updateUniforms();
 	}
 	
 	public void updateWorld() {

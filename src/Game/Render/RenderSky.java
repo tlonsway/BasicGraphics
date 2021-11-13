@@ -92,10 +92,10 @@ public class RenderSky {
 		glUseProgram(skyShaderProgram);
 		int camRotYUniformLoc = glGetUniformLocation(skyShaderProgram, "camRotYU");
 		glUniform1f(camRotYUniformLoc, -(float)Math.sin(cam.getRotations()[0]));
-		this.updateSun();
 		glBindVertexArray(skyVAO);
 		glDrawArrays(GL_TRIANGLES,0,6);
 		glEnable(GL_DEPTH_TEST);
+		this.updateSun();
 	}
 	
 	private void updateSun() {

@@ -153,10 +153,11 @@ public class World {
 		return trees;
 	}
 	
-	public Mesh getWater() {
+	public Mesh getWater(float quality) {
 		
 		Mesh map = new Mesh(null);
-		float resolution = 0.2f;
+		//float resolution = 0.2f;
+		float resolution = quality;
 		int chunkW = 2000;
 		
 

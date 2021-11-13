@@ -32,6 +32,7 @@ public class GameManager {
 	Rendering renderer;
 	World world;
 	
+	UIManager UI;
 	KeyboardManager keyboardThread;
 	MouseManager mouseThread;
 	SoundManager soundManager;
@@ -55,6 +56,7 @@ public class GameManager {
 	public GameManager(int[] screenDims) {
 		gameRunning = true;
 		window = Setup.start(screenDims, "Game Window");
+		UI = new UIManager(screenDims);
 		keyboardThread = new KeyboardManager();
 		mouseThread = new MouseManager();
 		gravity = new GravityThread();
@@ -74,6 +76,10 @@ public class GameManager {
 				cam.jump();
 			}
 			keyboardThread.keyEvent(key, action);
+			int hotBarSelected = keyboardThread.getHotbarKey(key, action);
+			if (hotBarSelected != -1) {
+				UI.setHotbarSlot(hotBarSelected);
+			}
 		});
 		glfwSetCursorPosCallback(window, (window, xpos, ypos) -> {
 			mouseThread.mouseMovement(xpos, ypos);
@@ -201,6 +207,9 @@ public class GameManager {
 		return world;
 	}
 	public int getTime() {
-		return -1;
+		return dayNightThreadDNT.getTime();
+	}
+	public UIManager getUI() {
+		return UI;
 	}
 }

@@ -616,7 +616,7 @@ public class Graphics {
 	private void bindWaterVertices() {
 		//float[] verts = world.getWater();
 		//float[] verts = new float[0];
-		Mesh waterMesh = world.getWater();
+		Mesh waterMesh = world.getWater(0.2f);
 		//GameObject go = new GameObject("ocean",world,waterMesh);
 		ArrayList<Polygon> polys = waterMesh.getPolygons();
 		float[] vertices = new float[polys.size()*18];
