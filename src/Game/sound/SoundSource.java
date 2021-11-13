@@ -9,18 +9,21 @@ public class SoundSource {
 			alSourcei(sourceID, AL_LOOPING, AL_TRUE);
 		}
 		if(relative) {
-			alSourcei(sourceID, AL_LOOPING, AL_TRUE);
+			alSourcei(sourceID, AL_SOURCE_RELATIVE, AL_TRUE);
 		}
-		setGain(1);
+		setGain(1f);
+		//alSourcef(sourceID, AL_PITCH, 1.0f);
 	}
-	
+		
 	public void setBuffer(int bufferID) {
 		stop();
 		alSourcei(sourceID, AL_BUFFER, bufferID);
 	}
 	
 	public void play() {
-		alSourcePlay(sourceID);
+		if(!isPlaying()) {
+			alSourcePlay(sourceID);
+		}
 	}
 	
 	public boolean isPlaying() {

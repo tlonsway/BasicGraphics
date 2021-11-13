@@ -7,6 +7,7 @@ import Game.Graphics.Graphics;
 
 public class KeyboardManager {
 	
+	boolean moving = false;
 	boolean wDown = false;
 	boolean aDown = false;
 	boolean sDown = false;
@@ -83,6 +84,15 @@ public class KeyboardManager {
 		if (key==GLFW_KEY_LEFT_SHIFT && action == GLFW_RELEASE) {
 			shiftDown=false;
 		}
+		if(aDown || wDown || dDown || sDown) {
+			moving = true;
+		}else {
+			moving = false;
+		}
+	}
+	
+	public boolean isMoving() {
+		return moving;
 	}
 	
 	public float[] getTranslate() {

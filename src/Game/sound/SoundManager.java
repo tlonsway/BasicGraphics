@@ -38,6 +38,15 @@ public class SoundManager {
         AL.createCapabilities(deviceCaps);
     }
  	
+ 	public void cleanUp() {
+ 		for(String key : sources.keySet()) {
+ 			sources.get(key).cleanup();
+ 		}
+ 		for(String key : buffers.keySet()) {
+ 			buffers.get(key).delete();
+ 		}
+ 	}
+ 	
  	public void setSourcePosition(String sourceName, float x, float y, float z) {
  		sources.get(sourceName).setPosition(x, y, z);
  	}

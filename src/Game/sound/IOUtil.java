@@ -60,7 +60,7 @@ public class IOUtil {
 	
 	private static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
         ByteBuffer buffer;
-
+        
         Path path = Paths.get(resource);
         if (Files.isReadable(path)) {
             try (SeekableByteChannel fc = Files.newByteChannel(path)) {
@@ -74,6 +74,7 @@ public class IOUtil {
                 InputStream source = IOUtil.class.getClassLoader().getResourceAsStream(resource);
                 ReadableByteChannel rbc = Channels.newChannel(source)
             ) {
+            	
                 buffer = createByteBuffer(bufferSize);
 
                 while (true) {

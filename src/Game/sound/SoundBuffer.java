@@ -9,7 +9,7 @@ public class SoundBuffer {
 	public SoundBuffer(String AudioFileName) {
 		bufID = alGenBuffers();
 		try(STBVorbisInfo info = STBVorbisInfo.malloc()){
-			ShortBuffer pcm = IOUtil.readVorbis(AudioFileName, 32 * 1024, info);
+			ShortBuffer pcm = IOUtil.readVorbis(AudioFileName, 32 * 8192, info);
             alBufferData(bufID, AL_FORMAT_MONO16, pcm, info.sample_rate());
 		}catch(Exception e) {
 			e.printStackTrace();
