@@ -19,8 +19,15 @@ public class SoundListener {
 	}
 	public void setOrientation() {
 		FloatMatrix rot = cam.getRotMat();
-		FloatMatrix dir = new FloatMatrix(new float[] {0f, -1f, 0f, 1f});
+		FloatMatrix dir = new FloatMatrix(new float[] {0f, 0f, 1f, 1f});
 		FloatMatrix result = rot.mmul(dir);
+		float sum = 0;
+		for(int i=0;i<3;i++) {
+			float f = result.get(i);
+			sum += f*f;
+		}
+		float mag = (float)Math.sqrt(sum);
+		result = result.divi(mag);
 		float[] tmp = result.data;
 		float[] direction = new float[] {tmp[0], tmp[1], tmp[2], 0, 1, 0};
 		alListenerfv(AL_ORIENTATION, direction);
