@@ -17,7 +17,7 @@ void main() {
 	float redC = (-camRotY/cD+0.7)-frgPos.y/2;
 	float greC = (camRotY/cD+0.8f)+frgPos.y/2;
 	float bluC = (camRotY/cD+0.8f)+frgPos.y/2;
-	vec3 skyCol = cos(time/1000.0f)*vec3(redC,greC,bluC);
+	vec3 skyCol = vec3(0.2f,0.2f,0.2f)+cos((1.0f/1.0f)*(time/1000.0f))*vec3(redC,greC,bluC);
 	vec2 sunPos = vec2(sunPosition.x,sunPosition.y);
 	vec3 sunCol = sunColor;
 	float sunIntensity = 1.2f;
