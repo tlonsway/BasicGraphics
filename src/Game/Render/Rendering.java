@@ -5,6 +5,7 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
+import Game.GameContent.*;
 import Game.GameData.*;
 import Game.Graphics.*;
 import Game.Network.*;
@@ -31,14 +32,16 @@ import static org.lwjgl.system.MemoryUtil.*;
 public class Rendering {
 	
 	GameManager manager;
+	ResourceManager resourceManager;
 	int[] screenDims;
 	RenderSky sky;
 	RenderTerrain terrain;
 	RenderWater water;
 	RenderUI UI;
 	
-	public Rendering(GameManager manager) {
+	public Rendering(GameManager manager, ResourceManager resourceManager) {
 		this.manager = manager;
+		this.resourceManager = resourceManager;
 		this.screenDims = manager.getScreenDims();
 		sky = new RenderSky(manager);
 		terrain = new RenderTerrain(manager);
@@ -56,6 +59,7 @@ public class Rendering {
 			sky.render();
 			UI.render();
 			terrain.render();
+			resourceManager.render();
 			water.render();
 			glfwSwapBuffers(manager.getWindow());
 			glfwPollEvents();

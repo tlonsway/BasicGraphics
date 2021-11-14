@@ -55,6 +55,39 @@ public class ResourceManager {
 		glDeleteShader(fragShader.getShader());
 	}
 	
+	public void addTestTrees() {
+		Mesh tree = ObjectGeneration.generateTree(9817239, 5);
+		VAOStorage vao = new VAOStorage(tree);
+		for(int i=0;i<500;i++) {
+			float posX = (float)((Math.random()*2000.0)-1000.0);
+			float posZ = (float)((Math.random()*2000.0)-1000.0);
+			float posY = manager.getWorld().getHeight(posX, posZ);
+			if (posY < 10.0f) {
+				i--;
+				continue;
+			}
+			float[] pos = new float[] {posX,posY,posZ};
+			float[] rot = new float[3];
+			PhysicalResource pr = new Tree(vao, tree, pos, rot);
+			this.addResource(pr);
+		}
+		Mesh tree2 = ObjectGeneration.generateTree(3453452, 5);
+		VAOStorage vao2 = new VAOStorage(tree);
+		for(int i=0;i<500;i++) {
+			float posX = (float)((Math.random()*2000.0)-1000.0);
+			float posZ = (float)((Math.random()*2000.0)-1000.0);
+			float posY = manager.getWorld().getHeight(posX, posZ);
+			if (posY < 10.0f) {
+				i--;
+				continue;
+			}
+			float[] pos = new float[] {posX,posY,posZ};
+			float[] rot = new float[3];
+			PhysicalResource pr = new Tree(vao2, tree2, pos, rot);
+			this.addResource(pr);
+		}
+	}
+	
 	public void render() {
 		Camera cam = manager.getCamera();
 		glEnable(GL_DEPTH_TEST);

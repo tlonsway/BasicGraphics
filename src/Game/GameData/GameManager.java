@@ -97,7 +97,7 @@ public class GameManager {
 		sunPosition = new float[3];
 		sunColor = new float[3];
 		
-		renderer = new Rendering(this);
+		renderer = new Rendering(this,resourceManager);
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
 		//gameLoop();
@@ -139,6 +139,7 @@ public class GameManager {
 	public void setWorld(World w) {
 		this.world = w;
 		cam.setWorld(w);
+		resourceManager.addTestTrees();
 	}
 	
 	private void chunkUpdateCheck() {
