@@ -41,6 +41,10 @@ public class ResourceManager {
 	
 	static final float[] iMatFlat = new float[] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
 	
+	static final float HQDistCutoff = 100.0f;
+	static final float MQDistCutoff = 250.0f;
+	static final float LQDistCutoff = 500.0f;
+	
 	public ResourceManager(GameManager manager) {
 		this.manager = manager;
 		resources = new HashMap<VAOStorage, ArrayList<PhysicalResource>>();
@@ -56,8 +60,11 @@ public class ResourceManager {
 	}
 	
 	public void addTestTrees() {
-		Mesh tree = ObjectGeneration.generateTree(9817239, 5);
-		VAOStorage vao = new VAOStorage(tree);
+		Mesh tree1 = ObjectGeneration.generateTree(9817239, 5);
+		Mesh tree1LQ = ObjectGeneration.generateTree(9817239, 2);
+		Mesh tree1MQ = ObjectGeneration.generateTree(9817239, 3);
+		Mesh tree1HQ = ObjectGeneration.generateTree(9817239, 5);
+		VAOStorage vao1 = new VAOStorage(tree1,tree1HQ,tree1MQ,tree1LQ);
 		for(int i=0;i<500;i++) {
 			float posX = (float)((Math.random()*2000.0)-1000.0);
 			float posZ = (float)((Math.random()*2000.0)-1000.0);
@@ -68,11 +75,15 @@ public class ResourceManager {
 			}
 			float[] pos = new float[] {posX,posY,posZ};
 			float[] rot = new float[3];
-			PhysicalResource pr = new Tree(vao, tree, pos, rot);
+			PhysicalResource pr = new Tree(vao1, tree1, pos, rot);
+			//pr.setQualityVAO(vao1HQ, vao1MQ, vao1LQ);
 			this.addResource(pr);
 		}
 		Mesh tree2 = ObjectGeneration.generateTree(3453452, 5);
-		VAOStorage vao2 = new VAOStorage(tree);
+		Mesh tree2LQ = ObjectGeneration.generateTree(3453452, 2);
+		Mesh tree2MQ = ObjectGeneration.generateTree(3453452, 3);
+		Mesh tree2HQ = ObjectGeneration.generateTree(3453452, 5);
+		VAOStorage vao2 = new VAOStorage(tree2,tree2HQ,tree2MQ,tree2LQ);
 		for(int i=0;i<500;i++) {
 			float posX = (float)((Math.random()*2000.0)-1000.0);
 			float posZ = (float)((Math.random()*2000.0)-1000.0);
@@ -84,10 +95,28 @@ public class ResourceManager {
 			float[] pos = new float[] {posX,posY,posZ};
 			float[] rot = new float[3];
 			PhysicalResource pr = new Tree(vao2, tree2, pos, rot);
+			//pr.setQualityVAO(vao2HQ, vao2MQ, vao2LQ);
 			this.addResource(pr);
 		}
 	}
-	
+
+	public void addTestFerns() {
+		Mesh fern1 = ObjectGeneration.generateFern(3453452);
+		VAOStorage vao1 = new VAOStorage(fern1);
+		for(int i=0;i<500;i++) {
+			float posX = (float)((Math.random()*2000.0)-1000.0);
+			float posZ = (float)((Math.random()*2000.0)-1000.0);
+			float posY = manager.getWorld().getHeight(posX, posZ);
+			if (posY < 10.0f) {
+				i--;
+				continue;
+			}
+			float[] pos = new float[] {posX,posY,posZ};
+			float[] rot = new float[3];
+			PhysicalResource pr = new Tree(vao1, fern1, pos, rot);
+			this.addResource(pr);
+		}
+	}
 	public void render() {
 		Camera cam = manager.getCamera();
 		glEnable(GL_DEPTH_TEST);
@@ -101,14 +130,54 @@ public class ResourceManager {
 		glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
 		updateSun();
 		for(VAOStorage vaoS : resources.keySet()) {
-			int VAOT = vaoS.getVAO();
-			int numVertT = vaoS.getNumVert();
-			glBindVertexArray(VAOT);
-			for(PhysicalResource resourceT : resources.get(vaoS)) {
-				float[] modelMat = resourceT.getModelMatFlat();
-				modelMatLoc = glGetUniformLocation(shaderProgram,"model");
-				glUniformMatrix4fv(modelMatLoc, false, modelMat);
-				glDrawArrays(GL_TRIANGLES,0,numVertT);
+			if (!vaoS.isVaoQualityEnabled()) {
+				int VAOT = vaoS.getVAO();
+				int numVertT = vaoS.getNumVert();
+				glBindVertexArray(VAOT);
+				for(PhysicalResource resourceT : resources.get(vaoS)) {
+					if (resourceT.distanceToXZ(cam) < 500.0f) {
+						float[] modelMat = resourceT.getModelMatFlat();
+						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+						glUniformMatrix4fv(modelMatLoc, false, modelMat);
+						glDrawArrays(GL_TRIANGLES,0,numVertT);
+					}
+				}
+			} else {
+				int VAOHQ = vaoS.getVAOQualityStorage().getVAOHQ().getVAO();
+				int numVertHQ = vaoS.getVAOQualityStorage().getVAOHQ().getNumVert();
+				int VAOMQ = vaoS.getVAOQualityStorage().getVAOMQ().getVAO();
+				int numVertMQ = vaoS.getVAOQualityStorage().getVAOMQ().getNumVert();
+				int VAOLQ = vaoS.getVAOQualityStorage().getVAOLQ().getVAO();
+				int numVertLQ = vaoS.getVAOQualityStorage().getVAOLQ().getNumVert();
+				glBindVertexArray(VAOHQ);
+				for(PhysicalResource resourceT : resources.get(vaoS)) {
+					if (resourceT.distanceToXZ(cam) < 100.0f) {
+						float[] modelMat = resourceT.getModelMatFlat();
+						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+						glUniformMatrix4fv(modelMatLoc, false, modelMat);
+						glDrawArrays(GL_TRIANGLES,0,numVertHQ);
+					}
+				}
+				glBindVertexArray(VAOMQ);
+				for(PhysicalResource resourceT : resources.get(vaoS)) {
+					float dist = resourceT.distanceToXZ(cam);
+					if (dist >= 100.0f && dist < 300.0f) {
+						float[] modelMat = resourceT.getModelMatFlat();
+						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+						glUniformMatrix4fv(modelMatLoc, false, modelMat);
+						glDrawArrays(GL_TRIANGLES,0,numVertMQ);
+					}
+				}
+				glBindVertexArray(VAOLQ);
+				for(PhysicalResource resourceT : resources.get(vaoS)) {
+					float dist = resourceT.distanceToXZ(cam);
+					if (dist >= 300.0f && dist < 500.0f) {
+						float[] modelMat = resourceT.getModelMatFlat();
+						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+						glUniformMatrix4fv(modelMatLoc, false, modelMat);
+						glDrawArrays(GL_TRIANGLES,0,numVertLQ);
+					}
+				}
 			}
 		}	
 	}

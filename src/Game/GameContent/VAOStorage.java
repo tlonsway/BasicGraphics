@@ -21,6 +21,9 @@ public class VAOStorage {
 	int VAO;
 	int numVert;
 	
+	boolean vaoQualityEnabled = false;
+	VAOQualityStorage vaoQuality;
+	
 	public VAOStorage(Mesh m) {
 		float[] verts = getVertices(m);
 		int VBOt,VAOt;
@@ -93,12 +96,26 @@ public class VAOStorage {
 		this.numVert = numVert;
 	}
 	
+	public VAOStorage(Mesh mDefault, Mesh mHQ, Mesh mMQ, Mesh mLQ) {
+		this(mDefault);
+		vaoQuality = new VAOQualityStorage(mHQ, mMQ, mLQ);
+		this.vaoQualityEnabled = true;
+	}
+	
 	public int getVAO() {
 		return VAO;
 	}
 	
 	public int getNumVert() {
 		return numVert;
+	}
+	
+	public boolean isVaoQualityEnabled() {
+		return vaoQualityEnabled;
+	}
+	
+	public VAOQualityStorage getVAOQualityStorage() {
+		return vaoQuality;
 	}
 	
 	@Override

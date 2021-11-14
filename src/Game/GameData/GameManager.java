@@ -140,6 +140,7 @@ public class GameManager {
 		this.world = w;
 		cam.setWorld(w);
 		resourceManager.addTestTrees();
+		resourceManager.addTestFerns();
 	}
 	
 	private void chunkUpdateCheck() {

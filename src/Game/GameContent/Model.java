@@ -8,6 +8,8 @@ import Game.Graphics.*;
 
 public class Model {
 	
+	boolean vaoQualityEnabled;
+	
 	VAOStorage vao;
 	AABB bounds;
 	FloatMatrix modelMat;
@@ -32,6 +34,43 @@ public class Model {
 		modelTransMat = new FloatMatrix(identMat);
 		this.setPosition(position);
 		this.setRotation(rotation);
+		vaoQualityEnabled = false;
+	}
+	
+	public float distanceToXZ(Camera cam) {
+		float[] camPosT = cam.getCamPos();
+		float[] camPos = new float[] {-camPosT[0],-camPosT[2]};
+		float[] thisPos = new float[] {position[0],position[2]};
+		return distance2(thisPos,camPos);
+	}
+	
+	public float distanceToXZ(Model m) {
+		float[] thisPos = new float[] {position[0],position[2]};
+		float[] oPos = new float[] {m.getPosition()[0],m.getPosition()[2]};
+		return distance2(thisPos,oPos);
+	}
+	
+	public float distanceTo(Camera cam) {
+		float[] camPosT = cam.getCamPos();
+		float[] camPos = new float[] {-camPosT[0],-camPosT[1],-camPosT[2]};
+		return distance3(position,camPos);
+	}
+	public float distanceTo(Model m) {
+		return distance3(position,m.getPosition());
+	}
+	
+	private float distance2(float[] p1, float[] p2) {
+		float t1 = (p1[0]-p2[0]);
+		float t2 = (p1[1]-p2[1]);
+		float tF = (t1*t1)+(t2*t2);
+		return (float)Math.sqrt(tF);
+	}
+	private float distance3(float[] p1, float[] p2) {
+		float t1 = (p1[0]-p2[0]);
+		float t2 = (p1[1]-p2[1]);
+		float t3 = (p1[2]-p2[2]);
+		float tF = (t1*t1)+(t2*t2)+(t3*t3);
+		return (float)Math.sqrt(tF);
 	}
 	
 	//update the physical position of the object based on acceleration and velocity
@@ -91,6 +130,7 @@ public class Model {
 	private void recompose() {
 		modelMat = modelTransMat.mmul(modelRotMat);
 		updateFlatMat();
+		position = new float[] {modelTransMat.get(0,3),modelTransMat.get(1,3),modelTransMat.get(2,3)};
 	}
 	
 	//regenerate the flattened version of the modelMat
@@ -110,6 +150,10 @@ public class Model {
 	public VAOStorage getVAOStorage() {
 		return vao;
 	}
+	public boolean vaoQualityEnabled() {
+		return vaoQualityEnabled;
+	}
+	
 	public AABB getBounds() {
 		return bounds;
 	}
