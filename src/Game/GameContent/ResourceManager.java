@@ -101,7 +101,7 @@ public class ResourceManager {
 	}
 
 	public void addTestFerns() {
-		Mesh fern1 = ObjectGeneration.generateFern(3453452);
+		Mesh fern1 = ObjectGeneration.generateFern(345342);
 		VAOStorage vao1 = new VAOStorage(fern1);
 		for(int i=0;i<500;i++) {
 			float posX = (float)((Math.random()*2000.0)-1000.0);
