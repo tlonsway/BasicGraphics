@@ -130,12 +130,12 @@ public class Polygon implements Comparable {
         	System.out.println("Cross Product: " + s1 + " , " + s2 + " , " + s3);
         }*/
         
-        
+        /*
         if (s2 < 0.0) {
         	s1 *= -1;
         	s2 *= -1;
         	s3 *= -1;
-        }
+        }*/
         
         //System.out.println(s2);
         return new FloatMatrix(new float[] {-s1,-s2,-s3});
@@ -151,6 +151,15 @@ public class Polygon implements Comparable {
 			return -1;
 		}
 	}
+	
+	public void rotatePointOrder() {
+		float[] pt1 = points[0].data;
+		float[] pt2 = points[1].data;
+		float[] pt3 = new float[] {points[2].data[0], points[2].data[1], points[2].data[2]};
+		points[0].data = pt3;
+		points[1].data = pt1;
+		points[2].data = pt2;
+ 	}
 	
 	public boolean equals(Object o) {
 		if(o instanceof Polygon) {

@@ -425,7 +425,10 @@ public class World {
 					p[2] = row*pR+zShift;
 				}
 				pts = shiftPoint(pts, p);
-				poly = new Polygon(pts[1], pts[2], pts[0]);
+				if(up) {
+					poly = new Polygon(pts[1], pts[0], pts[2]);
+				}
+				
 				
 				if(up) {
 					poly.setFColors(new float[][] {getLandColor(pts[1][1]), getLandColor(pts[2][1]), getLandColor(pts[0][1])});

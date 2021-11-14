@@ -208,17 +208,17 @@ public class ObjectGeneration {
 			}
 			else {
 				//Point one
-				pts[0][0] = (float)(Math.cos((double)(angle*r))*radius);
-				pts[0][1] = 0;
-				pts[0][2] = (float)(Math.sin((double)(angle*r))*radius);
+				pts[2][0] = (float)(Math.cos((double)(angle*r))*radius);
+				pts[2][1] = 0;
+				pts[2][2] = (float)(Math.sin((double)(angle*r))*radius);
 				//Point two
 				pts[1][0] = (float)(Math.cos((double)(angle*(r+1)))*radius);
 				pts[1][1] = 0;
 				pts[1][2] = (float)(Math.sin((double)(angle*(r+1)))*radius);
 				//Point Three
-				pts[2][0] = (float)(Math.cos((double)(angle*r+(angle/2.0)))*radius);
-				pts[2][1] = height;
-				pts[2][2] = (float)(Math.sin((double)(angle*r+(angle/2.0)))*radius);
+				pts[0][0] = (float)(Math.cos((double)(angle*r+(angle/2.0)))*radius);
+				pts[0][1] = height;
+				pts[0][2] = (float)(Math.sin((double)(angle*r+(angle/2.0)))*radius);
 			}
 			
 			Polygon side = new Polygon(pts[0], pts[1], pts[2]);
@@ -226,7 +226,7 @@ public class ObjectGeneration {
 				side.setFColor(generateColor(seed, color));
 			}
 			else {
-				side.setFColor(generateColor(seed+4, color));
+				side.setFColor(generateColor(seed, color));
 				//side.setFColor(new float[] {0,0,1});
 			}
 			down = !down;
