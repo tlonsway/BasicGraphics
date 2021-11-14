@@ -58,12 +58,12 @@ public class GameManager {
 	public GameManager(int[] screenDims) {
 		gameRunning = true;
 		window = Setup.start(screenDims, "Game Window");
+		resourceManager = new ResourceManager(this);
 		UI = new UIManager(screenDims);
 		keyboardThread = new KeyboardManager();
 		mouseThread = new MouseManager();
 		gravity = new GravityThread();
 		cam = new Camera(screenDims);
-		  
 		//Sound stuff
 		soundManager = new SoundManager(cam);
 		soundManager.addBuffer("Data/Audio/walking.ogg", "step"); 
@@ -187,6 +187,7 @@ public class GameManager {
 	
 	private void updateTransformMatrix() {
 		renderer.updateTransformMatrix();
+		resourceManager.updateTransformMatrix();
 	}
 	
 	public void sunPositionUpdate(float[] newPos) {

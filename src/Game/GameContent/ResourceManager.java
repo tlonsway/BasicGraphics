@@ -66,6 +66,7 @@ public class ResourceManager {
 		glUniformMatrix4fv(modelInvTranMatLoc,false,iMatFlat);
 		int modelMatLoc = glGetUniformLocation(shaderProgram,"model");
 		glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
+		updateSun();
 		for(VAOStorage vaoS : resources.keySet()) {
 			int VAOT = vaoS.getVAO();
 			int numVertT = vaoS.getNumVert();
