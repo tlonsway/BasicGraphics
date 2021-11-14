@@ -1,46 +1,31 @@
 package Game.GameContent;
 
 import Game.Graphics.*;
+import java.util.ArrayList;
 import org.jblas.*;
 
-public abstract class PhysicalResource {
+public abstract class PhysicalResource extends Model {
 	
-	VAOStorage vao;
+	
 	String type;
-	AABB bounds;
-	FloatMatrix modelMat;
-	float[] flatModelMat;
-	int health = 0;
+	int health;
 	
-	public PhysicalResource(VAOStorage vao, AABB bounds, FloatMatrix modelMat) {
-		this.vao = vao;
-		this.bounds = bounds;
-		this.setModelMat(modelMat);
+	public PhysicalResource(VAOStorage vao, Mesh m, float[] position, float[] rotation) {
+		super(vao,m,position,rotation);
+		health = 0;
+	}
+	public String getType() {
+		return type;
+	}
+	public int getHealth() {
+		return health;
+	}
+	public void setHealth(int newHealth) {
+		health = newHealth;
+	}
+	public void modifyHealth(int amount) {
+		health += amount;
 	}
 	
-	public VAOStorage getVAOStorage() {
-		return vao;
-	}
-	
-	public FloatMatrix getModelMat() {
-		return modelMat;
-	}
-	
-	public float[] getModelMatFlat() {
-		return flatModelMat;
-	}
-	
-	public void setModelMat(FloatMatrix newMat) {
-		modelMat = newMat;
-		float[] ret = new float[16];
-		int t = 0;
-		for(int r=0;r<4;r++) {
-			for(int c=0;c<4;c++) {
-				ret[t] = modelMat.get(c,r);
-				t++;
-			}
-		}
-		flatModelMat = ret;
-	}
 	
 }

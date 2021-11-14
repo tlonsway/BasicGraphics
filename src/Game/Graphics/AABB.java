@@ -3,12 +3,14 @@ package Game.Graphics;
 import java.util.ArrayList;
 
 import org.jblas.*;
+
+import Game.GameContent.Model;
 import Game.GameData.*;
 public class AABB {
 	public float minX,minY,minZ;
 	public float maxX,maxY,maxZ;
 	float[] lowestPoint; //this is the point on the object with the lowest height
-	GameObject object;
+	Model object;
 	Camera cam;
 	
 	public AABB(float[] minP, float[] maxP) {
@@ -18,15 +20,15 @@ public class AABB {
 		cam = null;
 	}
 	
-	public AABB(float[] minP, float[] maxP, GameObject attachedObject) {
+	public AABB(float[] minP, float[] maxP, Model attachedObject) {
 		minX=minP[0];minY=minP[1];minZ=minP[2];
 		maxX=maxP[0];maxY=maxP[1];maxZ=maxP[2];
 		this.object = attachedObject;
 		cam = null;
 	}
 	
-	public void setObject(GameObject go) {
-		object = go;
+	public void setObject(Model mo) {
+		object = mo;
 	}
 	
 	public void setCamera(Camera cam) {
@@ -95,7 +97,7 @@ public class AABB {
 			return false;
 		}
 		
-		if (oBox.getGameObject() == null) {
+		if (oBox.getModel() == null) {
 			//float[] tpos = object.getPosition();
 			float tx = tpos[0]; float ty = tpos[1]; float tz = tpos[2];
 			//System.out.print("Coords of object bbox: MIN(" + (this.minX+tx) + "," + (this.minY+ty) + "," + (this.minZ+tz) + ") MAX(" + (this.maxX+tx) + "," + (this.maxY+ty) + "," + (this.maxZ+tz) + ")");
@@ -107,7 +109,7 @@ public class AABB {
 		} else {
 			//float[] tpos = object.getPosition();
 			float tx = tpos[0]; float ty = tpos[1]; float tz = tpos[2];
-			float[] opos = oBox.getGameObject().getPosition();
+			float[] opos = oBox.getModel().getPosition();
 			float ox = opos[0]; float oy = opos[1]; float oz = opos[2];
 			if (oBox.maxX+ox >= this.minX+tx && this.maxX+tx >= oBox.minX+ox && oBox.maxY+oy >= this.minY+ty && this.maxY+ty >= oBox.minY+oy && oBox.maxZ+oz >= this.minZ+tz && this.maxZ+tz >= oBox.minZ+oz) {
 				return true;
@@ -173,7 +175,7 @@ public class AABB {
 	public float getZLength() {
 		return maxZ-minZ;
 	}
-	public GameObject getGameObject() {
+	public Model getModel() {
 		return object;
 	}
 	

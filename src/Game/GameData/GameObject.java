@@ -155,7 +155,7 @@ public class GameObject {
 		}
 		//System.out.println("MinX: " + pMinT[0] + " MaxX: " + pMaxT[0]);
 		
-		return new AABB(pMinT,pMaxT,this);
+		return new AABB(pMinT,pMaxT);
 	}
 	
 	private float[] findCenter(Mesh m) {
