@@ -5,7 +5,8 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
-import Game.sound.SoundManager;
+import Game.GameContent.*;
+import Game.sound.*;
 import Game.GameData.*;
 import Game.Graphics.*;
 import Game.Network.*;
@@ -32,6 +33,7 @@ public class GameManager {
 	Rendering renderer;
 	World world;
 	
+	ResourceManager resourceManager;
 	UIManager UI;
 	KeyboardManager keyboardThread;
 	MouseManager mouseThread;
@@ -61,6 +63,7 @@ public class GameManager {
 		mouseThread = new MouseManager();
 		gravity = new GravityThread();
 		cam = new Camera(screenDims);
+		  
 		//Sound stuff
 		soundManager = new SoundManager(cam);
 		soundManager.addBuffer("Data/Audio/walking.ogg", "step"); 

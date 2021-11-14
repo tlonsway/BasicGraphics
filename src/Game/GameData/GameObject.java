@@ -121,7 +121,7 @@ public class GameObject {
 	
 	
 	
-	private AABB genBounds(Mesh m) {
+	public AABB genBounds(Mesh m) {
 		ArrayList<Polygon> polys = m.getPolygons();
 		float[] pMinT = new float[] {polys.get(0).getPoints()[0].get(0),polys.get(0).getPoints()[0].get(1),polys.get(0).getPoints()[0].get(2)};
 		float[] pMaxT = new float[] {polys.get(0).getPoints()[0].get(0),polys.get(0).getPoints()[0].get(1),polys.get(0).getPoints()[0].get(2)};

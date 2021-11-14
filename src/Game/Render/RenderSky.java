@@ -79,7 +79,7 @@ public class RenderSky {
 		VAOt = glGenVertexArrays();
 		glBindVertexArray(VAOt);
 		glBindBuffer(GL_ARRAY_BUFFER,VBOt);
-		glBufferData(GL_ARRAY_BUFFER, skyVert, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, skyVert, GL_DYNAMIC_DRAW);
 		glVertexAttribPointer(0,2,GL_FLOAT,false,8,0l);
 		glEnableVertexAttribArray(0);
 		skyVAO = VAOt;
