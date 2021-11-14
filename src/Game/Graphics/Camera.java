@@ -9,6 +9,7 @@ public class Camera {
 	private FloatMatrix rotMat;
 	private FloatMatrix transMat;
 	private float[] rotations;
+	public boolean hitGround;
 	public int[] screenDims; //{width,height} in pixels
 	World world;
 	
@@ -33,6 +34,7 @@ public class Camera {
 		bounds.setCamera(this);
 		velocity = new float[3];
 		acceleration = new float[3];
+		hitGround = false;
 	}
 	
 	public Camera(float[] camPos, int[] screenDims, World world) {
@@ -204,6 +206,9 @@ public class Camera {
 		if (disToGround > 0) {
 		//if (-(getCamPos()[1]+bounds.getYHeight()) < world.getHeight(-getCamPos()[0], -getCamPos()[2])) {
 			//this.setPosition(new float[] {getCamPos()[0], -(world.getHeight(-getCamPos()[0], -getCamPos()[2])+bounds.getYHeight()),getCamPos()[2]});
+			if(falling && velocity[1] > 0.2) {
+				hitGround = true;
+			}
 			snapToGround();
 			return true;
 		}

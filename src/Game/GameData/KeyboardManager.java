@@ -91,7 +91,7 @@ public class KeyboardManager {
 		}
 	}
 	
-	public boolean isMoving() {
+	public boolean isWalking() {
 		return moving;
 	}
 	
