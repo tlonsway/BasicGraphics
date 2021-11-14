@@ -113,6 +113,7 @@ public class GameManager {
 			}
 			if(cam.hitGround) {
 				cam.hitGround = false;
+				soundManager.setSourcePosition("falling", -camPos[0], -camPos[1], -camPos[2]);
 				soundManager.playSound("falling");
 			}
 			renderer.renderFrame();
