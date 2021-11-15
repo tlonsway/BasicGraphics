@@ -15,12 +15,12 @@ public class DayNightThread implements Runnable {
 	int time = 0;
 	
 	
-	static final float ticksPerSecond = 120f;
+	static final float ticksPerSecond = 2.0f;
 	
 	public DayNightThread(GameManager g) {
 		this.g = g;
 		paused = false;
-		sunPosition = new FloatMatrix(new float[] {0f,10000.0f,0f,1.0f});
+		sunPosition = new FloatMatrix(new float[] {5000.0f,0.0f,-10000.0f,1.0f});
 		time = 0;
 	}
 	
