@@ -297,14 +297,14 @@ public class World {
 			color[2] = colors[rangesIncluded.get(0)][2];//+alter;
 		}
 		
-		/*
-		float redAlt = ((float)Math.random()*0.04f-0.02f);
-		float greenAlt = ((float)Math.random()*0.04f-0.02f);
-		float blueAlt = ((float)Math.random()*0.04f-0.02f);
+		
+		float redAlt = ((float)Math.random()*0.02f-0.01f);
+		float greenAlt = ((float)Math.random()*0.02f-0.01f);
+		float blueAlt = ((float)Math.random()*0.02f-0.01f);
 		color[0] += redAlt;
 		color[1] += greenAlt;
 		color[2] += blueAlt;
-		*/
+		
 		
 		return color;
 	}

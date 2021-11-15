@@ -21,7 +21,7 @@ public class DayNightThread implements Runnable {
 		this.g = g;
 		paused = false;
 		sunPosition = new FloatMatrix(new float[] {5000.0f,0.0f,-10000.0f,1.0f});
-		time = 0;
+		time = 4712;
 	}
 	
 	public void run() {
@@ -31,6 +31,7 @@ public class DayNightThread implements Runnable {
 			//g.updateSunPosition(sunPosition.data);
 			g.sunPositionUpdate(sunPosition.data);
 			time=(time+1)%6283;
+			System.out.println(time);
 			//System.out.println("Time: " + time);
 			
 			try {
