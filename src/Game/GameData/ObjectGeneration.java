@@ -178,7 +178,6 @@ public class ObjectGeneration {
 			}
 			for(int a = 0; a < leaves; a++) {
 				Polygon leaf = start.clone();
-				System.out.println("Adding leaf");
 				leaf.rotate(new float[] {0,0,0}, 'y', (float)(Math.PI*2.0/leaves)*a); 
 				bush.addToMesh(leaf);
 			}

@@ -188,11 +188,18 @@ public class Polygon implements Comparable {
 	public Polygon clone() {
 		float[] pt1 = new float[] {points[0].data[0], points[0].data[1], points[0].data[2]};
 		float[] pt2 = new float[] {points[1].data[0], points[1].data[1], points[1].data[2]};
-		float[] pt3 = new float[] {points[2].data[0], points[2].data[2], points[2].data[2]};
+		float[] pt3 = new float[] {points[2].data[0], points[2].data[1], points[2].data[2]};
 		Polygon p = new Polygon(new FloatMatrix[] {new FloatMatrix(pt1), new FloatMatrix(pt2), new FloatMatrix(pt3)} );
 		p.setFColor(new float[] {fColor[0][0], fColor[0][1], fColor[0][2]});
 		return p;
 	}
 	
-	
+	@Override
+	public String toString() {
+		String ret = "";
+		for(int pointNum = 0; pointNum < 3; pointNum++) {
+			ret += "pt"+(pointNum+1)+": X: "+points[pointNum].data[0] + " Y: " + points[pointNum].data[1] + " Z: " + points[pointNum].data[2]+"\n";
+		}
+		return ret;
+	}
 }

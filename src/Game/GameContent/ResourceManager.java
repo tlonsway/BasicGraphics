@@ -101,9 +101,9 @@ public class ResourceManager {
 	}
 
 	public void addTestFerns() {
-		Mesh fern1 = ObjectGeneration.generateFern(345342);
+		Mesh fern1 = ObjectGeneration.generateFern(3453426);
 		VAOStorage vao1 = new VAOStorage(fern1);
-		for(int i=0;i<500;i++) {
+		for(int i=0;i<700;i++) {
 			float posX = (float)((Math.random()*2000.0)-1000.0);
 			float posZ = (float)((Math.random()*2000.0)-1000.0);
 			float posY = manager.getWorld().getHeight(posX, posZ);
