@@ -61,7 +61,7 @@ public class GameManager {
 		resourceManager = new ResourceManager(this);
 		UI = new UIManager(screenDims);
 		keyboardThread = new KeyboardManager();
-		mouseThread = new MouseManager();
+		mouseThread = new MouseManager(this);
 		gravity = new GravityThread();
 		cam = new Camera(screenDims);
 		//Sound stuff
@@ -88,6 +88,14 @@ public class GameManager {
 		});
 		glfwSetCursorPosCallback(window, (window, xpos, ypos) -> {
 			mouseThread.mouseMovement(xpos, ypos);
+		});
+		glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
+			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+				mouseThread.leftClick();
+			} else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+				mouseThread.rightClick();
+			}
+			
 		});
 		cam.translate(0f, -60f, 0f);
 		dayNightThreadDNT = new DayNightThread(this);
@@ -134,6 +142,11 @@ public class GameManager {
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void leftClick() {
+		resourceManager.leftClick();
+		
 	}
 	
 	public void setWorld(World w) {

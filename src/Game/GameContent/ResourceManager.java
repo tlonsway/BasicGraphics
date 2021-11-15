@@ -63,7 +63,7 @@ public class ResourceManager {
 		Mesh tree1 = ObjectGeneration.generateTree(9817239, 5);
 		Mesh tree1LQ = ObjectGeneration.generateTree(9817239, 2);
 		Mesh tree1MQ = ObjectGeneration.generateTree(9817239, 3);
-		Mesh tree1HQ = ObjectGeneration.generateTree(9817239, 5);
+		Mesh tree1HQ = ObjectGeneration.generateTree(9817239, 9);
 		VAOStorage vao1 = new VAOStorage(tree1,tree1HQ,tree1MQ,tree1LQ);
 		for(int i=0;i<500;i++) {
 			float posX = (float)((Math.random()*2000.0)-1000.0);
@@ -82,7 +82,7 @@ public class ResourceManager {
 		Mesh tree2 = ObjectGeneration.generateTree(3453452, 5);
 		Mesh tree2LQ = ObjectGeneration.generateTree(3453452, 2);
 		Mesh tree2MQ = ObjectGeneration.generateTree(3453452, 3);
-		Mesh tree2HQ = ObjectGeneration.generateTree(3453452, 5);
+		Mesh tree2HQ = ObjectGeneration.generateTree(3453452, 9);
 		VAOStorage vao2 = new VAOStorage(tree2,tree2HQ,tree2MQ,tree2LQ);
 		for(int i=0;i<500;i++) {
 			float posX = (float)((Math.random()*2000.0)-1000.0);
@@ -135,6 +135,9 @@ public class ResourceManager {
 				int numVertT = vaoS.getNumVert();
 				glBindVertexArray(VAOT);
 				for(PhysicalResource resourceT : resources.get(vaoS)) {
+					if (resourceT.getHealth() <= 0) {
+						resources.get(vaoS).remove(resourceT);
+					}
 					if (resourceT.distanceToXZ(cam) < 500.0f) {
 						float[] modelMat = resourceT.getModelMatFlat();
 						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
@@ -151,6 +154,9 @@ public class ResourceManager {
 				int numVertLQ = vaoS.getVAOQualityStorage().getVAOLQ().getNumVert();
 				glBindVertexArray(VAOHQ);
 				for(PhysicalResource resourceT : resources.get(vaoS)) {
+					if (resourceT.getHealth() <= 0) {
+						resources.get(vaoS).remove(resourceT);
+					}
 					if (resourceT.distanceToXZ(cam) < 100.0f) {
 						float[] modelMat = resourceT.getModelMatFlat();
 						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
@@ -160,6 +166,7 @@ public class ResourceManager {
 				}
 				glBindVertexArray(VAOMQ);
 				for(PhysicalResource resourceT : resources.get(vaoS)) {
+					
 					float dist = resourceT.distanceToXZ(cam);
 					if (dist >= 100.0f && dist < 300.0f) {
 						float[] modelMat = resourceT.getModelMatFlat();
@@ -212,6 +219,18 @@ public class ResourceManager {
 		}
 	}
 	
+	public void leftClick() {
+		float[] minePoint = manager.getCamera().getPointInFront(0.0f);
+		for(VAOStorage vaoS : resources.keySet()) {
+			for(PhysicalResource resourceT : resources.get(vaoS)) {
+				if (resourceT.getBounds().containsPoint(minePoint)) {
+					System.out.println("Hit a " + resourceT.getType());
+					//resourceT.modifyHealth(-20);
+				}
+			}
+		}
+		
+	}
 	
 	private static float[] combineMats(FloatMatrix projmat, FloatMatrix camMat) {
 		FloatMatrix res = projmat.mmul(camMat);

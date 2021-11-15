@@ -20,8 +20,9 @@ public class Camera {
 	public boolean falling = false;
 	public boolean jumping = false;
 	
+	final static float[][] identMat = new float[][] {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
+	
 	public Camera(int[] screenDims) {
-		float[][] identMat = new float[][] {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
 		camMat = new FloatMatrix(identMat);
 		rotMat = new FloatMatrix(identMat);
 		transMat = new FloatMatrix(identMat);
@@ -39,7 +40,6 @@ public class Camera {
 	
 	public Camera(float[] camPos, int[] screenDims, World world) {
 		System.exit(-22);
-		float[][] identMat = new float[][] {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
 		camMat = new FloatMatrix(identMat);
 		rotMat = new FloatMatrix(identMat);
 		transMat = new FloatMatrix(identMat);
@@ -51,6 +51,19 @@ public class Camera {
 	
 	public void setWorld(World w) {
 		this.world = w;
+	}
+	
+	public float[] getPointInFront(float dist) {
+		FloatMatrix tempMat = new FloatMatrix(identMat);
+		tempMat = Operations.rotateMat(tempMat, 'x', -rotations[0]);
+		tempMat = Operations.rotateMat(tempMat, 'y', -rotations[1]);
+		tempMat = Operations.rotateMat(tempMat, 'z', -rotations[2]);
+		float[] camPos = this.getCamPos();
+		tempMat = Operations.translateMat(tempMat, -camPos[0], -camPos[1], -camPos[2]);
+		FloatMatrix inFront = new FloatMatrix(new float[] {0.0f,0.0f,-dist,1.0f});
+		inFront = tempMat.mmul(inFront);
+		//System.out.println(inFront);
+		return new float[] {inFront.data[0],inFront.data[1],inFront.data[2]};
 	}
 	
 	public float[] getCamPos() {

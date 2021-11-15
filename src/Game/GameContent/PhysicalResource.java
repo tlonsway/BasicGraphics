@@ -13,8 +13,9 @@ public abstract class PhysicalResource extends Model {
 	
 	public PhysicalResource(VAOStorage vao, Mesh m, float[] position, float[] rotation, String type) {
 		super(vao,m,position,rotation);
-		health = 0;
+		health = 100;
 		onScreen = false;	
+		this.type = type;
 	}
 	public boolean isOnScreen() {
 		return onScreen;

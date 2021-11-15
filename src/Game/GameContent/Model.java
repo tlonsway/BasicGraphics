@@ -25,7 +25,6 @@ public class Model {
 	
 	public Model(VAOStorage vao, Mesh m, float[] position, float[] rotation) {
 		this.vao = vao;
-		this.bounds = genBounds(m);
 		this.velocity = new float[3];
 		this.acceleration = new float[3];
 		modelMat = new FloatMatrix(identMat);
@@ -35,6 +34,7 @@ public class Model {
 		this.setPosition(position);
 		this.setRotation(rotation);
 		vaoQualityEnabled = false;
+		this.bounds = genBounds(m);
 	}
 	
 	public float distanceToXZ(Camera cam) {
@@ -193,14 +193,21 @@ public class Model {
 	//generate a bounding box from an input mesh
 	private AABB genBounds(Mesh m) {
 		ArrayList<Polygon> polys = m.getPolygons();
-		float[] pMinT = new float[] {polys.get(0).getPoints()[0].get(0),polys.get(0).getPoints()[0].get(1),polys.get(0).getPoints()[0].get(2)};
-		float[] pMaxT = new float[] {polys.get(0).getPoints()[0].get(0),polys.get(0).getPoints()[0].get(1),polys.get(0).getPoints()[0].get(2)};
+		FloatMatrix p0 = polys.get(0).getPoints()[0];
+		float[] p0dat = new float[] {p0.get(0),p0.get(1),p0.get(2),1.0f};
+		p0 = new FloatMatrix(p0dat);
+		p0 = modelMat.mmul(p0);
+		float[] pMinT = new float[] {p0.get(0),p0.get(1),p0.get(2)};
+		float[] pMaxT = new float[] {p0.get(0),p0.get(1),p0.get(2)};
 		for(Polygon poly : polys) {
 			FloatMatrix[] points = poly.getPoints();
 			for(FloatMatrix point : points) {
-				float pXT = point.get(0);
-				float pYT = point.get(1);
-				float pZT = point.get(2);
+				float[] pcdat = new float[] {point.get(0),point.get(1),point.get(2),1.0f};
+				FloatMatrix pointCopy = new FloatMatrix(pcdat);
+				pointCopy = modelMat.mmul(pointCopy);
+				float pXT = pointCopy.get(0);
+				float pYT = pointCopy.get(1);
+				float pZT = pointCopy.get(2);
 				if(pXT < pMinT[0]) {
 					pMinT[0] = pXT;
 				}

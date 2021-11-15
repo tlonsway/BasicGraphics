@@ -85,7 +85,8 @@ public class Graphics {
 		String windowTitle = "Game Window";
 		window = Setup.start(screenDims, windowTitle);
 		keyboardThread = new KeyboardManager();
-		mouseThread = new MouseManager();
+		//mouseThread = new MouseManager();
+		mouseThread = null;
 		gravity = new GravityThread();
 		objects = new ArrayList<GameObject>();
 		objectQueue = new ArrayList<GameObject>();
