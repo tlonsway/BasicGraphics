@@ -13,15 +13,30 @@ uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 viewPos;
 float specStrength = 0.2f;
-vec3 ambient = vec3(0.3f,0.3f,0.3f);
+vec3 ambient = vec3(0.4f,0.4f,0.4f);
+
+float random(float seed) {
+	float seedMod = sin(seed*10000.0f);
+	return seedMod-floor(seedMod);
+}
+
 
 void main() {
 	//vec3 norm = (normalize(normVec));
 	vec3 norm = normVec;
+	float randSeed1 = fragPos.x*fragPos.y;
+	float randSeed2 = fragPos.y*fragPos.z;
+	float randSeed3 = fragPos.z*fragPos.y;
+	float nMod1 = 0.1f*random(randSeed1);
+	float nMod2 = 0.1f*random(randSeed2);
+	float nMod3 = 0.1f*random(randSeed3);
+	vec3 norm2 = vec3(norm.x+nMod1,norm.y+nMod2,norm.z+nMod3);
+	
 	//vec3 lightDir = normalize(lightPos - fragPos);	
 	if (lightDir.y > 0.0f) {
-		//float diff = max(-1.0f*(dot(norm, lightDir)),0.0f);
-		vec3 diffuse = diff * lightColor;
+		float diff2 = max(-1.0f*(dot(norm2, lightDir)),0.0f);
+		//vec3 diffuse = diff * lightColor;
+		vec3 diffuse = diff2 * lightColor;
 		vec3 viewDir = normalize(viewPos - fragPos);
 		vec3 reflectDir = reflect(-lightDir,norm);
 		float spec = pow(max(dot(viewDir,reflectDir),0.0f),32);
@@ -34,3 +49,4 @@ void main() {
 	}
 	//FragColor = ourColor;
 }
+

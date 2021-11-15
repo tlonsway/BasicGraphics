@@ -296,12 +296,15 @@ public class World {
 			color[1] = colors[rangesIncluded.get(0)][1];//+alter;
 			color[2] = colors[rangesIncluded.get(0)][2];//+alter;
 		}
+		
+		/*
 		float redAlt = ((float)Math.random()*0.04f-0.02f);
 		float greenAlt = ((float)Math.random()*0.04f-0.02f);
 		float blueAlt = ((float)Math.random()*0.04f-0.02f);
 		color[0] += redAlt;
 		color[1] += greenAlt;
 		color[2] += blueAlt;
+		*/
 		
 		return color;
 	}
@@ -431,10 +434,15 @@ public class World {
 				
 				
 				if(up) {
-					poly.setFColors(new float[][] {getLandColor(pts[1][1]), getLandColor(pts[2][1]), getLandColor(pts[0][1])});
+					//poly.setFColors(new float[][] {getLandColor(pts[1][1]), getLandColor(pts[2][1]), getLandColor(pts[0][1])});
+					poly.setFColors(new float[][] {getLandColor(pts[1][1]), getLandColor(pts[0][1]), getLandColor(pts[2][1])});
+					float[] redCol = new float[] {1.0f,0.0f,0.0f};
+					//poly.setFColors(new float[][] {redCol,redCol,redCol});
 				}else {
 					poly = new Polygon(pts[0], pts[1], pts[2]);
 					poly.setFColors(new float[][] {getLandColor(pts[0][1]), getLandColor(pts[1][1]), getLandColor(pts[2][1])});
+					//float[] redCol = new float[] {1.0f,0.0f,0.0f};
+					//poly.setFColors(new float[][] {redCol,redCol,redCol});
 				}
 				map.addToMesh(poly);
 				if(up) {
