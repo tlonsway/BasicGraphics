@@ -11,6 +11,11 @@ out vec3 normVec;
 out vec3 fragPos;
 out vec3 objectColor;
 
+out vec3 lightDir;
+out float diff;
+
+uniform vec3 lightPos;
+
 uniform mat4 fullMat;
 uniform mat4 model;
 uniform mat4 invTranMod;
@@ -25,6 +30,8 @@ void main() {
 	vec3 fogCol = vec3(0.28f,0.45f,0.47f);
 	ourColor = vec4(fogFac,fogFac,fogFac,1.0f);
 	objectColor = (1-fogFac)*fogCol+(fogFac)*aColor;
-	normVec = aNormal;
+	normVec = normalize(aNormal);
 	fragPos = vec3(invTranMod * vec4(aPos, 1.0f));
+	lightDir =  normalize(lightPos - fragPos);
+	diff = max(-1.0f*(dot(normVec, lightDir)),0.0f);
 }

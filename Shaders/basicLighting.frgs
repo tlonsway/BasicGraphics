@@ -6,28 +6,31 @@ in vec3 normVec;
 in vec3 fragPos;
 in vec3 objectColor;
 
+in vec3 lightDir;
+in float diff;
+
 uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 viewPos;
 float specStrength = 0.2f;
+vec3 ambient = vec3(0.3f,0.3f,0.3f);
 
 void main() {
-	vec3 norm = (normalize(normVec));
-	vec3 lightDir = normalize(lightPos - fragPos);
-	float diff = max(-1.0f*(dot(norm, lightDir)),0.0f);
-	vec3 diffuse = diff * lightColor;
-	vec3 ambient = vec3(0.3f,0.3f,0.3f);
-	vec3 viewDir = normalize(viewPos - fragPos);
-	vec3 reflectDir = reflect(-lightDir,norm);
-	float spec = pow(max(dot(viewDir,reflectDir),0.0f),32);
-	vec3 specular = specStrength * spec * lightColor;
-	
-	vec3 result = (ambient + diffuse + specular) * objectColor;
-	//vec3 result = (diffuse) * objectColor;
-	//if (-dot(norm,vec3(0.0f,1.0f,0.0f)) >= 0.9f) {
-	//	result = vec3(1.0f,0.0f,0.0f);
-	//}
-	//result = norm;
-	FragColor = vec4(result, 1.0f);
+	//vec3 norm = (normalize(normVec));
+	vec3 norm = normVec;
+	//vec3 lightDir = normalize(lightPos - fragPos);	
+	if (lightDir.y > 0.0f) {
+		//float diff = max(-1.0f*(dot(norm, lightDir)),0.0f);
+		vec3 diffuse = diff * lightColor;
+		vec3 viewDir = normalize(viewPos - fragPos);
+		vec3 reflectDir = reflect(-lightDir,norm);
+		float spec = pow(max(dot(viewDir,reflectDir),0.0f),32);
+		vec3 specular = specStrength * spec * lightColor;
+		vec3 result = (ambient + diffuse + specular) * objectColor;
+		FragColor = vec4(result, 1.0f);
+	} else {
+		vec3 result = (ambient) * objectColor;
+		FragColor = vec4(result, 1.0f);	
+	}
 	//FragColor = ourColor;
 }
