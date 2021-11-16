@@ -1,0 +1,4 @@
+Format for items
+name:volume in cubic meters:weight in kg
+craftable item
+name:volume in cubic meters:weight in kg:number received after crafting:comma separated list of requirements with : then the ammount ex: stick:3,stone:3
