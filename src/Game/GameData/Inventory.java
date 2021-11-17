@@ -1,10 +1,11 @@
 package Game.GameData;
 import java.util.*;
 public class Inventory {
-	
+	private final String name;
 	ArrayList<Item> items;
 	float maxVolume;
-	public Inventory(float maxVolume) {
+	public Inventory(String name, float maxVolume) {
+		this.name = name;
 		this.maxVolume = maxVolume;
 	}
 	

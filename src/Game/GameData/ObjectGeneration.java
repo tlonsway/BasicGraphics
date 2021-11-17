@@ -75,7 +75,8 @@ public class ObjectGeneration {
 			if(level%2 == 0) {
 				z=true;
 			}
-			Mesh leaves = generateLeaves(z, seed);
+			
+			Mesh leaves = generateLeaves(z, seed, resolution);
 			leaves.translate(nep[0], nep[1], nep[2]);
 			branch.addMesh(leaves);
 		}
@@ -128,16 +129,19 @@ public class ObjectGeneration {
 		}	
 		return branch;
 	}
-	public static Mesh generateLeaves(boolean zAxis, int seed) {
+	public static Mesh generateLeaves(boolean zAxis, int seed, int resolution) {
 		Mesh leaves = new Mesh(true);
 		FloatMatrix p1 = new FloatMatrix(new float[] {0, -1.0f, -1.0f});
 		FloatMatrix p2 = new FloatMatrix(new float[] {0, -1.0f, 1.0f});
-		for(int i = 0; i < 4; i++) {
+		for(int i = 0; i < 4 && i < resolution; i++) {
 			Polygon p = new Polygon(new float[] {p1.get(0), p1.get(1), p1.get(2)}, new float[] {p2.get(0), p2.get(1), p2.get(2)}, new float[] {0, 0, 0});
 			p.setFColor(generateColor(seed, "green"));
 			leaves.addToMesh(p);
 			p1 = Game.Graphics.Operations.rotatePoint(p1, 'z', (float)(Math.PI/2.0f));
 			p2 = Game.Graphics.Operations.rotatePoint(p2, 'z', (float)(Math.PI/2.0f));
+		}
+		if(resolution < 3) {
+			return leaves;
 		}
 		p1 = Game.Graphics.Operations.rotatePoint(p1, 'y', (float)(Math.PI/2.0f));
 		p2 = Game.Graphics.Operations.rotatePoint(p2, 'y', (float)(Math.PI/2.0f));
