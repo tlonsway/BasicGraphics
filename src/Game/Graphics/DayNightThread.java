@@ -15,7 +15,7 @@ public class DayNightThread implements Runnable {
 	int time = 0;
 	
 	
-	static final float ticksPerSecond = 4.0f;
+	static final float ticksPerSecond = 8.0f;
 	
 	public DayNightThread(GameManager g) {
 		this.g = g;
@@ -26,12 +26,12 @@ public class DayNightThread implements Runnable {
 	
 	public void run() {
 		while(!paused) {
-			FloatMatrix newPoint = Operations.rotatePoint(sunPosition, 'z', 0.001f);
+			FloatMatrix newPoint = Operations.rotatePoint(sunPosition, 'x', 0.001f);
 			sunPosition = newPoint;
 			//g.updateSunPosition(sunPosition.data);
 			g.sunPositionUpdate(sunPosition.data);
 			time=(time+1)%6283;
-			System.out.println(time);
+			//System.out.println(time);
 			//System.out.println("Time: " + time);
 			
 			try {

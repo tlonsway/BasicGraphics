@@ -50,6 +50,7 @@ public class Rendering {
 		glClearColor(0.275f,0.94f,0.97f,1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE);
+		//glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 		//glEnable(GL_CULL_FACE);
 		glLineWidth(3.0f);
 	}

@@ -68,7 +68,7 @@ public class ResourceManager {
 		for(int i=0;i<500;i++) {
 			float posX = (float)((Math.random()*2000.0)-1000.0);
 			float posZ = (float)((Math.random()*2000.0)-1000.0);
-			float posY = manager.getWorld().getHeight(posX, posZ);
+			float posY = manager.getWorld().getHeight(posX, posZ)-0.5f;
 			if (posY < 10.0f) {
 				i--;
 				continue;
@@ -87,7 +87,7 @@ public class ResourceManager {
 		for(int i=0;i<500;i++) {
 			float posX = (float)((Math.random()*2000.0)-1000.0);
 			float posZ = (float)((Math.random()*2000.0)-1000.0);
-			float posY = manager.getWorld().getHeight(posX, posZ);
+			float posY = manager.getWorld().getHeight(posX, posZ)-0.5f;
 			if (posY < 10.0f) {
 				i--;
 				continue;
@@ -103,11 +103,11 @@ public class ResourceManager {
 	public void addTestFerns() {
 		Mesh fern1 = ObjectGeneration.generateFern(3453426);
 		VAOStorage vao1 = new VAOStorage(fern1);
-		for(int i=0;i<700;i++) {
+		for(int i=0;i<10000;i++) {
 			float posX = (float)((Math.random()*2000.0)-1000.0);
 			float posZ = (float)((Math.random()*2000.0)-1000.0);
 			float posY = manager.getWorld().getHeight(posX, posZ);
-			if (posY < 10.0f) {
+			if (posY < 10.0f || posY > 80.0f) {
 				i--;
 				continue;
 			}
@@ -138,7 +138,7 @@ public class ResourceManager {
 					if (resourceT.getHealth() <= 0) {
 						resources.get(vaoS).remove(resourceT);
 					}
-					if (resourceT.distanceToXZ(cam) < 500.0f) {
+					if (resourceT.distanceToXZ(cam) < 400.0f) {
 						float[] modelMat = resourceT.getModelMatFlat();
 						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
 						glUniformMatrix4fv(modelMatLoc, false, modelMat);
@@ -220,7 +220,7 @@ public class ResourceManager {
 	}
 	
 	public void leftClick() {
-		float[] minePoint = manager.getCamera().getPointInFront(0.0f);
+		float[] minePoint = manager.getCamera().getPointInFront(1.0f);
 		for(VAOStorage vaoS : resources.keySet()) {
 			for(PhysicalResource resourceT : resources.get(vaoS)) {
 				if (resourceT.getBounds().containsPoint(minePoint)) {
