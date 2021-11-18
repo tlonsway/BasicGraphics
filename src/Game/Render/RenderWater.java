@@ -49,7 +49,7 @@ public class RenderWater {
 		this.manager = manager;
 		//Shader waterVertShader = new Shader("Shaders/basicProjWithModel.vtxs",GL_VERTEX_SHADER);
 		Shader waterVertShader = new Shader("Shaders/waterWaveVert.vtxs",GL_VERTEX_SHADER);
-		Shader waterFragShader = new Shader("Shaders/basicLighting.frgs",GL_FRAGMENT_SHADER);
+		Shader waterFragShader = new Shader("Shaders/waterLighting.frgs",GL_FRAGMENT_SHADER);
 		shaderProgram = glCreateProgram();
 		glAttachShader(shaderProgram,waterVertShader.getShader());
 		glAttachShader(shaderProgram,waterFragShader.getShader());
@@ -116,7 +116,8 @@ public class RenderWater {
 		float[] sunPos = manager.getSunPosition();
 		float[] sunCol = manager.getSunColor();
 		glUniform3fv(lightPosLoc, sunPos);
-		glUniform3fv(lightColLoc, sunCol);
+		//glUniform3fv(lightColLoc, sunCol);
+		glUniform3fv(lightColLoc, new float[] {1.0f, 1.0f, 1.0f});
 	}
 	
 	public void updateWavePos() {
