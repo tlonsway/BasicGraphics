@@ -13,7 +13,7 @@ in float diff;
 uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 viewPos;
-uniform sampler2D normalMap;
+uniform float noiseMap[10];
 
 float specStrength = 0.8f;
 vec3 ambient = vec3(0.4f,0.4f,0.4f);
