@@ -35,7 +35,7 @@ void main() {
 	//objectColor = (1-fogFac)*fogCol+(fogFac)*aColor;
 	ourColor = vec4(objectColor,1.0f);
 	//normVec = normalize(aNormal);
-	normVec = -normalize(vec3(0.0f,1.0f,waveHeight/4.0f));
+	normVec = -normalize(vec3(0.0f,1.0f,waveHeight/20.0f));
 	fragPos = vec3(invTranMod * vec4(aPos, 1.0f));
 	lightDir =  normalize(lightPos - fragPos);
 	diff = max(-1.0f*(dot(normVec, lightDir)),0.0f);

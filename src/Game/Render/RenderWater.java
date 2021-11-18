@@ -123,7 +123,7 @@ public class RenderWater {
 		glUseProgram(shaderProgram);
 		int wavePosLoc = glGetUniformLocation(shaderProgram,"wavePos");
 		glUniform1f(wavePosLoc, wavePos);
-		wavePos+=0.05f;
+		wavePos-=0.1f;
 	}
 	
 	
@@ -268,7 +268,8 @@ public class RenderWater {
 				vertices[vertIn+4] = normVec[1];
 				vertices[vertIn+5] = normVec[2];
 				vertIn+=6;
-				vertices[vertIn] = polyPoints[pi2].get(0);
+				float height = manager.getWorld().getHeight(polyPoints[pi2].get(0), polyPoints[pi2].get(2));
+				vertices[vertIn] = (float)(height/3);
 				vertIn++;
 			}
 		}

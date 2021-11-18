@@ -201,13 +201,13 @@ public class World {
 				pts = shiftPoint(pts, p);
 				if(up) {
 					poly = new Polygon(pts[1], pts[0], pts[2]);
-					float blueNum2 = 0.8f+((float)Math.random()*0.1f-0.05f);
-					float[] col2 = new float[] {0.15f,0.3f,blueNum2};
+					float blueNum2 = 0.9f+((float)Math.random()*0.05f-0.025f);
+					float[] col2 = new float[] {0.16f,0.68f,blueNum2};
 					poly.setFColors(new float[][] {col2, col2, col2});
 				}else {
 					poly = new Polygon(pts[0], pts[1], pts[2]);
-					float blueNum2 = 0.8f+((float)Math.random()*0.1f-0.05f);
-					float[] col2 = new float[] {0.15f,0.3f,blueNum2};
+					float blueNum2 = 0.9f+((float)Math.random()*0.05f-0.025f);
+					float[] col2 = new float[] {0.16f,0.68f,blueNum2};
 					poly.setFColors(new float[][] {col2, col2, col2});
 				}
 				/*
