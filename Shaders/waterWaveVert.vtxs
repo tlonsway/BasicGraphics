@@ -2,7 +2,7 @@
 
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aColor;
-layout (location = 3) in float inPos;
+layout (location = 2) in float inPos;
 
 out vec4 ourColor;
 
@@ -23,6 +23,6 @@ void main() {
 	vec3 fogCol = vec3(0.28f,0.45f,0.47f);
 	//ourColor = vec4(aColor,1.0f);
 	vec3 objectColor = (1-fogFac)*fogCol+aColor;
-	//ourColor = vec4(objectColor,1.0f);
-	ourColor = vec4(inPos/2.0f,inPos/2.0f,inPos/2.0f,1.0f);
+	ourColor = vec4(objectColor,1.0f);
+	//ourColor = vec4(inPos/2.0f,inPos/2.0f,inPos/2.0f,1.0f);
 }
