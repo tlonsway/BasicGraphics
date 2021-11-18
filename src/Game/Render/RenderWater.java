@@ -11,27 +11,14 @@ import Game.Graphics.*;
 import Game.Network.*;
 import Game.Init.Setup;
 
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
-import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
-import static org.lwjgl.opengl.GL20.glAttachShader;
-import static org.lwjgl.opengl.GL20.glCreateProgram;
-import static org.lwjgl.opengl.GL20.glDeleteShader;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glLinkProgram;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
-import static org.lwjgl.opengl.GL20.glUseProgram;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
+import static org.lwjgl.opengl.GL41.*;
+import static org.lwjgl.system.MemoryStack.*;
+import static org.lwjgl.system.MemoryUtil.*;
 
 import java.nio.*;
 import java.util.*;
@@ -47,11 +34,14 @@ public class RenderWater {
 	int numVertLQ;
 	int shaderProgram;
 	
+	float wavePos = 0.0f;
+	
 	static final float[] iMatFlat = new float[] {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
 	
 	public RenderWater(GameManager manager) {
 		this.manager = manager;
-		Shader waterVertShader = new Shader("Shaders/basicProjWithModel.vtxs",GL_VERTEX_SHADER);
+		//Shader waterVertShader = new Shader("Shaders/basicProjWithModel.vtxs",GL_VERTEX_SHADER);
+		Shader waterVertShader = new Shader("Shaders/waterWaveVert.vtxs",GL_VERTEX_SHADER);
 		Shader waterFragShader = new Shader("Shaders/singleColor.frgs",GL_FRAGMENT_SHADER);
 		shaderProgram = glCreateProgram();
 		glAttachShader(shaderProgram,waterVertShader.getShader());
@@ -99,8 +89,9 @@ public class RenderWater {
 		float[] matCom = combineMats(project.getProjMatFMat(),cam.getCamMat());
 		int fullMatLoc = glGetUniformLocation(shaderProgram,"fullMat");
 		glUniformMatrix4fv(fullMatLoc, false, matCom);	
-		
-		
+		int wavePosLoc = glGetUniformLocation(shaderProgram,"wavePos");
+		glUniform1f(wavePosLoc, wavePos);
+		wavePos+=0.05f;
 	}
 	
 	
@@ -108,8 +99,9 @@ public class RenderWater {
 		if (manager.getWorld() != null) {
 			Mesh waterMesh = manager.getWorld().getWater(0.1f);
 			ArrayList<Polygon> polys = waterMesh.getPolygons();
-			float[] vertices = new float[polys.size()*18];
+			float[] vertices = new float[polys.size()*21];
 			int vertIn = 0;
+			int inc = 0;
 			for(Polygon p : polys) {
 				FloatMatrix[] polyPoints = p.getPoints();
 				for(int pi2=0;pi2<3;pi2++) {
@@ -117,11 +109,15 @@ public class RenderWater {
 						vertices[vertIn] = polyPoints[pi2].get(pi);
 						vertIn++;
 					}
-					float[] colT = p.fColor[pi2];
+					float[] colT = p.fColor[pi2];	
 					vertices[vertIn] = colT[0];
 					vertices[vertIn+1] = colT[1];
 					vertices[vertIn+2] = colT[2];
 					vertIn+=3;
+					vertices[vertIn] = (float)inc/100.0f;
+					System.out.println(vertices[vertIn]);
+					inc = (inc+1)%100;
+					vertIn++;
 				}
 			}
 			float[] waterVerts = vertices;
@@ -131,10 +127,12 @@ public class RenderWater {
 			glBindVertexArray(VAOt);
 			glBindBuffer(GL_ARRAY_BUFFER,VBOt);
 			glBufferData(GL_ARRAY_BUFFER, waterVerts, GL_STATIC_DRAW);
-			glVertexAttribPointer(0,3,GL_FLOAT,false,24,0l);
+			glVertexAttribPointer(0,3,GL_FLOAT,false,28,0l);
 			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(1,3,GL_FLOAT,false,24,12l);
+			glVertexAttribPointer(1,3,GL_FLOAT,false,28,12l);
 			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(3,1,GL_FLOAT,false,28,16l);
+			glEnableVertexAttribArray(3);
 			glBindBuffer(GL_ARRAY_BUFFER,0);
 			glBindVertexArray(0);
 			VAOHQ = VAOt;
@@ -145,8 +143,9 @@ public class RenderWater {
 		if (manager.getWorld() != null) {
 			Mesh waterMesh = manager.getWorld().getWater(0.05f);
 			ArrayList<Polygon> polys = waterMesh.getPolygons();
-			float[] vertices = new float[polys.size()*18];
+			float[] vertices = new float[polys.size()*21];
 			int vertIn = 0;
+			int inc = 0;
 			for(Polygon p : polys) {
 				FloatMatrix[] polyPoints = p.getPoints();
 				for(int pi2=0;pi2<3;pi2++) {
@@ -159,6 +158,10 @@ public class RenderWater {
 					vertices[vertIn+1] = colT[1];
 					vertices[vertIn+2] = colT[2];
 					vertIn+=3;
+					vertices[vertIn] = (float)inc/100.0f;
+					inc = (inc+1)%100;
+					System.out.println(inc);
+					vertIn++;
 				}
 			}
 			float[] waterVerts = vertices;
@@ -168,10 +171,12 @@ public class RenderWater {
 			glBindVertexArray(VAOt);
 			glBindBuffer(GL_ARRAY_BUFFER,VBOt);
 			glBufferData(GL_ARRAY_BUFFER, waterVerts, GL_STATIC_DRAW);
-			glVertexAttribPointer(0,3,GL_FLOAT,false,24,0l);
+			glVertexAttribPointer(0,3,GL_FLOAT,false,28,0l);
 			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(1,3,GL_FLOAT,false,24,12l);
+			glVertexAttribPointer(1,3,GL_FLOAT,false,28,12l);
 			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(3,1,GL_FLOAT,false,28,16l);
+			glEnableVertexAttribArray(3);
 			glBindBuffer(GL_ARRAY_BUFFER,0);
 			glBindVertexArray(0);
 			VAOLQ = VAOt;
