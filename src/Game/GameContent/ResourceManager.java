@@ -101,9 +101,9 @@ public class ResourceManager {
 	}
 	
 	public void addRocks() {
-		Mesh rock = ObjectGeneration.generateSphere(9, 13, 9,5);
+		Mesh rock = ObjectGeneration.generateSphere(4, 5, 8, 3);
 		VAOStorage vao1 = new VAOStorage(rock);
-		float[] pos = new float[] {0,manager.getWorld().getHeight(0,  0)+10,0};
+		float[] pos = new float[] {0,manager.getWorld().getHeight(0,  0)+5,0};
 		float[] rot = new float[3];
 		PhysicalResource pr = new Tree(vao1, rock, pos, rot);
 		this.addResource(pr);

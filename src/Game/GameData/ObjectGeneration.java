@@ -251,13 +251,20 @@ public class ObjectGeneration {
 			float lvlH = -(float)(Math.cos(angle*i)*(height/2.0));
 			float lvlW = (float)(Math.sin(angle*i)*(width/2.0));
 			float lvlL = (float)(Math.sin(angle*i)*(length/2.0));
+			if(i == 4) {
+				System.out.println("Width: "+lvlW);
+				System.out.println("length: "+lvlL);
+			}
 			for(int a = 0; a <= resolution*2; a++) {
-				System.out.println("looping");
 				if(a!=resolution*2) {
 					float x = lvlW*(float)Math.cos(angle*a + (angle/2f)*(i%2)) ;
 					currLevel[a][0] = x;
 					currLevel[a][1] = lvlH;
-					currLevel[a][2] = (float)Math.sqrt(Math.pow(lvlL, 2) - (Math.pow(lvlL, 2)*Math.pow(x, 2))/Math.pow(lvlW, 2));
+					float z = (float)(Math.pow(lvlL, 2) - (Math.pow(lvlL, 2)*Math.pow(x, 2))/Math.pow(lvlW, 2));
+					if(z < 0) {
+						z = 0;
+					}
+					currLevel[a][2] = (float)Math.sqrt(z); 
 					currLevel[a+resolution*2][0] = -x;
 					currLevel[a+resolution*2][1] = lvlH;
 					currLevel[a+resolution*2][2] = -currLevel[a][2];
@@ -272,11 +279,9 @@ public class ObjectGeneration {
 					points[3] = lastLevel[(a+resolution*2)%lastLevel.length];
 					Polygon p = new Polygon(points[0], points[1], points[2]);
 					p.setFColor(new float[] {1f, 1f, 1f});
-					System.out.println("Poly a: \n"+p);
 					sphere.addToMesh(p);
 					p = new Polygon(points[3], points[4], points[5]);
 					p.setFColor(new float[] {1f, 1f, 1f});
-					System.out.println("Poly b: \n"+p);
 					sphere.addToMesh(p);
 				}
 				if(i != 1) {
@@ -288,20 +293,14 @@ public class ObjectGeneration {
 					points[3] = lastLevel[((a+resolution*2)+1)%lastLevel.length];
 					Polygon p = new Polygon(points[0], points[1], points[2]);
 					p.setFColor(new float[] {1f, 1f, 1f});
-					System.out.println("Poly a: \n"+p);
 					sphere.addToMesh(p);
 					p = new Polygon(points[3], points[4], points[5]);
 					p.setFColor(new float[] {1f, 1f, 1f});
-					System.out.println("Poly b: \n"+p);
 					sphere.addToMesh(p);
 				}
 				
 			}
 			lastLevel = currLevel;
-			System.out.println("Level: "+i);
-			for(float[] point: currLevel) {
-				System.out.println("X: "+point[0]+" Y: "+ point[1]+" Z: "+point[2]);
-			}
 		}
 		for(int i = 1; i <= lastLevel.length; i++) { 
 			Polygon p = new Polygon(lastLevel[i-1] ,new float[] {0, (float)(height/2.0),0} , lastLevel[i%lastLevel.length]);
