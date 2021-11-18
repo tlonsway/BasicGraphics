@@ -20,7 +20,6 @@ float random(float seed) {
 	return seedMod-floor(seedMod);
 }
 
-
 void main() {
 	//vec3 norm = (normalize(normVec));
 	vec3 norm = normVec;
