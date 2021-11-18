@@ -202,12 +202,12 @@ public class World {
 				if(up) {
 					poly = new Polygon(pts[1], pts[0], pts[2]);
 					float blueNum2 = 0.9f+((float)Math.random()*0.05f-0.025f);
-					float[] col2 = new float[] {0.16f,0.68f,blueNum2};
+					float[] col2 = new float[] {0.16f,0.58f,blueNum2};
 					poly.setFColors(new float[][] {col2, col2, col2});
 				}else {
 					poly = new Polygon(pts[0], pts[1], pts[2]);
 					float blueNum2 = 0.9f+((float)Math.random()*0.05f-0.025f);
-					float[] col2 = new float[] {0.16f,0.68f,blueNum2};
+					float[] col2 = new float[] {0.16f,0.58f,blueNum2};
 					poly.setFColors(new float[][] {col2, col2, col2});
 				}
 				/*
