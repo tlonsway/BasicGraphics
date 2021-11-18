@@ -72,7 +72,8 @@ public class Rendering {
 	
 	public void updateTransformMatrix() {
 		terrain.updateTransformMatrix();
-		water.updateUniforms();
+		water.updateTransformMatrix();
+		water.updateWavePos();
 	}
 	
 	public void updateWorld() {
