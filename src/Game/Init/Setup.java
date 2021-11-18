@@ -35,6 +35,9 @@ public class Setup {
 		    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
+		String glvendor = glGetString(GL_VENDOR);
+		String glrenderer = glGetString(GL_RENDERER);
+		System.out.println("DEVICE IN USE: " + glvendor + " : " + glrenderer);
 		glfwSwapInterval(1); //enable v-sync
 		return window;
 	}
