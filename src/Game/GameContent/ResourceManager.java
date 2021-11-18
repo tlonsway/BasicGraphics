@@ -99,7 +99,16 @@ public class ResourceManager {
 			this.addResource(pr);
 		}
 	}
-
+	
+	public void addRocks() {
+		Mesh rock = ObjectGeneration.generateSphere(9, 13, 9,5);
+		VAOStorage vao1 = new VAOStorage(rock);
+		float[] pos = new float[] {0,manager.getWorld().getHeight(0,  0)+10,0};
+		float[] rot = new float[3];
+		PhysicalResource pr = new Tree(vao1, rock, pos, rot);
+		this.addResource(pr);
+	}
+	
 	public void addTestFerns() {
 		Mesh fern1 = ObjectGeneration.generateFern(3453426);
 		VAOStorage vao1 = new VAOStorage(fern1);

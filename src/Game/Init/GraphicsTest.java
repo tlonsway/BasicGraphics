@@ -19,7 +19,6 @@ public class GraphicsTest {
 		
 		System.out.println("Creating world mesh");
 		World world = new World();
-		
 		g.setWorld(world);
 		//world.setGraphics(g);
 		//float[] vert = world.vertices;

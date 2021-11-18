@@ -154,6 +154,7 @@ public class GameManager {
 		cam.setWorld(w);
 		resourceManager.addTestTrees();
 		resourceManager.addTestFerns();
+		resourceManager.addRocks();
 	}
 	
 	private void chunkUpdateCheck() {
