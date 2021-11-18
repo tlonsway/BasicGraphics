@@ -33,7 +33,7 @@ void main() {
 	objectColor = (1-fogFac)*fogCol+aColor;
 	//ourColor = vec4(fogFac,fogFac,fogFac,1.0f);
 	//objectColor = (1-fogFac)*fogCol+(fogFac)*aColor;
-	ourColor = vec4(objectColor,1.0f);
+	ourColor = vec4(objectColor,wavePos);
 	//normVec = normalize(aNormal);
 	normVec = -normalize(vec3(0.0f,1.0f,waveHeight/20.0f));
 	fragPos = vec3(invTranMod * vec4(aPos, 1.0f));

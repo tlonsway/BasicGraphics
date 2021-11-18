@@ -5,6 +5,7 @@ in vec4 ourColor;
 in vec3 normVec;
 in vec3 fragPos;
 in vec3 objectColor;
+in float wavePos;
 
 in vec3 lightDir;
 in float diff;
@@ -23,7 +24,11 @@ float random(float seed) {
 }
 
 void main() {
-	vec3 norm = normVec;	
+	vec3 norm = normVec;
+	//float randX = sin(gl_FragCoord.x/mod(0.25*ourColor.w, 2.0f));	
+	//randX = clamp(randX, 0.0f, 0.8f) + 0.2f;
+	//float randY = sin(gl_FragCoord.y/mod(0.25*ourColor.w, 1.5f));
+	//randY = clamp(randY, 0.0f, 1.0f) + 0.2f;
 	if (lightDir.y > 0.0f) {
 		vec3 diffuse = diff * lightColor;
 		vec3 viewDir = normalize(viewPos - fragPos);
