@@ -143,7 +143,7 @@ public class RenderWater {
 	
 	private void updateVertsHQ() {
 		if (manager.getWorld() != null) {
-			Mesh waterMesh = manager.getWorld().getWater(0.2f);
+			Mesh waterMesh = manager.getWorld().getWater(0.1f);
 			/*ArrayList<Polygon> polys = waterMesh.getPolygons();
 			float[] vertices = new float[polys.size()*21];
 			int vertIn = 0;
