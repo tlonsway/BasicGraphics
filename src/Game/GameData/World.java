@@ -158,10 +158,10 @@ public class World {
 		Mesh map = new Mesh(null);
 		//float resolution = 0.2f;
 		float resolution = quality;
-		int chunkW = 2000;
+		int chunkW = 10000;
 		
 
-		int chunkL = 2000;
+		int chunkL = 10000;
 		int width = (int)(chunkW*(resolution));
 		int length = (int)(chunkL*(resolution));
 		float[][] grid = new float[width+1][length+1];
@@ -171,8 +171,8 @@ public class World {
 			}
 		}
 		float pR = 1.0f/resolution;
-		int xShift = -1000;
-		int zShift = -1000;
+		int xShift = -5000;
+		int zShift = -5000;
 		for(int row = 0; row < grid[0].length-1; row++) {
 			float[][] pts = {{xShift,grid[0][row],(row*pR)+zShift}, {xShift,grid[0][row+1], ((row+1)*pR)+zShift}, {pR+xShift, grid[1][row], (row*pR)+zShift}};
 			Polygon poly = new Polygon(pts[0], pts[1], pts[2]);

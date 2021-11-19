@@ -22,7 +22,7 @@ uniform mat4 model;
 uniform mat4 invTranMod;
 
 void main() {
-	float waveHeight = sin(0.25f*wavePos+inPos);
+	float waveHeight = 1.5f*sin(0.25f*wavePos+inPos);
 	vec4 res = fullMat * model * vec4(aPos.x,aPos.y+waveHeight,aPos.z,1.0);
 	gl_Position = res;
 	float fogFac = (2000.0f-gl_Position.z)/(2000.0f-1000.0f);
@@ -35,7 +35,7 @@ void main() {
 	//objectColor = (1-fogFac)*fogCol+(fogFac)*aColor;
 	ourColor = vec4(objectColor,wavePos);
 	//normVec = normalize(aNormal);
-	normVec = -normalize(vec3(0.0f,1.0f,waveHeight/20.0f));
+	normVec = -normalize(vec3(0.0f,1.0f,waveHeight/15.0f));
 	fragPos = vec3(invTranMod * vec4(aPos, 1.0f));
 	lightDir =  normalize(lightPos - fragPos);
 	diff = max(-1.0f*(dot(normVec, lightDir)),0.0f);

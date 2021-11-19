@@ -49,7 +49,11 @@ public class Rendering {
 		UI = new RenderUI(manager);
 		glClearColor(0.275f,0.94f,0.97f,1.0f);
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_MULTISAMPLE);
+		//glEnable(GL_MULTISAMPLE);
+		boolean wireframe = false;
+		if (wireframe) {
+			glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+		}
 		//glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 		//glEnable(GL_CULL_FACE);
 		glLineWidth(3.0f);

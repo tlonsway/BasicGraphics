@@ -14,8 +14,11 @@ import Game.Init.Setup;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
+import static org.lwjgl.opengl.GL11.GL_LINE;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
@@ -64,6 +67,7 @@ public class RenderWater {
 	}
 	
 	public void render() {
+		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 		if (numVertLQ == 0 || numVertHQ == 0) {
 			updateVertsLQ();
 			updateVertsHQ();
@@ -82,6 +86,8 @@ public class RenderWater {
 		int modelMatLocT = glGetUniformLocation(shaderProgram,"model");
 		glUniformMatrix4fv(modelMatLocT, false, iMatFlat);
 		glDrawArrays(GL_TRIANGLES,0,numVertHQ);
+		
+		/*
 		glBindVertexArray(VAOLQ);
 		for(int x=-2;x<=2;x++) {
 			for(int z=-2;z<=2;z++) {
@@ -89,15 +95,17 @@ public class RenderWater {
 					continue;
 				}
 				GameObject go = new GameObject("temp");
-				go.translate(2000f*x, 0f, 2000f*z);
+				go.translate(2000*x, 0f, 2000*z);
 				float[] goMat = go.getModelMatFlat();
 				modelMatLocT = glGetUniformLocation(shaderProgram,"model");
 				glUniformMatrix4fv(modelMatLocT, false, goMat);
 				glDrawArrays(GL_TRIANGLES,0,numVertLQ);
 			}
 		}
-		updateSun();
+		*/
 		
+		updateSun();
+		//glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	}
 	
 	public void updateTransformMatrix() {
@@ -144,7 +152,7 @@ public class RenderWater {
 	
 	private void updateVertsHQ() {
 		if (manager.getWorld() != null) {
-			Mesh waterMesh = manager.getWorld().getWater(0.1f);
+			Mesh waterMesh = manager.getWorld().getWater(0.01f);
 			/*ArrayList<Polygon> polys = waterMesh.getPolygons();
 			float[] vertices = new float[polys.size()*21];
 			int vertIn = 0;
@@ -192,7 +200,7 @@ public class RenderWater {
 	}
 	private void updateVertsLQ() {
 		if (manager.getWorld() != null) {
-			Mesh waterMesh = manager.getWorld().getWater(0.05f);
+			Mesh waterMesh = manager.getWorld().getWater(0.01f);
 			/*ArrayList<Polygon> polys = waterMesh.getPolygons();
 			float[] vertices = new float[polys.size()*21];
 			int vertIn = 0;

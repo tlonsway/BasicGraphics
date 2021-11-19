@@ -19,7 +19,7 @@ float specStrength = 0.8f;
 vec3 ambient = vec3(0.4f,0.4f,0.4f);
 
 float random(float seed) {
-	float seedMod = sin(seed*10000.0f);
+	float seedMod = sin(seed*100000.0f);
 	return seedMod-floor(seedMod);
 }
 
@@ -29,14 +29,18 @@ void main() {
 	//randX = clamp(randX, 0.0f, 0.8f) + 0.2f;
 	//float randY = sin(gl_FragCoord.y/mod(0.25*ourColor.w, 1.5f));
 	//randY = clamp(randY, 0.0f, 1.0f) + 0.2f;
+	
 	if (lightDir.y > 0.0f) {
 		vec3 diffuse = diff * lightColor;
 		vec3 viewDir = normalize(viewPos - fragPos);
 		vec3 reflectDir = reflect(-lightDir,norm);
-		float spec = pow(max(dot(viewDir,reflectDir),0.0f),16);
+		float spec = pow(max(dot(viewDir,reflectDir),0.0f),512);
+		float rand = max(0.25f*random(norm.z/norm.y),0.0f);
+		spec = spec * rand;
 		vec3 specular = specStrength * spec * lightColor;
 		vec3 result = (ambient + diffuse + specular) * objectColor;		
 		FragColor = vec4(result, 1.0f);
+		//FragColor = vec4(reflectDir, 1.0f);
 	} else {
 		vec3 result = (ambient) * objectColor;
 		FragColor = vec4(result, 1.0f);	
