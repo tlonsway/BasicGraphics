@@ -10,6 +10,8 @@ in float wavePos;
 in vec3 lightDir;
 in float diff;
 
+in float gHeight;
+
 uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 viewPos;
@@ -29,21 +31,20 @@ void main() {
 	//randX = clamp(randX, 0.0f, 0.8f) + 0.2f;
 	//float randY = sin(gl_FragCoord.y/mod(0.25*ourColor.w, 1.5f));
 	//randY = clamp(randY, 0.0f, 1.0f) + 0.2f;
-	
+	float alpha = 0.9f;
+
 	if (lightDir.y > 0.0f) {
 		vec3 diffuse = diff * lightColor;
 		vec3 viewDir = normalize(viewPos - fragPos);
 		vec3 reflectDir = reflect(-lightDir,norm);
 		float spec = pow(max(dot(viewDir,reflectDir),0.0f),512);
-		float rand = max(0.25f*random(norm.z/norm.y),0.0f);
-		spec = spec * rand;
 		vec3 specular = specStrength * spec * lightColor;
 		vec3 result = (ambient + diffuse + specular) * objectColor;		
-		FragColor = vec4(result, 1.0f);
-		//FragColor = vec4(reflectDir, 1.0f);
+		FragColor = vec4(result, alpha);
+		//FragColor = vec4(reflectDir, alpha);
 	} else {
 		vec3 result = (ambient) * objectColor;
-		FragColor = vec4(result, 1.0f);	
+		FragColor = vec4(result, alpha);	
 	}
 	
 }

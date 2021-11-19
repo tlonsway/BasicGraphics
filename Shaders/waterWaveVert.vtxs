@@ -13,6 +13,8 @@ out vec3 objectColor;
 out vec3 lightDir;
 out float diff;
 
+out float gHeight;
+
 uniform float wavePos;
 
 uniform vec3 lightPos;
@@ -23,6 +25,7 @@ uniform mat4 invTranMod;
 
 void main() {
 	float waveHeight = 1.5f*sin(0.25f*wavePos+inPos);
+	gHeight = inPos;
 	vec4 res = fullMat * model * vec4(aPos.x,aPos.y+waveHeight,aPos.z,1.0);
 	gl_Position = res;
 	float fogFac = (2000.0f-gl_Position.z)/(2000.0f-1000.0f);

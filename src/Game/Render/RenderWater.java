@@ -67,6 +67,8 @@ public class RenderWater {
 	}
 	
 	public void render() {
+		glEnable(GL_BLEND);  
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
 		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 		if (numVertLQ == 0 || numVertHQ == 0) {
 			updateVertsLQ();
@@ -106,6 +108,7 @@ public class RenderWater {
 		
 		updateSun();
 		//glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+		glDisable(GL_BLEND);
 	}
 	
 	public void updateTransformMatrix() {
