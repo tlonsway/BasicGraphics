@@ -159,7 +159,7 @@ public class GameManager {
 	
 	private void chunkUpdateCheck() {
 		float[] currentXZ = new float[] {cam.getCamPos()[0],cam.getCamPos()[2]};
-		if (Math.sqrt((currentXZ[0]-playerXZ[0])*(currentXZ[0]-playerXZ[0])+(currentXZ[1]-playerXZ[1])*(currentXZ[1]-playerXZ[1])) > world.width*2) {
+		if (Math.sqrt((currentXZ[0]-playerXZ[0])*(currentXZ[0]-playerXZ[0])+(currentXZ[1]-playerXZ[1])*(currentXZ[1]-playerXZ[1])) > world.width*1.5) {
 			playerXZ = currentXZ;
 			new Thread(new WorldUpdateThread(this,world,new int[] {(int)currentXZ[0],(int)currentXZ[1]})).start();
 		}

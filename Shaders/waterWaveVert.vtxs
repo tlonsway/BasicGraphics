@@ -24,7 +24,7 @@ uniform mat4 model;
 uniform mat4 invTranMod;
 
 void main() {
-	float waveHeight = 1.5f*sin(0.25f*wavePos+inPos);
+	float waveHeight = 2f*sin(0.25f*wavePos+inPos);
 	gHeight = inPos;
 	vec4 res = fullMat * model * vec4(aPos.x,aPos.y+waveHeight,aPos.z,1.0);
 	gl_Position = res;

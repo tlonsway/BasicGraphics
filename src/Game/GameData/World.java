@@ -10,8 +10,6 @@ public class World {
 	Mesh tree;
 	Graphics g;
 	ArrayList<Mesh> objects;
-	HashMap<String, Mesh> chunkBuf;
-	HashMap<String, float[]> chunkVertBuf;
 	int width, length, height;
 	public int renderDistance;
 	public float[] vertices;
@@ -20,8 +18,6 @@ public class World {
 	public World() {
 		renderDistance = 50;
 		this.g = g;
-		chunkBuf = new HashMap<>();
-		chunkVertBuf = new HashMap<>();
 		noise = new Noise();
 		//int seed = 10000;
 		height = 300;
@@ -119,17 +115,35 @@ public class World {
 	//GET HEIGHT
 	public float getHeight(float x, float z) {
 		double ret = processNoise(Noise.noise(x/300.0+seed+0.1, z/300.0+seed+0.1), 3.2, -0.6, 0.6) + 0.07*processNoise(Noise.noise(x/40.0+seed+0.1, z/40.0+seed+0.1), 0, -0.3, 0.9);
-		/*
-		double nx = x/width - 0.5; 
-		double ny = z/length - 0.5;
-		double d = Math.sqrt(nx*nx + ny*ny) / 10;//Math.sqrt(0.5);
+		double nx = x/width; 
+		double ny = z/length;
+		double d = Math.sqrt(Math.pow(nx, 2) + Math.pow(ny+9, 2)) / 10;//Math.sqrt(0.5);
 		if(d > 1) {
 			d = 1;
 		}
-		ret = 0.5-d+ret;
-		*/
-		ret = (ret-0.3)*height;
+		ret += getBiomeShift((float)nx, (float)ny);
+		ret = (ret-0.2f)*height;
 		return (float)ret;
+	}
+	
+	int biomeSize = 5;
+	public float getBiomeShift(float x, float y) {
+		int biomeX, biomeY; 
+		if(x < 0) {
+			biomeX = (int)(x/(biomeSize*2) - 0.5);
+		}else {
+			biomeX = (int)(x/(biomeSize*2) + 0.5);
+		}
+		if(y < 0) {
+			biomeY = (int)(y/(biomeSize*2) - 0.5);
+		}else {
+			biomeY = (int)(y/(biomeSize*2) + 0.5);
+		}
+		float biome = (float)Noise.noise(biomeX+seed+0.5, biomeY+seed+0.5);
+		double d = Math.sqrt(Math.pow(x-biomeX*biomeSize*2, 2) + Math.pow(y-biomeY*biomeSize*2, 2)) / biomeSize;
+		if(d>1)
+			d = 1;
+		return (float)(biome*(1-d));
 	}
 	
 	public double processNoise(double noise,double a,double b,double c) {
