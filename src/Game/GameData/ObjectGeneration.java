@@ -309,4 +309,10 @@ public class ObjectGeneration {
 		}
 		return sphere;
 	}
+	
+	public float[][][] getBarkTexture(int seed){
+		float[][][] texture = new float[256][256][3];
+		
+		return texture;
+	}
 }

@@ -65,44 +65,23 @@ public class ResourceManager {
 		Mesh tree1MQ = ObjectGeneration.generateTree(9817239, 3);
 		Mesh tree1HQ = ObjectGeneration.generateTree(9817239, 9);
 		VAOStorage vao1 = new VAOStorage(tree1,tree1HQ,tree1MQ,tree1LQ);
-		for(int i=0;i<500;i++) {
-			float posX = (float)((Math.random()*2000.0)-1000.0);
-			float posZ = (float)((Math.random()*2000.0)-1000.0);
-			float posY = manager.getWorld().getHeight(posX, posZ)-0.5f;
-			if (posY < 10.0f) {
-				i--;
-				continue;
+		for(int x = -10; x < 10; x++) {
+			for(int y = -10; y < 10; y++) {
+				ArrayList<float[]> pts = manager.getWorld().getSpawnPoints((int)(Math.sqrt(Math.pow(x*2, 2)+Math.pow(y*2, 2))+6), 100, 100);
+				for(float[] pt: pts) {
+					float height = manager.getWorld().getHeight(pt[0]+x*100, pt[1]+y*100);
+					if(height > 10 && height < 150) {
+						PhysicalResource pr = new Tree(vao1, tree1, new float[] {pt[0]+x*100, height, pt[1]+y*100}, new float[] {0,0,0});
+						this.addResource(pr);
+					}
+				}
 			}
-			float[] pos = new float[] {posX,posY,posZ};
-			float[] rot = new float[3];
-			PhysicalResource pr = new Tree(vao1, tree1, pos, rot);
-			//pr.setQualityVAO(vao1HQ, vao1MQ, vao1LQ);
-			this.addResource(pr);
-		}
-		Mesh tree2 = ObjectGeneration.generateTree(3453452, 5);
-		Mesh tree2LQ = ObjectGeneration.generateTree(3453452, 2);
-		Mesh tree2MQ = ObjectGeneration.generateTree(3453452, 3);
-		Mesh tree2HQ = ObjectGeneration.generateTree(3453452, 9);
-		VAOStorage vao2 = new VAOStorage(tree2,tree2HQ,tree2MQ,tree2LQ);
-		for(int i=0;i<500;i++) {
-			float posX = (float)((Math.random()*2000.0)-1000.0);
-			float posZ = (float)((Math.random()*2000.0)-1000.0);
-			float posY = manager.getWorld().getHeight(posX, posZ)-0.5f;
-			if (posY < 10.0f) {
-				i--;
-				continue;
-			}
-			float[] pos = new float[] {posX,posY,posZ};
-			float[] rot = new float[3];
-			PhysicalResource pr = new Tree(vao2, tree2, pos, rot);
-			//pr.setQualityVAO(vao2HQ, vao2MQ, vao2LQ);
-			this.addResource(pr);
 		}
 	}
 	
 	public void addRocks() {
-		Mesh ball = ObjectGeneration.generateSphere(100, 100, 100, 80);
-		float[] bP = new float[] {0, manager.getWorld().getHeight(0, 0)+3,0};
+		Mesh ball = ObjectGeneration.generateSphere(120, 150, 280, 60);
+		float[] bP = new float[] {100, manager.getWorld().getHeight(0, 0)+200,0};
 		VAOStorage vBall = new VAOStorage(ball);
 		this.addResource(new Tree(vBall, ball, bP, new float[] {0, 0, 0}));
 		Mesh rock = ObjectGeneration.generateSphere(3, 2, 2, 3);

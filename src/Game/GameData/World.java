@@ -13,10 +13,12 @@ public class World {
 	HashMap<String, Mesh> chunkBuf;
 	HashMap<String, float[]> chunkVertBuf;
 	int width, length, height;
+	public int renderDistance;
 	public float[] vertices;
 	public int[] indices;
 	public int seed;
 	public World() {
+		renderDistance = 50;
 		this.g = g;
 		chunkBuf = new HashMap<>();
 		chunkVertBuf = new HashMap<>();
@@ -26,7 +28,7 @@ public class World {
 		width = 100;
 		length = 100;
 		seed = (int)(Math.random()*100000000);
-		terrain = generateWorld(0, 0, 20, 20);
+		terrain = generateWorld(0, 0);
 		//determines how zoomed in on the perlin noise the cave will be
 		double perlinScaler = 25;
 		//display the points or not
@@ -50,7 +52,7 @@ public class World {
 			}
 		}
 	}
-	
+	/*
 	public World(int seed) {
 		noise = new Noise();
 		//int seed = 10000;
@@ -64,7 +66,7 @@ public class World {
 				Mesh chunk = generateChunk(seed, x*width, z*length, width, length, 1);
 				terrain.add(chunk);
 				Mesh tree = ObjectGeneration.generateTree(seed, 5);
-				tree.translate(x*100-50, getHeight(x*100-50, z*100-59), z*100-50);
+				tree.translate(x*width-(width/2), getHeight(x*width-50, z*length-()), z*length-(length/2));
 				terrain.add(tree);
 			}
 		}
@@ -74,14 +76,14 @@ public class World {
 		System.out.println("Seed: "+seed);
 		objects = new ArrayList<Mesh>();
 	}
-	
+	*/
 	public void updateWorld(int xLoc, int yLoc) {
 		long sTime = System.nanoTime();
 		xLoc+=50;
 		yLoc+=50;
 		xLoc = xLoc-(xLoc%100);
 		yLoc = yLoc-(yLoc%100);
-		terrain = generateWorld(xLoc, yLoc, 20, 20);
+		terrain = generateWorld(xLoc, yLoc);
 		long eTime1 = System.nanoTime();
 		generateVerticeList(xLoc, yLoc);
 		long eTime2 = System.nanoTime();
@@ -89,10 +91,10 @@ public class World {
 		System.out.println("GenerateVertex took: " + (eTime2-eTime1));
 	}
 	
-	private ArrayList<Mesh> generateWorld(int startX, int startY, int wWidth, int wLength) {
+	private ArrayList<Mesh> generateWorld(int startX, int startY) {
 		ArrayList<Mesh> map = new ArrayList<>();
-		for(int w = -1*(wWidth/2); w < wWidth/2; w++) {
-			for(int l = -1*(wLength/2); l < (wLength/2); l++) {
+		for(int w = -1*renderDistance; w < renderDistance; w++) {
+			for(int l = -1*renderDistance; l < renderDistance; l++) {
 				float res = 0.5f;
 				if(Math.abs(w) > 10 || Math.abs(l) > 10) {
 					res = 0.05f;
@@ -117,7 +119,7 @@ public class World {
 	//GET HEIGHT
 	public float getHeight(float x, float z) {
 		double ret = processNoise(Noise.noise(x/300.0+seed+0.1, z/300.0+seed+0.1), 3.2, -0.6, 0.6) + 0.07*processNoise(Noise.noise(x/40.0+seed+0.1, z/40.0+seed+0.1), 0, -0.3, 0.9);
-		
+		/*
 		double nx = x/width - 0.5; 
 		double ny = z/length - 0.5;
 		double d = Math.sqrt(nx*nx + ny*ny) / 10;//Math.sqrt(0.5);
@@ -125,6 +127,7 @@ public class World {
 			d = 1;
 		}
 		ret = 0.5-d+ret;
+		*/
 		ret = (ret-0.3)*height;
 		return (float)ret;
 	}
@@ -234,9 +237,9 @@ public class World {
 		int inc = 0;
 		System.out.println("Terrain: "+terrain.size()+" Polygons: "+sum);
 		float[] ver = new float[sum*27];
-		for(int x = -10; x < 10;x++) {
-			for(int z = -10; z < 10;z++) {
-				Mesh m = terrain.get((x+10)*20+(z+10));
+		for(int x = -renderDistance; x < renderDistance;x++) {
+			for(int z = -renderDistance; z < renderDistance;z++) {
+				Mesh m = terrain.get((x+renderDistance)*(2*renderDistance)+(z+renderDistance));
 				m.generateVertices();
 				for(int i = 0; i < m.verts.length; i++) {
 					ver[inc] = m.verts[i];
@@ -389,11 +392,11 @@ public class World {
 	}
 	//Resolution is the number of polygons per one unit distance in game
 	public Mesh generateChunk(int seed, int xShift, int zShift, int chunkW, int chunkL, float resolution) {
-		
+		/*
 		if(resolution == 1 &&  chunkW > 30 &&chunkBuf.containsKey(xShift+":"+zShift)) {
 			//System.out.println("World gen key: "+xShift+":"+zShift);
 			return chunkBuf.get(xShift+":"+zShift);
-		}
+		}*/
 		Mesh map = new Mesh(null);
 		int width = (int)(chunkW*(resolution));
 		int length = (int)(chunkL*(resolution));
@@ -451,10 +454,11 @@ public class World {
 			}
 		}
 		map.generateVertices();
+		/*
 		if(resolution == 1 && chunkW > 30 && chunkL > 30) {
 			chunkBuf.put(xShift+":"+zShift, map);
-			
 		}
+		*/
 		return map;
 	}
 	private float[][] shiftPoint(float[][] pts, float[] p){
@@ -462,6 +466,36 @@ public class World {
 		pts[1] = pts[2];
 		pts[2] = p;
 		return pts;
+	}
+	public ArrayList<float[]> getSpawnPoints(int density, float xRange, float yRange){
+		ArrayList<float[]> points = new ArrayList<>();
+		float[][] noiseMap = new float[(int)xRange][(int)yRange];
+		for (int y = 0; y < yRange; y++) {
+		  for (int x = 0; x < xRange; x++) {
+		    double nx = x/xRange - 0.5, ny = y/yRange - 0.5;
+		    noiseMap[y][x] = (float)Noise.noise(50 * nx+seed, 50 * ny+seed); 
+		  }
+		}
+
+		for (int yc = 0; yc < yRange; yc++) {
+		  for (int xc = 0; xc < xRange; xc++) {
+		    double max = 0;
+		    for (int yn = yc - density; yn <= yc + density; yn++) {
+		      for (int xn = xc - density; xn <= xc + density; xn++) {
+		        if (0 <= yn && yn < yRange && 0 <= xn && xn < xRange) {
+		          double e = noiseMap[yn][xn];
+		          if (e > max) { 
+		        	  max = e; 
+		          }
+		        }
+		      }
+		    }
+		    if (noiseMap[yc][xc] == max) {
+		    	points.add(new float[] {xc, yc});
+		    }
+		  }
+		}
+		return points;
 	}
 	public ArrayList<Polygon> getPolygons() {
 		ArrayList<Polygon> polys = new ArrayList<>();

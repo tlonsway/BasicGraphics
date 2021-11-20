@@ -5,6 +5,7 @@ import Game.GameData.*;
 import Game.Graphics.*;
 import Game.Network.*;
 public class RunClient {
+	/*
 	public static void main(String[] args) {
 		String[][] commandList = new String[][] {{"host list", "Returns a list of possible hosts to join."}, 
 												 {"host game", "Tells the server you wish to host a game."}, 
@@ -104,10 +105,11 @@ public class RunClient {
 			float tYLoc = (float)generator.nextFloat()*worldHgt;
 			go1.translate(tXLoc, 150f, tYLoc);
 			graphic.addGameObject(go1);
-		}*/
+		}
 		System.out.println("Tree generation complete");
 		new Thread(new GameToServerPlayerLocationThread(client, graphic)).start();
 		new Thread(new PlayerLocationThread(client)).start();
 		graphic.loop();
 	}
+*/
 }
