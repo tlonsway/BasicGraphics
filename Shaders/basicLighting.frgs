@@ -12,7 +12,7 @@ in float diff;
 uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 viewPos;
-float specStrength = 0.2f;
+float specStrength = 0.4f;
 vec3 ambient = vec3(0.4f,0.4f,0.4f);
 
 float random(float seed) {
@@ -43,7 +43,7 @@ void main() {
 	//	waterMod = 0.0f;
 	//}
 	
-	//vec3 lightDir = normalize(lightPos - fragPos);	
+	//vec3 lightDir2 = normalize(lightPos - fragPos);	
 	if (lightDir.y > 0.0f) {
 		float diff2 = max(-1.0f*(dot(norm2, lightDir)),0.0f);
 		//float diff2 = -1.0f*dot(norm2, lightDir);
@@ -51,7 +51,7 @@ void main() {
 		vec3 diffuse = diff2 * lightColor;
 		vec3 viewDir = normalize(viewPos - fragPos);
 		vec3 reflectDir = reflect(-lightDir,norm);
-		float spec = pow(max(dot(viewDir,reflectDir),0.0f),32);
+		float spec = pow(max(dot(viewDir,reflectDir),0.0f),4.0f);
 		vec3 specular = specStrength * spec * lightColor;
 		vec3 result = (ambient + diffuse + specular) * objectColor;		
 		FragColor = vec4(result, 1.0f);

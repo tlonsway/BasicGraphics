@@ -40,7 +40,7 @@ void main() {
 		vec3 reflectDir = reflect(-lightDir,norm);
 		float spec = pow(max(dot(viewDir,reflectDir),0.0f),512);
 		vec3 specular = specStrength * spec * lightColor;
-		vec3 result = (ambient + 0.5f*diffuse + specular) * objectColor;		
+		vec3 result = (ambient + 0.8f*diffuse + specular) * objectColor;		
 		FragColor = vec4(result, alpha);
 		//FragColor = vec4(reflectDir, alpha);
 	} else {
