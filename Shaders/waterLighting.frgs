@@ -18,7 +18,7 @@ uniform vec3 viewPos;
 uniform float noiseMap[10];
 
 float specStrength = 0.8f;
-vec3 ambient = vec3(0.4f,0.4f,0.4f);
+vec3 ambient = vec3(0.2f,0.2f,0.2f);
 
 float random(float seed) {
 	float seedMod = sin(seed*100000.0f);
@@ -31,7 +31,8 @@ void main() {
 	//randX = clamp(randX, 0.0f, 0.8f) + 0.2f;
 	//float randY = sin(gl_FragCoord.y/mod(0.25*ourColor.w, 1.5f));
 	//randY = clamp(randY, 0.0f, 1.0f) + 0.2f;
-	float alpha = 0.9f;
+	//float alpha = 0.9f;
+	float alpha = 0.8f;
 
 	if (lightDir.y > 0.0f) {
 		vec3 diffuse = diff * lightColor;
@@ -39,7 +40,7 @@ void main() {
 		vec3 reflectDir = reflect(-lightDir,norm);
 		float spec = pow(max(dot(viewDir,reflectDir),0.0f),512);
 		vec3 specular = specStrength * spec * lightColor;
-		vec3 result = (ambient + diffuse + specular) * objectColor;		
+		vec3 result = (ambient + 0.5f*diffuse + specular) * objectColor;		
 		FragColor = vec4(result, alpha);
 		//FragColor = vec4(reflectDir, alpha);
 	} else {
