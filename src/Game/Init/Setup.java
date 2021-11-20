@@ -35,6 +35,7 @@ public class Setup {
 		    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 		glfwMakeContextCurrent(window);
 		GL.createCapabilities();
+		glViewport(0, 0, 1920, 1080);
 		String glvendor = glGetString(GL_VENDOR);
 		String glrenderer = glGetString(GL_RENDERER);
 		System.out.println("DEVICE IN USE: " + glvendor + " : " + glrenderer);
