@@ -101,16 +101,18 @@ public class Rendering {
 	private void runRenderMethodsNormal() {
 		sky.render();
 		UI.render();
+		clouds.render();
 		terrain.render();
 		resourceManager.render();
 		water.render();
-		clouds.render();
+		
 	}
 	
 	public void renderFrame() {
 		if (!glfwWindowShouldClose(manager.getWindow())) {
-			//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			
+			/*
 			glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 			glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 			glClear(GL_DEPTH_BUFFER_BIT);
@@ -123,6 +125,8 @@ public class Rendering {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			//ConfigureShaderAndMatrices();
 			glBindTexture(GL_TEXTURE_2D, depthMap);
+			*/
+			
 			
 			runRenderMethodsNormal();
 			

@@ -82,7 +82,8 @@ GameManager manager;
 		for(float[] loc: cloud1Locs) {
 			loc[0] += xShift;
 			loc[2] += zShift;
-			if(Math.sqrt(Math.pow(-cpt[0]-loc[0], 2)+Math.pow(-cpt[2]-loc[2], 2)) > 2000) {
+			//System.out.println(Math.sqrt(Math.pow(-cpt[0]-loc[0], 2)+Math.pow(-cpt[2]-loc[2], 2)));
+			if(Math.sqrt(Math.pow(-cpt[0]-loc[0], 2)+Math.pow(-cpt[2]-loc[2], 2)) > 3000) {
 				addNewCloud(cloud1Locs, loc);
 			}
 		}
@@ -90,11 +91,21 @@ GameManager manager;
 		for(float[] loc: cloud2Locs) {
 			loc[0] += xShift;
 			loc[2] += zShift;
-			if(Math.sqrt(Math.pow(-cpt[0]-loc[0], 2)+Math.pow(-cpt[2]-loc[2], 2)) > 2000) {
+			if(Math.sqrt(Math.pow(-cpt[0]-loc[0], 2)+Math.pow(-cpt[2]-loc[2], 2)) > 3000) {
 				addNewCloud(cloud2Locs, loc);
 			}
 		}
 		//System.out.println("Finished moving trees");
+	}
+	
+	public void updateSun() {
+		glUseProgram(shaderProgram);
+		int lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
+		int lightColLoc = glGetUniformLocation(shaderProgram, "lightColor");
+		float[] sunPos = manager.getSunPosition();
+		float[] sunCol = manager.getSunColor();
+		glUniform3fv(lightPosLoc, sunPos);
+		glUniform3fv(lightColLoc, sunCol);
 	}
 	
 	public void generateCloudLocs() {
@@ -116,10 +127,18 @@ GameManager manager;
 	
 	public void addNewCloud(ArrayList<float[]> locs, float[] loc) {
 		float[] camPos = manager.getCamera().getCamPos();
-		loc = new float[] {-2000-camPos[0], (float)(Math.random()*60+250), (float)(Math.random()*4000-2000)-camPos[2]};
+		//loc = new float[] {-2000-camPos[0], (float)(Math.random()*60+250), -(float)(Math.random()*4000-2000)-camPos[2]};
+		locs.set(locs.indexOf(loc),new float[] {2000-camPos[0], (float)(Math.random()*60.0+250.0), (float)(Math.random()*4000-2000)-camPos[2]});
 	}
 	
+	
+	
 	public void render() {
+		if (numVert1 == 0 || numVert2 == 0) {
+			updateVerts();
+		}
+		
+		
 		glUseProgram(shaderProgram);
 		//update uniform variables for lighting
 		float[] cpt = manager.getCamera().getCamPos();
@@ -129,12 +148,13 @@ GameManager manager;
 		glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
 		int modelInvTranMatLoc = glGetUniformLocation(shaderProgram, "invTranMod");
 		glUniformMatrix4fv(modelInvTranMatLoc,false,iMatFlat);
+		updateSun();
 		glBindVertexArray(VAO1);
-		System.out.println("-------------------------");
+		//System.out.println("-------------------------");
 		for(float[] loc: cloud1Locs) {
 			GameObject go = new GameObject("temp");
 			go.translate(loc[0], loc[1], loc[2]);
-			System.out.println("X: "+loc[0]+" Y: "+loc[1]+" Z: "+loc[2]);
+			//System.out.println("X: "+loc[0]+" Y: "+loc[1]+" Z: "+loc[2]);
 			float[] goMat = go.getModelMatFlat();
 			int modelMatLocT = glGetUniformLocation(shaderProgram,"model");
 			glUniformMatrix4fv(modelMatLocT, false, goMat);
@@ -149,7 +169,7 @@ GameManager manager;
 			glUniformMatrix4fv(modelMatLocT, false, goMat);
 			glDrawArrays(GL_TRIANGLES,0,numVert2);
 		}
-		moveClouds(0.2f, 0);
+		moveClouds(-20.0f, 0);
 	}
 	
 	public void updateWavePos() {
@@ -160,7 +180,9 @@ GameManager manager;
 	}
 	
 	private void updateVerts() {
+		System.out.println("GOT HERE 1");
 		if (manager.getWorld() != null) {
+			System.out.println("GOT HERE 2");
 			int seed = manager.getWorld().seed;
 			Mesh cloud1 = ObjectGeneration.generateCloud(seed, 5);
 			Mesh cloud2 = ObjectGeneration.generateCloud(seed>>2, 5);
@@ -169,6 +191,16 @@ GameManager manager;
 			float[] cloud2Verts = getVertices(cloud2);
 			
 			int VBOt1,VAOt1, VBOt2, VAOt2;
+			
+			System.out.println("CLOUD 1 VERTICES LENGTH: " + cloud1Verts.length);
+			
+			for(int i=0;i<cloud1Verts.length;i++) {
+				System.out.println(cloud1Verts[i] + " ");
+				
+				if (i%3==0) {
+					System.out.print("\n");
+				}
+			}
 			
 			//cloud type 1
 			VBOt1 = glGenBuffers();
@@ -183,7 +215,7 @@ GameManager manager;
 			glVertexAttribPointer(2,3,GL_FLOAT,false,36,24l);
 			glEnableVertexAttribArray(2);
 			glBindBuffer(GL_ARRAY_BUFFER,0);
-			glBindVertexArray(0);
+			glBindVertexArray(VAOt1);
 			VAO1 = VAOt1;
 			numVert1 = cloud1Verts.length;	
 			
@@ -192,7 +224,7 @@ GameManager manager;
 			VAOt2 = glGenVertexArrays();
 			glBindVertexArray(VAOt2);
 			glBindBuffer(GL_ARRAY_BUFFER,VBOt2);
-			glBufferData(GL_ARRAY_BUFFER, cloud1Verts, GL_DYNAMIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, cloud2Verts, GL_DYNAMIC_DRAW);
 			glVertexAttribPointer(0,3,GL_FLOAT,false,36,0l);
 			glEnableVertexAttribArray(0);
 			glVertexAttribPointer(1,3,GL_FLOAT,false,36,12l);
@@ -200,7 +232,7 @@ GameManager manager;
 			glVertexAttribPointer(2,3,GL_FLOAT,false,36,24l);
 			glEnableVertexAttribArray(2);
 			glBindBuffer(GL_ARRAY_BUFFER,0);
-			glBindVertexArray(0);
+			glBindVertexArray(VAOt2);
 			VAO2 = VAOt2;
 			numVert2 = cloud2Verts.length;	
 		}
