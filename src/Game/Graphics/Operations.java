@@ -1,6 +1,7 @@
 package Game.Graphics;
 
 import org.jblas.*;
+import org.jblas.Geometry.*;
 
 public class Operations {
 	
@@ -82,6 +83,42 @@ public class Operations {
 		FloatMatrix tMat2 = new FloatMatrix(tMat);
 		return tMat2.mmul(mat);		
 	}
+	
+	public static FloatMatrix crossProd(FloatMatrix vec1, FloatMatrix vec2) {
+		float[] v1 = vec1.data;
+		float[] v2 = vec2.data;
+		float iVal = (v1[1]*v2[2])-(v2[1]*v1[2]);
+		float jVal = (v1[0]*v2[2])-(v2[0]*v1[2]);
+		float kVal = (v1[0]*v2[1])-(v2[0]*v1[1]);
+		return new FloatMatrix(new float[] {iVal,jVal,kVal});
+	}
+	
+	public static FloatMatrix lookAt(FloatMatrix position, FloatMatrix target, FloatMatrix up) {
+		//System.out.println("Position: " + position + ", Target: " + target);
+		FloatMatrix Z = position.rsub(target);
+		Geometry.normalize(Z);
+		FloatMatrix Y = up;
+		FloatMatrix X = crossProd(Y,Z);
+		Y = crossProd(Z,X);
+		Geometry.normalize(X);
+		Geometry.normalize(Y);
+		float[][] ret = new float[][] {{X.get(0),X.get(1),X.get(2),-X.dot(position)},
+									   {Y.get(0),Y.get(1),Y.get(2),-Y.dot(position)},
+									   {Z.get(0),Z.get(1),Z.get(2),-Z.dot(position)},
+									   {0,0,0,1}};
+		return new FloatMatrix(ret);
+	}
+	
+	/*
+	public static void main(String[] args) {
+		//test look at method
+		FloatMatrix pos = new FloatMatrix(new float[] {5,5,5});
+		FloatMatrix target = new FloatMatrix(new float[] {0,0,1});
+		FloatMatrix up = new FloatMatrix(new float[] {0,1,0});
+		FloatMatrix transform = lookAt(pos,target,up);
+		System.out.println(transform);
+	}
+	*/
 	
 	public static void printMat(FloatMatrix mat) {
 		for(int r=0;r<mat.rows;r++) {

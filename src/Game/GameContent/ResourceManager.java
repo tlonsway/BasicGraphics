@@ -197,6 +197,86 @@ public class ResourceManager {
 		}	
 	}
 	
+	public void renderShadows() {
+		Camera cam = manager.getCamera();
+		glUseProgram(manager.getShadowShaderProgram());
+		setShadowUniforms();
+		int modelMatLoc = glGetUniformLocation(manager.getShadowShaderProgram(),"model");
+		glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
+		updateSun();
+		for(VAOStorage vaoS : resources.keySet()) {
+			if (!vaoS.isVaoQualityEnabled()) {
+				int VAOT = vaoS.getVAO();
+				int numVertT = vaoS.getNumVert();
+				glBindVertexArray(VAOT);
+				for(PhysicalResource resourceT : resources.get(vaoS)) {
+					if (resourceT.getHealth() <= 0) {
+						resources.get(vaoS).remove(resourceT);
+					}
+					if (resourceT.distanceToXZ(cam) < 400.0f) {
+						float[] modelMat = resourceT.getModelMatFlat();
+						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+						glUniformMatrix4fv(modelMatLoc, false, modelMat);
+						glDrawArrays(GL_TRIANGLES,0,numVertT);
+					}
+				}
+			} else {
+				int VAOHQ = vaoS.getVAOQualityStorage().getVAOHQ().getVAO();
+				int numVertHQ = vaoS.getVAOQualityStorage().getVAOHQ().getNumVert();
+				int VAOMQ = vaoS.getVAOQualityStorage().getVAOMQ().getVAO();
+				int numVertMQ = vaoS.getVAOQualityStorage().getVAOMQ().getNumVert();
+				int VAOLQ = vaoS.getVAOQualityStorage().getVAOLQ().getVAO();
+				int numVertLQ = vaoS.getVAOQualityStorage().getVAOLQ().getNumVert();
+				glBindVertexArray(VAOHQ);
+				for(PhysicalResource resourceT : resources.get(vaoS)) {
+					if (resourceT.getHealth() <= 0) {
+						resources.get(vaoS).remove(resourceT);
+					}
+					if (resourceT.distanceToXZ(cam) < 100.0f) {
+						float[] modelMat = resourceT.getModelMatFlat();
+						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+						glUniformMatrix4fv(modelMatLoc, false, modelMat);
+						glDrawArrays(GL_TRIANGLES,0,numVertHQ);
+					}
+				}
+				glBindVertexArray(VAOMQ);
+				for(PhysicalResource resourceT : resources.get(vaoS)) {
+					
+					float dist = resourceT.distanceToXZ(cam);
+					if (dist >= 100.0f && dist < 300.0f) {
+						float[] modelMat = resourceT.getModelMatFlat();
+						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+						glUniformMatrix4fv(modelMatLoc, false, modelMat);
+						glDrawArrays(GL_TRIANGLES,0,numVertMQ);
+					}
+				}
+				glBindVertexArray(VAOLQ);
+				for(PhysicalResource resourceT : resources.get(vaoS)) {
+					float dist = resourceT.distanceToXZ(cam);
+					if (dist >= 300.0f && dist < 500.0f) {
+						float[] modelMat = resourceT.getModelMatFlat();
+						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+						glUniformMatrix4fv(modelMatLoc, false, modelMat);
+						glDrawArrays(GL_TRIANGLES,0,numVertLQ);
+					}
+				}
+			}
+		}	
+	}
+	
+	public void setShadowUniforms() {
+		glUseProgram(manager.getShadowShaderProgram());
+		Projection project = manager.getProjection();
+		FloatMatrix lightPosition = new FloatMatrix(manager.getSunPosition());
+		lightPosition = new FloatMatrix(new float[] {lightPosition.get(0),lightPosition.get(1),lightPosition.get(2)});
+		FloatMatrix target = new FloatMatrix(new float[] {0,0,0});
+		FloatMatrix up = new FloatMatrix(new float[] {0,1,0});
+		FloatMatrix depthView = Operations.lookAt(lightPosition, target, up);
+		float[] matCom = combineMats(project.getProjMatFMat(),depthView);
+		int fullMatLoc = glGetUniformLocation(shaderProgram,"fullMat");
+		glUniformMatrix4fv(fullMatLoc, false, matCom);
+	}
+	
 	public void updateTransformMatrix() {
 		Projection project = manager.getProjection();
 		Camera cam = manager.getCamera();

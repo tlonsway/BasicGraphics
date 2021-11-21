@@ -22,6 +22,11 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
+import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL20.glAttachShader;
+import static org.lwjgl.opengl.GL20.glDeleteShader;
+import static org.lwjgl.opengl.GL20.glLinkProgram;
 import static org.lwjgl.opengl.GL41.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -43,6 +48,8 @@ public class GameManager {
 	
 	GravityThread gravity;
 	
+	int shadowShaderProgram;
+	
 	int[] screenDims;
 	long window;
 	
@@ -56,6 +63,8 @@ public class GameManager {
 	
 	
 	public GameManager(int[] screenDims) {
+		
+		
 		gameRunning = true;
 		window = Setup.start(screenDims, "Game Window");
 		resourceManager = new ResourceManager(this);
@@ -105,14 +114,38 @@ public class GameManager {
 		sunPosition = new float[3];
 		sunColor = new float[3];
 		
+		
+		
+		shadowShaderProgram = glCreateProgram();
+		Shader shadowVertShader = new Shader("Shaders/shadowVert.vtxs",GL_VERTEX_SHADER);
+		Shader shadowFragShader = new Shader("Shaders/emptyFrag.frgs",GL_FRAGMENT_SHADER);
+		glAttachShader(shadowShaderProgram,shadowVertShader.getShader());
+		glAttachShader(shadowShaderProgram,shadowFragShader.getShader());
+		glLinkProgram(shadowShaderProgram);
+		glDeleteShader(shadowVertShader.getShader());
+		glDeleteShader(shadowFragShader.getShader());
+		
+		
+		
 		renderer = new Rendering(this,resourceManager);
+		
+		
+		
 		glfwMakeContextCurrent(window);
+		
+		
+		
+		
 		GL.createCapabilities();
+		
+		
+		
 		//gameLoop();
 	}
 	
 	
 	public void gameLoop() {
+		
 		soundManager.playSound("walking");
 		while(gameRunning) {
 			float[] camPos = cam.getCamPos();
@@ -212,6 +245,10 @@ public class GameManager {
 	
 	public void endGame() {
 		gameRunning = false;
+	}
+	
+	public int getShadowShaderProgram() {
+		return shadowShaderProgram;
 	}
 	
 	public int[] getScreenDims() {

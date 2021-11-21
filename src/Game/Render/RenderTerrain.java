@@ -87,6 +87,30 @@ public class RenderTerrain {
 		glDrawArrays(GL_TRIANGLES,0,numElements);
 	}
 	
+	public void renderShadows() {
+		glUseProgram(manager.getShadowShaderProgram());
+		setShadowUniforms();
+		int modelMatLoc = glGetUniformLocation(manager.getShadowShaderProgram(),"model");
+		glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
+		updateSun();
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES,0,numElements);
+	}
+	
+	public void setShadowUniforms() {
+		glUseProgram(manager.getShadowShaderProgram());
+		Projection project = manager.getProjection();
+		FloatMatrix lightPosition = new FloatMatrix(manager.getSunPosition());
+		lightPosition = new FloatMatrix(new float[] {lightPosition.get(0),lightPosition.get(1),lightPosition.get(2)});
+		FloatMatrix target = new FloatMatrix(new float[] {0,0,0});
+		FloatMatrix up = new FloatMatrix(new float[] {0,1,0});
+		FloatMatrix depthView = Operations.lookAt(lightPosition, target, up);
+		float[] matCom = combineMats(project.getProjMatFMat(),depthView);
+		int fullMatLoc = glGetUniformLocation(shaderProgram,"fullMat");
+		glUniformMatrix4fv(fullMatLoc, false, matCom);
+	}
+	
+	
 	public void updateTransformMatrix() {
 		Projection project = manager.getProjection();
 		Camera cam = manager.getCamera();

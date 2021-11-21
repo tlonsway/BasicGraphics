@@ -10,6 +10,9 @@ public class GraphicsTest {
 		int[] screenDims = new int[] {1920,1080};
 		
 		GameManager g = new GameManager(screenDims);
+		
+		System.out.println("get here");
+		
 		//float[] vertices = new float[] {-0.1f,0.1f,-1.2f,
 		//		0f,-0.1f,-1.2f,
 		//		0.1f,0.1f,-1.2f};
@@ -18,13 +21,24 @@ public class GraphicsTest {
 		//g.updateData(vertices, indices);
 		
 		System.out.println("Creating world mesh");
+		
+		System.out.println("get here");
+		
 		World world = new World();
+		
+		
+		
 		g.setWorld(world);
 		//world.setGraphics(g);
 		//float[] vert = world.vertices;
 		//int[] ind = world.indices;;
 		//g.updateData(vert, ind);
+		
+		
 		g.setWorldUpdateReady();
+		
+		
+		
 		System.out.println("World mesh complete");
 		
 		
@@ -69,6 +83,8 @@ public class GraphicsTest {
 		
 		//go1.rotate('y', (float)(Math.PI/2), false);
 		//g.loop();
+		
+		
 		g.gameLoop();
 	}	
 }
