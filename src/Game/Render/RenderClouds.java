@@ -34,8 +34,7 @@ import java.util.ArrayList;
 
 import org.jblas.FloatMatrix;
 
-import Game.GameData.GameManager;
-import Game.GameData.ObjectGeneration;
+import Game.GameData.*;
 import Game.Graphics.Camera;
 import Game.Graphics.Mesh;
 import Game.Graphics.Polygon;
@@ -59,10 +58,13 @@ GameManager manager;
 	public RenderClouds(GameManager manager) {
 		cloud1Locs = new ArrayList<>();
 		cloud2Locs = new ArrayList<>();
+		generateCloudLocs();
+		System.out.println("Type 1: "+cloud1Locs.size());
+		System.out.println("Type 2: "+cloud2Locs.size());
 		this.manager = manager;
 		//Shader waterVertShader = new Shader("Shaders/basicProjWithModel.vtxs",GL_VERTEX_SHADER);
-		Shader waterVertShader = new Shader("Shaders/waterWaveVert.vtxs",GL_VERTEX_SHADER);
-		Shader waterFragShader = new Shader("Shaders/waterLighting.frgs",GL_FRAGMENT_SHADER);
+		Shader waterVertShader = new Shader("Shaders/basicProjModelLighting.vtxs",GL_VERTEX_SHADER);
+		Shader waterFragShader = new Shader("Shaders/basicLighting.frgs",GL_FRAGMENT_SHADER);
 		shaderProgram = glCreateProgram();
 		glAttachShader(shaderProgram,waterVertShader.getShader());
 		glAttachShader(shaderProgram,waterFragShader.getShader());
@@ -70,7 +72,29 @@ GameManager manager;
 		glDeleteShader(waterVertShader.getShader());
 		glDeleteShader(waterFragShader.getShader());
 		numVert1 = 0;
+		numVert2 = 0;
 		updateVerts();
+	}
+	
+	private void moveClouds(float xShift, float zShift) {
+		float[] cpt = manager.getCamera().getCamPos();
+		//System.out.println("Moving trees 1");
+		for(float[] loc: cloud1Locs) {
+			loc[0] += xShift;
+			loc[2] += zShift;
+			if(Math.sqrt(Math.pow(-cpt[0]-loc[0], 2)+Math.pow(-cpt[2]-loc[2], 2)) > 2000) {
+				addNewCloud(cloud1Locs, loc);
+			}
+		}
+		//System.out.println("Moving trees 2");
+		for(float[] loc: cloud2Locs) {
+			loc[0] += xShift;
+			loc[2] += zShift;
+			if(Math.sqrt(Math.pow(-cpt[0]-loc[0], 2)+Math.pow(-cpt[2]-loc[2], 2)) > 2000) {
+				addNewCloud(cloud2Locs, loc);
+			}
+		}
+		//System.out.println("Finished moving trees");
 	}
 	
 	public void generateCloudLocs() {
@@ -78,27 +102,24 @@ GameManager manager;
 		int num2 = (int)(Math.random()*20+10);
 		for(int i = 0; i < num1; i++) {
 			cloud1Locs.add(new float[] {(float)(Math.random()*4000-2000), (float)(Math.random()*60+250), (float)(Math.random()*4000-2000)});
+			float[] pos = cloud1Locs.get(cloud1Locs.size()-1);
+			System.out.println(pos[0]+" "+pos[1]+" "+pos[2]);
 		}
+		System.out.println("-----------------------");
 		for(int i = 0; i < num2; i++) {
 			cloud2Locs.add(new float[] {(float)(Math.random()*4000-2000), (float)(Math.random()*60+250), (float)(Math.random()*4000-2000)});
+			float[] pos = cloud2Locs.get(cloud2Locs.size()-1);
+			System.out.println(pos[0]+" "+pos[1]+" "+pos[2]);
 		}
+		System.out.println("Finished generating clouds");
 	}
 	
 	public void addNewCloud(ArrayList<float[]> locs, float[] loc) {
-		locs.remove(loc);
 		float[] camPos = manager.getCamera().getCamPos();
-		locs.add(new float[] {-2000-camPos[0], (float)(Math.random()*60+250), (float)(Math.random()*4000-2000)-camPos[2]});
+		loc = new float[] {-2000-camPos[0], (float)(Math.random()*60+250), (float)(Math.random()*4000-2000)-camPos[2]};
 	}
 	
 	public void render() {
-		/*
-		glEnable(GL_BLEND);  
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
-		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-		if (numVertLQ == 0 || numVertHQ == 0) {
-			updateVertsLQ();
-			updateVertsHQ();
-		}
 		glUseProgram(shaderProgram);
 		//update uniform variables for lighting
 		float[] cpt = manager.getCamera().getCamPos();
@@ -108,22 +129,27 @@ GameManager manager;
 		glUniformMatrix4fv(modelMatLoc, false, iMatFlat);
 		int modelInvTranMatLoc = glGetUniformLocation(shaderProgram, "invTranMod");
 		glUniformMatrix4fv(modelInvTranMatLoc,false,iMatFlat);
-		
-		glBindVertexArray(VAOHQ);
-		int modelMatLocT = glGetUniformLocation(shaderProgram,"model");
-		glUniformMatrix4fv(modelMatLocT, false, iMatFlat);
-		glDrawArrays(GL_TRIANGLES,0,numVertHQ);
-		glDisable(GL_BLEND);
-		*/
-	}
-	
-	public void updateTransformMatrix() {
-		Projection project = manager.getProjection();
-		Camera cam = manager.getCamera();
-		glUseProgram(shaderProgram);
-		float[] matCom = combineMats(project.getProjMatFMat(),cam.getCamMat());
-		int fullMatLoc = glGetUniformLocation(shaderProgram,"fullMat");
-		glUniformMatrix4fv(fullMatLoc, false, matCom);
+		glBindVertexArray(VAO1);
+		System.out.println("-------------------------");
+		for(float[] loc: cloud1Locs) {
+			GameObject go = new GameObject("temp");
+			go.translate(loc[0], loc[1], loc[2]);
+			System.out.println("X: "+loc[0]+" Y: "+loc[1]+" Z: "+loc[2]);
+			float[] goMat = go.getModelMatFlat();
+			int modelMatLocT = glGetUniformLocation(shaderProgram,"model");
+			glUniformMatrix4fv(modelMatLocT, false, goMat);
+			glDrawArrays(GL_TRIANGLES,0,numVert1);
+		}
+		glBindVertexArray(VAO2);
+		for(float[] loc: cloud2Locs) {
+			GameObject go = new GameObject("temp");
+			go.translate(loc[0], loc[1], loc[2]);
+			float[] goMat = go.getModelMatFlat();
+			int modelMatLocT = glGetUniformLocation(shaderProgram,"model");
+			glUniformMatrix4fv(modelMatLocT, false, goMat);
+			glDrawArrays(GL_TRIANGLES,0,numVert2);
+		}
+		moveClouds(0.2f, 0);
 	}
 	
 	public void updateWavePos() {
@@ -132,21 +158,6 @@ GameManager manager;
 		glUniform1f(wavePosLoc, wavePos);
 		wavePos-=0.1f;
 	}
-	
-	
-	/*
-	public void updateUniforms() {
-		glUseProgram(shaderProgram);
-		Projection project = manager.getProjection();
-		Camera cam = manager.getCamera(); 
-		float[] matCom = combineMats(project.getProjMatFMat(),cam.getCamMat());
-		int fullMatLoc = glGetUniformLocation(shaderProgram,"fullMat");
-		glUniformMatrix4fv(fullMatLoc, false, matCom);	
-		int wavePosLoc = glGetUniformLocation(shaderProgram,"wavePos");
-		glUniform1f(wavePosLoc, wavePos);
-		wavePos+=0.05f;
-	}*/
-	
 	
 	private void updateVerts() {
 		if (manager.getWorld() != null) {
@@ -159,6 +170,7 @@ GameManager manager;
 			
 			int VBOt1,VAOt1, VBOt2, VAOt2;
 			
+			//cloud type 1
 			VBOt1 = glGenBuffers();
 			VAOt1 = glGenVertexArrays();
 			glBindVertexArray(VAOt1);
@@ -175,6 +187,7 @@ GameManager manager;
 			VAO1 = VAOt1;
 			numVert1 = cloud1Verts.length;	
 			
+			//cloud type 2
 			VBOt2 = glGenBuffers();
 			VAOt2 = glGenVertexArrays();
 			glBindVertexArray(VAOt2);
@@ -191,6 +204,15 @@ GameManager manager;
 			VAO2 = VAOt2;
 			numVert2 = cloud2Verts.length;	
 		}
+	}
+	
+	public void updateTransformMatrix() {
+		Projection project = manager.getProjection();
+		Camera cam = manager.getCamera();
+		glUseProgram(shaderProgram);
+		float[] matCom = combineMats(project.getProjMatFMat(),cam.getCamMat());
+		int fullMatLoc = glGetUniformLocation(shaderProgram,"fullMat");
+		glUniformMatrix4fv(fullMatLoc, false, matCom);
 	}
 	
 	private static float[] combineMats(FloatMatrix projmat, FloatMatrix camMat) {

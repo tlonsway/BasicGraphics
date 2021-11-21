@@ -37,6 +37,7 @@ public class Rendering {
 	RenderSky sky;
 	RenderTerrain terrain;
 	RenderWater water;
+	RenderClouds clouds;
 	RenderUI UI;
 	
 	Projection depthProj;
@@ -52,6 +53,7 @@ public class Rendering {
 		terrain = new RenderTerrain(manager);
 		water = new RenderWater(manager);
 		UI = new RenderUI(manager);
+		clouds = new RenderClouds(manager);
 		glClearColor(0.275f,0.94f,0.97f,1.0f);
 		glEnable(GL_DEPTH_TEST);
 		//glEnable(GL_MULTISAMPLE);
@@ -102,6 +104,7 @@ public class Rendering {
 		terrain.render();
 		resourceManager.render();
 		water.render();
+		clouds.render();
 	}
 	
 	public void renderFrame() {
@@ -135,7 +138,6 @@ public class Rendering {
 		FloatMatrix target = new FloatMatrix(new float[] {0,0,0});
 		FloatMatrix up = new FloatMatrix(new float[] {0,1,0});
 		FloatMatrix depthView = Operations.lookAt(lightPosition, target, up);
-			
 		
 	}
 	
@@ -149,6 +151,7 @@ public class Rendering {
 		terrain.updateTransformMatrix();
 		water.updateTransformMatrix();
 		water.updateWavePos();
+		clouds.updateTransformMatrix();
 	}
 	
 	public void updateWorld() {
