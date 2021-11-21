@@ -23,7 +23,7 @@ public class World {
 		height = 300;
 		width = 100;
 		length = 100;
-		seed = (int)(Math.random()*100000000);
+		seed = (int)(Math.random()*100000);
 		terrain = generateWorld(0, 0);
 		//determines how zoomed in on the perlin noise the cave will be
 		double perlinScaler = 25;
@@ -143,7 +143,7 @@ public class World {
 		double d = Math.sqrt(Math.pow(x-biomeX*biomeSize*2, 2) + Math.pow(y-biomeY*biomeSize*2, 2)) / biomeSize;
 		if(d>1)
 			d = 1;
-		return (float)(biome*(1-d));
+		return (float)(biome*(1-d))*2;
 	}
 	
 	public double processNoise(double noise,double a,double b,double c) {

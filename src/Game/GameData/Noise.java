@@ -1,5 +1,4 @@
 package Game.GameData;
-
 //Copyright 2001 Ken Perlin
 /** 
  Computes Perlin Noise for one, two, and three dimensions.<p>
@@ -35,17 +34,17 @@ public final class Noise {
 	}
 
 	public static float genfloat(float seed, float min, float max) {
-		float num = Math.abs((float)noise(seed/20f+0.1f));
-		num = num * (max-min);
-		num = num + min;
+		float num = Math.abs((float)noise(seed+0.1f));
+		num = num * (max-min) + min;
 		return num;
 	}
 	public static int genInt(float seed,  int min, int max) {
-		float num = Math.abs((float)noise(seed/20f+0.1f));
+		float num = ((float)noise(seed+0.1f)+1f)/2f;
 		num = num * (max-min);
 		num = num + min;
 		return (int)num;
 	}
+	
 	private static double lerp(double t, double a, double b) {
 	   return a + t * (b - a);
 	}

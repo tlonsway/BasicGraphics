@@ -80,10 +80,12 @@ public class ResourceManager {
 	}
 	
 	public void addRocks() {
-		Mesh ball = ObjectGeneration.generateSphere(120, 150, 280, 60);
-		float[] bP = new float[] {100, manager.getWorld().getHeight(0, 0)+200,0};
+		//Mesh ball = ObjectGeneration.generateSphere(120, 150, 280, 60);
+		Mesh ball = ObjectGeneration.generateCloud(manager.getWorld().seed, 4);
+		float[] bP = new float[] {0, manager.getWorld().getHeight(0, 0)+200,0};
 		VAOStorage vBall = new VAOStorage(ball);
 		this.addResource(new Tree(vBall, ball, bP, new float[] {0, 0, 0}));
+		/*
 		Mesh rock = ObjectGeneration.generateSphere(3, 2, 2, 3);
 		Mesh r2 = ObjectGeneration.generateSphere(1, 1, 2, 3);
 		r2.translate(1, 0, 1);
@@ -103,7 +105,7 @@ public class ResourceManager {
 			PhysicalResource pr = new Tree(vao1, rock, pos, rot);
 			//pr.setQualityVAO(vao1HQ, vao1MQ, vao1LQ);
 			this.addResource(pr);
-		}
+		}*/
 	}
 	
 	public void addTestFerns() {

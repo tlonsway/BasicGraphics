@@ -310,6 +310,22 @@ public class ObjectGeneration {
 		return sphere;
 	}
 	
+	public static Mesh generateCloud(int seed, int resolution) {
+		Mesh cloud = new Mesh(true);
+		int num = Noise.genInt(seed+0.5f, 3, 8);
+		System.out.println("Parts in the cloud: "+num);
+		for(int i = 0; i < num; i++) {
+			int x = Noise.genInt(seed+i*3+0.5f, 40-i*5, 70-i*5);
+			int y = Noise.genInt(seed+i*3+1.5f, 10-i, 40-i);
+			int z = Noise.genInt(seed+i*3*2.5f, 40-i*5, 70-i*5);
+			System.out.println("W: "+x+" H: "+y+" L: "+z);
+			Mesh sphere = generateSphere(x, y, z, resolution);
+			sphere.translate(Noise.genInt((float)(+i*3+0.5f), -i*25, i*25), Noise.genInt((float)(seed+i*3+1.5f), -i*10, i*10), Noise.genInt((float)(seed+i*3+2.5f), -i*25, i*25));
+			cloud.addMesh(sphere);
+		}
+		return cloud;
+	}
+	
 	public float[][][] getBarkTexture(int seed){
 		float[][][] texture = new float[256][256][3];
 		
