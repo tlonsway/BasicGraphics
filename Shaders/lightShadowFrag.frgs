@@ -9,9 +9,14 @@ in vec3 objectColor;
 in vec3 lightDir;
 in float diff;
 
+in vec4 fragPosLightSpace;
+
 uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 viewPos;
+
+uniform sampler2D shadowMap;
+
 float specStrength = 0.4f;
 vec3 ambient = vec3(0.4f,0.4f,0.4f);
 
@@ -27,8 +32,28 @@ float distance(vec3 pos1, vec3 pos2) {
 	return sqrt(v1+v2+v3);
 }
 
+float LinearizeDepth(float depth)
+{
+	float near_plane = 0.1f;
+	float far_plane = 10000.0f;
+
+    float z = depth * 2.0 - 1.0; // Back to NDC 
+    return (2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane));	
+}
+
+float ShadowCalculation(vec4 fragPosLightSpace) {
+	float bias = 0.000005f;
+	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	projCoords = projCoords * 0.5 + 0.5; 
+	float closestDepth = texture(shadowMap, projCoords.xy).r;
+	//closestDepth = LinearizeDepth(closestDepth);
+	float currentDepth = projCoords.z;  
+	float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+	return shadow;
+	//return currentDepth/10.0f;
+}
+
 void main() {
-	//vec3 norm = (normalize(normVec));
 	vec3 norm = normVec;
 	float randSeed1 = fragPos.x*fragPos.y;
 	float randSeed2 = fragPos.y*fragPos.z;
@@ -38,30 +63,23 @@ void main() {
 	float nMod3 = 0.1f*random(randSeed3);
 	vec3 norm2 = vec3(norm.x+nMod1,norm.y+nMod2,norm.z+nMod3);
 	
-	//float waterMod = 1.0f;
-	//if (distance(viewPos,fragPos) > 100.0f) {
-	//	waterMod = 0.0f;
-	//}
-	
 	//vec3 lightDir2 = normalize(lightPos - fragPos);	
-	if (lightDir.y > 0.0f) {
+	if (1 == 1) {
 		float diff2 = max(-1.0f*(dot(norm2, lightDir)),0.0f);
-		//float diff2 = -1.0f*dot(norm2, lightDir);
-		//vec3 diffuse = diff * lightColor;
 		vec3 diffuse = diff2 * lightColor;
 		vec3 viewDir = normalize(viewPos - fragPos);
 		vec3 reflectDir = reflect(-lightDir,norm);
 		float spec = pow(max(dot(viewDir,reflectDir),0.0f),4.0f);
 		vec3 specular = specStrength * spec * lightColor;
-		vec3 result = (ambient + diffuse + specular) * objectColor;
+		float shadow = ShadowCalculation(fragPosLightSpace);     
+		//vec3 result = (ambient + diffuse + specular) * objectColor;		
+		vec3 result = (ambient + (1.0f - shadow) * (diffuse + specular)) * objectColor;
+		//vec3 result = vec3(fragPosLightSpace.xyz);
+		//vec3 result = vec3(shadow,shadow,shadow);
 		FragColor = vec4(result, 1.0f);
-		//FragColor = vec4(norm2,1.0f);
-		//FragColor = vec4(0f,lightDir.y,0f,1.0f);
 	} else {
 		vec3 result = (ambient) * objectColor;
 		FragColor = vec4(result, 1.0f);	
 	}
-	//FragColor = vec4(norm2,1.0f);
-	
 }
 

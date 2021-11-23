@@ -215,7 +215,7 @@ public class ResourceManager {
 					}
 					if (resourceT.distanceToXZ(cam) < 400.0f) {
 						float[] modelMat = resourceT.getModelMatFlat();
-						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+						modelMatLoc = glGetUniformLocation(manager.getShadowShaderProgram(),"model");
 						glUniformMatrix4fv(modelMatLoc, false, modelMat);
 						glDrawArrays(GL_TRIANGLES,0,numVertT);
 					}
@@ -234,7 +234,7 @@ public class ResourceManager {
 					}
 					if (resourceT.distanceToXZ(cam) < 100.0f) {
 						float[] modelMat = resourceT.getModelMatFlat();
-						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+						modelMatLoc = glGetUniformLocation(manager.getShadowShaderProgram(),"model");
 						glUniformMatrix4fv(modelMatLoc, false, modelMat);
 						glDrawArrays(GL_TRIANGLES,0,numVertHQ);
 					}
@@ -245,7 +245,7 @@ public class ResourceManager {
 					float dist = resourceT.distanceToXZ(cam);
 					if (dist >= 100.0f && dist < 300.0f) {
 						float[] modelMat = resourceT.getModelMatFlat();
-						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+						modelMatLoc = glGetUniformLocation(manager.getShadowShaderProgram(),"model");
 						glUniformMatrix4fv(modelMatLoc, false, modelMat);
 						glDrawArrays(GL_TRIANGLES,0,numVertMQ);
 					}
@@ -255,7 +255,7 @@ public class ResourceManager {
 					float dist = resourceT.distanceToXZ(cam);
 					if (dist >= 300.0f && dist < 500.0f) {
 						float[] modelMat = resourceT.getModelMatFlat();
-						modelMatLoc = glGetUniformLocation(shaderProgram,"model");
+						modelMatLoc = glGetUniformLocation(manager.getShadowShaderProgram(),"model");
 						glUniformMatrix4fv(modelMatLoc, false, modelMat);
 						glDrawArrays(GL_TRIANGLES,0,numVertLQ);
 					}
@@ -272,8 +272,24 @@ public class ResourceManager {
 		FloatMatrix target = new FloatMatrix(new float[] {0,0,0});
 		FloatMatrix up = new FloatMatrix(new float[] {0,1,0});
 		FloatMatrix depthView = Operations.lookAt(lightPosition, target, up);
+		
+		Camera c2 = new Camera(new int[] {1920,1080});
+		c2.rotate('x', 3.74f);
+		//c2.rotate('y', -80);
+		//c2.rotate('z', 1.05f);
+		c2.translate(1000, 500, 1000);
+		depthView = c2.getCamMat();
+		//Camera cam = manager.getCamera();
+		//depthView = cam.getCamMat();
+		
 		float[] matCom = combineMats(project.getProjMatFMat(),depthView);
-		int fullMatLoc = glGetUniformLocation(shaderProgram,"fullMat");
+		
+		//Camera cam = manager.getCamera();
+		//matCom = combineMats(project.getProjMatFMat(),cam.getCamMat());
+		
+		
+		
+		int fullMatLoc = glGetUniformLocation(manager.getShadowShaderProgram(),"fullMat");
 		glUniformMatrix4fv(fullMatLoc, false, matCom);
 	}
 	

@@ -12,12 +12,15 @@ out vec3 objectColor;
 out vec3 lightDir;
 out float diff;
 
+out vec4 fragPosLightSpace;
+
 uniform vec3 lightPos;
 
 uniform mat4 fullMat;
 uniform mat4 model;
 uniform mat4 invTranMod;
 
+uniform mat4 lightSpaceMatrix;
 
 float fogDensity = 0.015f;
 
@@ -36,4 +39,5 @@ void main() {
 	fragPos = vec3(model * vec4(aPos, 1.0f));
 	lightDir =  normalize(lightPos - fragPos);
 	diff = max(-1.0f*(dot(normVec, lightDir)),0.0f);
+	fragPosLightSpace = lightSpaceMatrix * vec4(fragPos,1.0f);
 }
