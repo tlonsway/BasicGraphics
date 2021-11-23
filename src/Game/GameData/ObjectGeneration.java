@@ -18,12 +18,12 @@ public class ObjectGeneration {
 		if(!split) {
 			bA = Noise.genfloat(seed, 0.7f, 0.9f);
 			numBranchStacks = Noise.genInt(seed+6, 3, 5);
-			levels = 3;
+			levels = 2;
 		}
 		else {
 			numBranchStacks = 1;
 			bA = Noise.genfloat(seed+12, 0.4f, 0.8f);
-			levels = 4;
+			levels = 3;
 		}
 		float trunkRadius = Noise.genfloat(seed+18, 0.5f, 1.3f);
 		float trunkHeight = Noise.genfloat(seed+24, 4f, 9f);
@@ -63,6 +63,12 @@ public class ObjectGeneration {
 	
 	private static Mesh generateBranch(int level, float bl, float bw, float bA, int resolution, int numBranches, float[] rotations, float[] endPoint, int seed) {
 		Mesh branch = generateCylinder(bw, bl, resolution, seed, "brown");
+		if(level == 0) {
+			//Mesh leaves = generateLeaves(seed, resolution);
+			Mesh leaves = generateSphere(3f, 3f, 3f, 1);
+			leaves.translate(0, bl+1.2f, 0);
+			branch.addMesh(leaves);
+		}
 		branch.translate(endPoint[0], endPoint[1], endPoint[2]);
 		FloatMatrix nextEndPoint = new FloatMatrix(new float[] {0, bl, 0});
 		branch.rotate(endPoint, 'x', rotations[0]);
@@ -72,16 +78,7 @@ public class ObjectGeneration {
 		branch.rotate(endPoint, 'z', rotations[2]);
 		nextEndPoint = Game.Graphics.Operations.rotatePoint(nextEndPoint, 'z', rotations[2]);
 		float[] nep = new float[] {endPoint[0]+nextEndPoint.get(0), endPoint[1]+nextEndPoint.get(1), endPoint[2]+nextEndPoint.get(2)};
-		if(level < 1) {
-			boolean z = false;
-			if(level%2 == 0) {
-				z=true;
-			}
-			
-			Mesh leaves = generateLeaves(z, seed, resolution);
-			leaves.translate(nep[0], nep[1], nep[2]);
-			branch.addMesh(leaves);
-		}
+		
 		if(level != 0) {
 			if(numBranches != 2) {
 				numBranches--;
@@ -124,14 +121,16 @@ public class ObjectGeneration {
 				if(theta > Math.PI && range!=0) {
 					yRot*=-1;
 				}
+				//if() {
 				//System.out.println("Level: "+level+" cA: "+rotations[0]+" Range: "+range+" height: "+height+" (p,l)A: ("+p+","+l+")"+a+" C: "+c+" G: "+g+" xRotRem: "+xRotRem+" RotPer: "+yRot+" theta: "+(angle*i)+" numBranches: "+numBranches+" branchNum: "+i+" branchL: "+bl);
-				Mesh b = generateBranch(level-1, bl*0.8f, bw*0.75f, bA, resolution, numBranches, new float[] {rotations[0]+bA-xRotRem, yRot+rotations[1], 0}, nep, seed);
-				branch.addMesh(b);
+					Mesh b = generateBranch(level-1, bl*0.8f, bw*0.75f, bA, resolution, numBranches, new float[] {rotations[0]+bA-xRotRem, yRot+rotations[1], 0}, nep, seed);
+					branch.addMesh(b);
+				//}
 			}
 		}	
 		return branch;
 	}
-	public static Mesh generateLeaves(boolean zAxis, int seed, int resolution) {
+	public static Mesh generateLeaves(int seed, int resolution) {
 		Mesh leaves = new Mesh(true);
 		FloatMatrix p1 = new FloatMatrix(new float[] {0, -1.0f, -1.0f});
 		FloatMatrix p2 = new FloatMatrix(new float[] {0, -1.0f, 1.0f});
