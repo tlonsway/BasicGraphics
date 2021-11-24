@@ -24,7 +24,7 @@ void main() {
 	float disTerm1 = sunPos.x-frgPos.x;
 	float disTerm2 = ratio*(sunPos.y-frgPos.y);
 	float sunDist = sqrt(disTerm1*disTerm1+disTerm2*disTerm2);
-	float col = (1/(3f*sqrt(sunDist)));
+	float col = (1/(3.0f*sqrt(sunDist)));
 	vec3 sunPx = sunIntensity*col*sunCol;
 	float sunContrib = (1/sqrt(10.0f*sunDist));
 	if (sunPosition.z < 0.0f) {

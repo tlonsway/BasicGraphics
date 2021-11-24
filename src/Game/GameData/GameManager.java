@@ -186,8 +186,8 @@ public class GameManager {
 		this.world = w;
 		cam.setWorld(w);
 		//resourceManager.addTestTrees();
-		resourceManager.addTestFerns();
-		resourceManager.addRocks();
+		//resourceManager.addTestFerns();
+		//resourceManager.addRocks();
 	}
 	
 	private void chunkUpdateCheck() {

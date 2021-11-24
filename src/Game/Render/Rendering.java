@@ -137,8 +137,8 @@ public class Rendering {
 	
 	private void runRenderMethodsShadows() {
 		//terrain.render();
-		//resourceManager.render();
-		terrain.renderShadows();
+		resourceManager.render();
+		//terrain.renderShadows();
 		resourceManager.renderShadows();
 		//terrain.render();
 	}

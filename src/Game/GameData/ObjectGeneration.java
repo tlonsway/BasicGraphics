@@ -250,10 +250,12 @@ public class ObjectGeneration {
 			float lvlH = -(float)(Math.cos(angle*i)*(height/2.0));
 			float lvlW = (float)(Math.sin(angle*i)*(width/2.0));
 			float lvlL = (float)(Math.sin(angle*i)*(length/2.0));
+			/*
 			if(i == 4) {
 				System.out.println("Width: "+lvlW);
 				System.out.println("length: "+lvlL);
 			}
+			*/
 			for(int a = 0; a <= resolution*2; a++) {
 				if(a!=resolution*2) {
 					float x = lvlW*(float)Math.cos(angle*a + (angle/2f)*(i%2)) ;

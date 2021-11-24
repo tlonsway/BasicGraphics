@@ -113,14 +113,14 @@ GameManager manager;
 		int num2 = (int)(Math.random()*20+10);
 		for(int i = 0; i < num1; i++) {
 			cloud1Locs.add(new float[] {(float)(Math.random()*4000-2000), (float)(Math.random()*60+250), (float)(Math.random()*4000-2000)});
-			float[] pos = cloud1Locs.get(cloud1Locs.size()-1);
-			System.out.println(pos[0]+" "+pos[1]+" "+pos[2]);
+			//float[] pos = cloud1Locs.get(cloud1Locs.size()-1);
+			//System.out.println(pos[0]+" "+pos[1]+" "+pos[2]);
 		}
-		System.out.println("-----------------------");
+		//System.out.println("-----------------------");
 		for(int i = 0; i < num2; i++) {
 			cloud2Locs.add(new float[] {(float)(Math.random()*4000-2000), (float)(Math.random()*60+250), (float)(Math.random()*4000-2000)});
-			float[] pos = cloud2Locs.get(cloud2Locs.size()-1);
-			System.out.println(pos[0]+" "+pos[1]+" "+pos[2]);
+			//float[] pos = cloud2Locs.get(cloud2Locs.size()-1);
+			//System.out.println(pos[0]+" "+pos[1]+" "+pos[2]);
 		}
 		System.out.println("Finished generating clouds");
 	}
@@ -150,11 +150,9 @@ GameManager manager;
 		glUniformMatrix4fv(modelInvTranMatLoc,false,iMatFlat);
 		updateSun();
 		glBindVertexArray(VAO1);
-		//System.out.println("-------------------------");
 		for(float[] loc: cloud1Locs) {
 			GameObject go = new GameObject("temp");
 			go.translate(loc[0], loc[1], loc[2]);
-			//System.out.println("X: "+loc[0]+" Y: "+loc[1]+" Z: "+loc[2]);
 			float[] goMat = go.getModelMatFlat();
 			int modelMatLocT = glGetUniformLocation(shaderProgram,"model");
 			glUniformMatrix4fv(modelMatLocT, false, goMat);
@@ -169,7 +167,7 @@ GameManager manager;
 			glUniformMatrix4fv(modelMatLocT, false, goMat);
 			glDrawArrays(GL_TRIANGLES,0,numVert2);
 		}
-		moveClouds(-20.0f, 0);
+		moveClouds(-1.0f, 0);
 	}
 	
 	public void updateWavePos() {
@@ -180,9 +178,7 @@ GameManager manager;
 	}
 	
 	private void updateVerts() {
-		System.out.println("GOT HERE 1");
 		if (manager.getWorld() != null) {
-			System.out.println("GOT HERE 2");
 			int seed = manager.getWorld().seed;
 			Mesh cloud1 = ObjectGeneration.generateCloud(seed, 5);
 			Mesh cloud2 = ObjectGeneration.generateCloud(seed>>2, 5);
@@ -191,16 +187,6 @@ GameManager manager;
 			float[] cloud2Verts = getVertices(cloud2);
 			
 			int VBOt1,VAOt1, VBOt2, VAOt2;
-			
-			System.out.println("CLOUD 1 VERTICES LENGTH: " + cloud1Verts.length);
-			
-			for(int i=0;i<cloud1Verts.length;i++) {
-				System.out.println(cloud1Verts[i] + " ");
-				
-				if (i%3==0) {
-					System.out.print("\n");
-				}
-			}
 			
 			//cloud type 1
 			VBOt1 = glGenBuffers();
