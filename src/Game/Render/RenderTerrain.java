@@ -102,45 +102,71 @@ public class RenderTerrain {
 	
 	public void setShadowUniforms() {
 		glUseProgram(manager.getShadowShaderProgram());
+		
+		/*
 		Projection project = manager.getProjection();
 		FloatMatrix lightPosition = new FloatMatrix(manager.getSunPosition());
 		lightPosition = new FloatMatrix(new float[] {lightPosition.get(0),lightPosition.get(1),lightPosition.get(2)});
 		FloatMatrix target = new FloatMatrix(new float[] {0,0,0});
 		FloatMatrix up = new FloatMatrix(new float[] {0,1,0});
 		FloatMatrix depthView = Operations.lookAt(lightPosition, target, up);
-		
 		Camera c2 = new Camera(new int[] {1920,1080});
 		c2.rotate('x', 3.74f);
-		//c2.rotate('y', -80);
-		//c2.rotate('z', 1.05f);
 		c2.translate(1000, 500, 1000);
 		depthView = c2.getCamMat();
-		//Camera cam = manager.getCamera();
-		//depthView = cam.getCamMat();
-		
 		float[] matCom = combineMats(project.getProjMatFMat(),depthView);
+		*/
 		
-		//Camera cam = manager.getCamera();
-		//matCom = combineMats(project.getProjMatFMat(),cam.getCamMat());
 		
+		//float[] camPos = manager.getCamera().getCamPos();
+		//System.out.println("POSITION: (" + -camPos[0] + "," + -camPos[1] + "," + -camPos[2] + ")");
+		
+		//Projection project = manager.getProjection();
+		Projection project = new Projection(70, 1000f, 25000f, new int[] {1920,1080});
+		FloatMatrix lightPosition = new FloatMatrix(manager.getSunPosition());
+		lightPosition = new FloatMatrix(new float[] {lightPosition.get(0),lightPosition.get(1),lightPosition.get(2)});
+		FloatMatrix target = new FloatMatrix(new float[] {0,0,0});
+		Camera cam = manager.getCamera();
+		FloatMatrix up = new FloatMatrix(new float[] {0,1,0});
+		FloatMatrix depthView = Operations.lookAt(lightPosition, target, up);
+		float[] matCom = combineMats(project.getProjMatFMat(),depthView);
 		
 		
 		int fullMatLoc = glGetUniformLocation(manager.getShadowShaderProgram(),"fullMat");
-		glUniformMatrix4fv(fullMatLoc, false, matCom);
+		glUniformMatrix4fv(fullMatLoc, false, matCom);	
 	}
 	
 	public void setLightSpaceMatUniform() {
 		glUseProgram(shaderProgram);
+		/*
 		Camera c2 = new Camera(new int[] {1920,1080});
 		c2.rotate('x', 3.74f);
-		//c2.rotate('y', -80);
-		//c2.rotate('z', 1.05f);
 		c2.translate(1000, 500, 1000);
 		FloatMatrix depthView = c2.getCamMat();
-		//Camera cam = manager.getCamera();
-		//depthView = cam.getCamMat();
 		Projection project = manager.getProjection();
+		float[] matCom = combineMats(project.getProjMatFMat(),depthView);*/
+		
+		/*
+		Projection project = manager.getProjection();
+		FloatMatrix lightPosition = new FloatMatrix(manager.getSunPosition());
+		lightPosition = new FloatMatrix(new float[] {lightPosition.get(0),lightPosition.get(1),lightPosition.get(2)});
+		lightPosition = new FloatMatrix(new float[] {100,100,100});
+		FloatMatrix target = new FloatMatrix(new float[] {0,0,0});
+		Camera cam = manager.getCamera();
+		//target = new FloatMatrix(new float[] {-cam.getCamPos()[0],-cam.getCamPos()[1],-cam.getCamPos()[2]});
+		FloatMatrix up = new FloatMatrix(new float[] {0,1,0});
+		FloatMatrix depthView = Operations.lookAt(lightPosition, target, up);
 		float[] matCom = combineMats(project.getProjMatFMat(),depthView);
+		*/
+		Projection project = new Projection(70, 1000f, 25000f, new int[] {1920,1080});
+		FloatMatrix lightPosition = new FloatMatrix(manager.getSunPosition());
+		lightPosition = new FloatMatrix(new float[] {lightPosition.get(0),lightPosition.get(1),lightPosition.get(2)});
+		FloatMatrix target = new FloatMatrix(new float[] {0,0,0});
+		Camera cam = manager.getCamera();
+		FloatMatrix up = new FloatMatrix(new float[] {0,1,0});
+		FloatMatrix depthView = Operations.lookAt(lightPosition, target, up);
+		float[] matCom = combineMats(project.getProjMatFMat(),depthView);
+		
 		int fullMatLoc = glGetUniformLocation(shaderProgram,"lightSpaceMatrix");
 		glUniformMatrix4fv(fullMatLoc, false, matCom);
 	}

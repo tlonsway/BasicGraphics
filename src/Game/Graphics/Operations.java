@@ -93,19 +93,26 @@ public class Operations {
 		return new FloatMatrix(new float[] {iVal,jVal,kVal});
 	}
 	
-	public static FloatMatrix lookAt(FloatMatrix position, FloatMatrix target, FloatMatrix up) {
+	public static FloatMatrix lookAt(FloatMatrix eye, FloatMatrix at, FloatMatrix up) {
 		//System.out.println("Position: " + position + ", Target: " + target);
-		FloatMatrix Z = position.rsub(target);
-		Geometry.normalize(Z);
+		FloatMatrix Z = at.rsub(eye);
+		//FloatMatrix Z = eye.rsub(at);
+		Z = Geometry.normalize(Z);
 		FloatMatrix Y = up;
 		FloatMatrix X = crossProd(Y,Z);
+		X = Geometry.normalize(X);
 		Y = crossProd(Z,X);
-		Geometry.normalize(X);
-		Geometry.normalize(Y);
-		float[][] ret = new float[][] {{X.get(0),X.get(1),X.get(2),-X.dot(position)},
-									   {Y.get(0),Y.get(1),Y.get(2),-Y.dot(position)},
-									   {Z.get(0),Z.get(1),Z.get(2),-Z.dot(position)},
+		
+		//Y = Geometry.normalize(Y);
+		float[][] ret = new float[][] {{X.get(0),X.get(1),X.get(2),-X.dot(eye)},
+									   {Y.get(0),Y.get(1),Y.get(2),-Y.dot(eye)},
+									   {Z.get(0),Z.get(1),Z.get(2),-Z.dot(eye)},
 									   {0,0,0,1}};
+		/*float[][] ret = new float[][] {{X.get(0),Y.get(0),Z.get(0),0},
+									   {X.get(1),Y.get(1),Z.get(1),0},
+									   {X.get(2),Y.get(2),Z.get(2),0},
+									   {-X.dot(eye),-Y.dot(eye),-Z.dot(eye),1}};*/
+		
 		return new FloatMatrix(ret);
 	}
 	

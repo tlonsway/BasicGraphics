@@ -129,6 +129,7 @@ public class GameManager {
 		
 		renderer = new Rendering(this,resourceManager);
 		
+		//resourceManager.addTestTrees();
 		
 		
 		glfwMakeContextCurrent(window);

@@ -63,7 +63,7 @@ public class Rendering {
 	
 	Projection depthProj;
 	int depthMapFBO;
-	int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+	int SHADOW_WIDTH = 10000, SHADOW_HEIGHT = 10000;
 	int depthMap;
 	
 	int quadShaderProgram;
@@ -137,8 +137,8 @@ public class Rendering {
 	
 	private void runRenderMethodsShadows() {
 		//terrain.render();
-		resourceManager.render();
-		//terrain.renderShadows();
+		//resourceManager.render();
+		terrain.renderShadows();
 		resourceManager.renderShadows();
 		//terrain.render();
 	}
@@ -229,9 +229,6 @@ public class Rendering {
 	        
 	        
 			//bindFullScreenQuad();
-			
-			
-			
 			
 			runRenderMethodsNormal();
 			
