@@ -65,9 +65,25 @@ public class ResourceManager {
 		Mesh tree1MQ = ObjectGeneration.generateTree(9817239, 3);
 		Mesh tree1HQ = ObjectGeneration.generateTree(9817239, 9);
 		VAOStorage vao1 = new VAOStorage(tree1,tree1HQ,tree1MQ,tree1LQ);
-		for(int x = -10; x < 10; x++) {
+		
+		for(int i=0;i<500;i++) {
+			float posX = (float)((Math.random()*2000.0)-1000.0);
+			float posZ = (float)((Math.random()*2000.0)-1000.0);
+			float posY = manager.getWorld().getHeight(posX, posZ);
+			if (posY < 10.0f) {
+				i--;
+				continue;
+			}
+			float[] pos = new float[] {posX,posY,posZ};
+			float[] rot = new float[3];
+			PhysicalResource pr = new Tree(vao1, tree1, pos, rot);
+			//pr.setQualityVAO(vao1HQ, vao1MQ, vao1LQ);
+			this.addResource(pr);
+		}
+		/*for(int x = -10; x < 10; x++) {
 			for(int y = -10; y < 10; y++) {
 				ArrayList<float[]> pts = manager.getWorld().getSpawnPoints((int)(Math.sqrt(Math.pow(x*2, 2)+Math.pow(y*2, 2))+6), 100, 100);
+				
 				for(float[] pt: pts) {
 					float height = manager.getWorld().getHeight(pt[0]+x*100, pt[1]+y*100);
 					if(height > 10 && height < 150) {
@@ -76,7 +92,7 @@ public class ResourceManager {
 					}
 				}
 			}
-		}
+		}*/
 	}
 	
 	public void addRocks() {
@@ -218,6 +234,7 @@ public class ResourceManager {
 						modelMatLoc = glGetUniformLocation(manager.getShadowShaderProgram(),"model");
 						glUniformMatrix4fv(modelMatLoc, false, modelMat);
 						glDrawArrays(GL_TRIANGLES,0,numVertT);
+						System.out.println("drawing");
 					}
 				}
 			} else {
@@ -237,6 +254,7 @@ public class ResourceManager {
 						modelMatLoc = glGetUniformLocation(manager.getShadowShaderProgram(),"model");
 						glUniformMatrix4fv(modelMatLoc, false, modelMat);
 						glDrawArrays(GL_TRIANGLES,0,numVertHQ);
+						System.out.println("drawing");
 					}
 				}
 				glBindVertexArray(VAOMQ);
@@ -248,6 +266,7 @@ public class ResourceManager {
 						modelMatLoc = glGetUniformLocation(manager.getShadowShaderProgram(),"model");
 						glUniformMatrix4fv(modelMatLoc, false, modelMat);
 						glDrawArrays(GL_TRIANGLES,0,numVertMQ);
+						System.out.println("drawing");
 					}
 				}
 				glBindVertexArray(VAOLQ);
@@ -258,6 +277,7 @@ public class ResourceManager {
 						modelMatLoc = glGetUniformLocation(manager.getShadowShaderProgram(),"model");
 						glUniformMatrix4fv(modelMatLoc, false, modelMat);
 						glDrawArrays(GL_TRIANGLES,0,numVertLQ);
+						System.out.println("drawing");
 					}
 				}
 			}
@@ -266,31 +286,18 @@ public class ResourceManager {
 	
 	public void setShadowUniforms() {
 		glUseProgram(manager.getShadowShaderProgram());
-		Projection project = manager.getProjection();
+		Projection project = new Projection(70, 1000f, 25000f, new int[] {10000,10000});
 		FloatMatrix lightPosition = new FloatMatrix(manager.getSunPosition());
 		lightPosition = new FloatMatrix(new float[] {lightPosition.get(0),lightPosition.get(1),lightPosition.get(2)});
 		FloatMatrix target = new FloatMatrix(new float[] {0,0,0});
+		Camera cam = manager.getCamera();
 		FloatMatrix up = new FloatMatrix(new float[] {0,1,0});
 		FloatMatrix depthView = Operations.lookAt(lightPosition, target, up);
-		
-		Camera c2 = new Camera(new int[] {1920,1080});
-		c2.rotate('x', 3.74f);
-		//c2.rotate('y', -80);
-		//c2.rotate('z', 1.05f);
-		c2.translate(1000, 500, 1000);
-		depthView = c2.getCamMat();
-		//Camera cam = manager.getCamera();
-		//depthView = cam.getCamMat();
-		
 		float[] matCom = combineMats(project.getProjMatFMat(),depthView);
-		
-		//Camera cam = manager.getCamera();
-		//matCom = combineMats(project.getProjMatFMat(),cam.getCamMat());
-		
 		
 		
 		int fullMatLoc = glGetUniformLocation(manager.getShadowShaderProgram(),"fullMat");
-		glUniformMatrix4fv(fullMatLoc, false, matCom);
+		glUniformMatrix4fv(fullMatLoc, false, matCom);	
 	}
 	
 	public void updateTransformMatrix() {

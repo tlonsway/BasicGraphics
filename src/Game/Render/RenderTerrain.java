@@ -122,7 +122,7 @@ public class RenderTerrain {
 		//System.out.println("POSITION: (" + -camPos[0] + "," + -camPos[1] + "," + -camPos[2] + ")");
 		
 		//Projection project = manager.getProjection();
-		Projection project = new Projection(70, 1000f, 25000f, new int[] {1920,1080});
+		Projection project = new Projection(70, 1000f, 25000f, new int[] {10000,10000});
 		FloatMatrix lightPosition = new FloatMatrix(manager.getSunPosition());
 		lightPosition = new FloatMatrix(new float[] {lightPosition.get(0),lightPosition.get(1),lightPosition.get(2)});
 		FloatMatrix target = new FloatMatrix(new float[] {0,0,0});
@@ -158,7 +158,7 @@ public class RenderTerrain {
 		FloatMatrix depthView = Operations.lookAt(lightPosition, target, up);
 		float[] matCom = combineMats(project.getProjMatFMat(),depthView);
 		*/
-		Projection project = new Projection(70, 1000f, 25000f, new int[] {1920,1080});
+		Projection project = new Projection(70, 1000f, 25000f, new int[] {10000,10000});
 		FloatMatrix lightPosition = new FloatMatrix(manager.getSunPosition());
 		lightPosition = new FloatMatrix(new float[] {lightPosition.get(0),lightPosition.get(1),lightPosition.get(2)});
 		FloatMatrix target = new FloatMatrix(new float[] {0,0,0});

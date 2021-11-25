@@ -15,7 +15,7 @@ public class DayNightThread implements Runnable {
 	int time = 0;
 	
 	
-	static final float ticksPerSecond = 20.0f; //8 is a good value
+	static final float ticksPerSecond = 8.0f; //8 is a good value
 	
 	public DayNightThread(GameManager g) {
 		this.g = g;

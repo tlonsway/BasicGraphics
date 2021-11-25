@@ -146,7 +146,7 @@ public class GameManager {
 	
 	
 	public void gameLoop() {
-		
+		resourceManager.addTestTrees();
 		soundManager.playSound("walking");
 		while(gameRunning) {
 			float[] camPos = cam.getCamPos();
