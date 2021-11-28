@@ -198,24 +198,28 @@ public class Rendering {
 			case(GL_FRAMEBUFFER_UNSUPPORTED): System.out.println("incomplete"); break;
 			}*/
 			
-			glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-			glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-			glClear(GL_DEPTH_BUFFER_BIT);
+			boolean shadingEnabled = true;
 			
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, depthMap);
+			if (shadingEnabled) {
 			
-			runRenderMethodsShadows();	
-			//runRenderMethodsNormal();
-			
-			
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			
-			glViewport(0, 0, 1920, 1080);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			//ConfigureShaderAndMatrices();
-			glActiveTexture(GL_TEXTURE0);
-	        glBindTexture(GL_TEXTURE_2D, depthMap);
+				glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+				glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+				glClear(GL_DEPTH_BUFFER_BIT);
+				
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, depthMap);
+				
+				runRenderMethodsShadows();	
+				
+				
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				
+				glViewport(0, 0, 1920, 1080);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				//ConfigureShaderAndMatrices();
+				glActiveTexture(GL_TEXTURE0);
+		        glBindTexture(GL_TEXTURE_2D, depthMap);
+			}
 			
 	        /*
 	        byte[] pixels = new byte[1024 * 1024 * 1];
