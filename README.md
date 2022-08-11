@@ -1,7 +1,5 @@
 # 3D OpenGL Powered Game Engine
 
-![Lines of code](https://img.shields.io/tokei/lines/github/tlonsway/BasicGraphics?color=orange&style=flat-square)
-
 ![BasicGraphics_gif](https://user-images.githubusercontent.com/36086269/182716270-c7735bcd-28dc-41c8-b0c6-92522b66812f.gif)
 
 
